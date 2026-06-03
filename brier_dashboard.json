@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-02T16:02:32.020111",
-  "total_resolved": 88,
+  "generated_at": "2026-06-02T21:03:15.239399",
+  "total_resolved": 90,
   "by_model": {
     "MLB_GAME": {
       "n": 32,
@@ -21,12 +21,12 @@
       "beats_random": false
     },
     "JOBS": {
-      "n": 52,
-      "correct": 35,
-      "acc_pct": 67.3,
-      "avg_brier": 0.1347,
-      "avg_logloss": 0.4457,
-      "avg_edge": 15.8,
+      "n": 54,
+      "correct": 36,
+      "acc_pct": 66.7,
+      "avg_brier": 0.1351,
+      "avg_logloss": 0.4462,
+      "avg_edge": 15.6,
       "beats_random": true
     }
   },
