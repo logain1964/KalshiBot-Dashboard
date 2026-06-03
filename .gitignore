@@ -1,0 +1,8 @@
+# .gitignore  
+*  
+!README.md  
+!.gitignore  
+!brier_dashboard.json  
+!learning_recommendations.json  
+!paper_trades.json  
+!signals_log.csv  

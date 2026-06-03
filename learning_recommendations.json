@@ -1,0 +1,288 @@
+{
+  "generated_at": "2026-06-02T16:02:32.022680",
+  "current_threshold": 8,
+  "current_weights": {
+    "GDP": 1.0,
+    "JOBS": 0.85,
+    "CPI": 0.9,
+    "CLAIMS": 0.75,
+    "NBA": 0.85,
+    "BTC": 0.8,
+    "MLB_GAME": 0.8,
+    "NHL": 0.78,
+    "MLB_CHAMP": 0.75,
+    "NHL_CHAMP": 0.7,
+    "WC_WINNER": 0.5,
+    "MLS_GAME": 0.65,
+    "WC_GAME": 0.6,
+    "FED": 0.65,
+    "NBA_GAME": 0.78,
+    "NHL_GAME": 0.72,
+    "NBA_CHAMP": 0.8
+  },
+  "threshold_recs": [
+    {
+      "model": "GDP",
+      "current_threshold": 8,
+      "suggested_threshold": 8,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n_above": 0,
+      "n_below": 0,
+      "brier_above": null,
+      "brier_below": null,
+      "reason": [
+        "Need 26 more resolved signals"
+      ]
+    },
+    {
+      "model": "JOBS",
+      "current_threshold": 8,
+      "suggested_threshold": 8,
+      "action": "HOLD",
+      "confidence": "LOW",
+      "n_above": 34,
+      "n_below": 0,
+      "brier_above": 0.131903,
+      "brier_below": null,
+      "reason": []
+    },
+    {
+      "model": "MLB_GAME",
+      "current_threshold": 8,
+      "suggested_threshold": 8,
+      "action": "HOLD",
+      "confidence": "LOW",
+      "n_above": 0,
+      "n_below": 0,
+      "brier_above": null,
+      "brier_below": null,
+      "reason": []
+    }
+  ],
+  "weight_recs": [
+    {
+      "model": "BTC",
+      "current_weight": 0.8,
+      "suggested_weight": 0.8,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "CLAIMS",
+      "current_weight": 0.75,
+      "suggested_weight": 0.75,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "CPI",
+      "current_weight": 0.9,
+      "suggested_weight": 0.9,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "FED",
+      "current_weight": 0.65,
+      "suggested_weight": 0.65,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "GDP",
+      "current_weight": 1.0,
+      "suggested_weight": 1.0,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 4,
+      "brier": 0.4566,
+      "reason": [
+        "Need 16 more resolved signals (have 4)"
+      ]
+    },
+    {
+      "model": "JOBS",
+      "current_weight": 0.85,
+      "suggested_weight": 0.87,
+      "delta": 0.02,
+      "action": "RAISE",
+      "confidence": "MEDIUM",
+      "n": 52,
+      "brier": 0.1347,
+      "reason": [
+        "Good calibration: Brier=0.1347 (n=52)"
+      ]
+    },
+    {
+      "model": "MLB_CHAMP",
+      "current_weight": 0.75,
+      "suggested_weight": 0.75,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "MLB_GAME",
+      "current_weight": 0.8,
+      "suggested_weight": 0.75,
+      "delta": -0.05,
+      "action": "LOWER",
+      "confidence": "MEDIUM",
+      "n": 32,
+      "brier": 0.2579,
+      "reason": [
+        "Below random: Brier=0.2579 (random=0.25) (n=32)"
+      ]
+    },
+    {
+      "model": "MLS_GAME",
+      "current_weight": 0.65,
+      "suggested_weight": 0.65,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "NBA",
+      "current_weight": 0.85,
+      "suggested_weight": 0.85,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "NBA_CHAMP",
+      "current_weight": 0.8,
+      "suggested_weight": 0.8,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "NBA_GAME",
+      "current_weight": 0.78,
+      "suggested_weight": 0.78,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "NHL",
+      "current_weight": 0.78,
+      "suggested_weight": 0.78,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "NHL_CHAMP",
+      "current_weight": 0.7,
+      "suggested_weight": 0.7,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "NHL_GAME",
+      "current_weight": 0.72,
+      "suggested_weight": 0.72,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "WC_GAME",
+      "current_weight": 0.6,
+      "suggested_weight": 0.6,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "WC_WINNER",
+      "current_weight": 0.5,
+      "suggested_weight": 0.5,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
+      "reason": [
+        "Need 20 more resolved signals (have 0)"
+      ]
+    }
+  ],
+  "any_actionable": true,
+  "auto_apply_ready": false
+}
