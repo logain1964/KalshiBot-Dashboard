@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-06-03T21:03:08.571628",
+  "generated_at": "2026-06-04T07:02:45.796319",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 1.0,
-    "JOBS": 0.85,
+    "JOBS": 0.87,
     "CPI": 0.9,
     "CLAIMS": 0.75,
     "NBA": 0.85,
     "BTC": 0.8,
-    "MLB_GAME": 0.8,
+    "MLB_GAME": 0.75,
     "NHL": 0.78,
     "MLB_CHAMP": 0.75,
     "NHL_CHAMP": 0.7,
@@ -41,9 +41,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 41,
+      "n_above": 43,
       "n_below": 0,
-      "brier_above": 0.133334,
+      "brier_above": 0.133895,
       "brier_below": null,
       "reason": []
     },
@@ -128,15 +128,15 @@
     },
     {
       "model": "JOBS",
-      "current_weight": 0.85,
-      "suggested_weight": 0.87,
+      "current_weight": 0.87,
+      "suggested_weight": 0.89,
       "delta": 0.02,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n": 59,
-      "brier": 0.1354,
+      "n": 61,
+      "brier": 0.1357,
       "reason": [
-        "Good calibration: Brier=0.1354 (n=59)"
+        "Good calibration: Brier=0.1357 (n=61)"
       ]
     },
     {
@@ -154,8 +154,8 @@
     },
     {
       "model": "MLB_GAME",
-      "current_weight": 0.8,
-      "suggested_weight": 0.8,
+      "current_weight": 0.75,
+      "suggested_weight": 0.75,
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "MEDIUM",
