@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-03T07:02:38.859225",
+  "generated_at": "2026-06-03T21:03:08.571628",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 1.0,
@@ -41,9 +41,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 38,
+      "n_above": 41,
       "n_below": 0,
-      "brier_above": 0.133324,
+      "brier_above": 0.133334,
       "brier_below": null,
       "reason": []
     },
@@ -133,10 +133,10 @@
       "delta": 0.02,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n": 56,
-      "brier": 0.1355,
+      "n": 59,
+      "brier": 0.1354,
       "reason": [
-        "Good calibration: Brier=0.1355 (n=56)"
+        "Good calibration: Brier=0.1354 (n=59)"
       ]
     },
     {
@@ -155,14 +155,14 @@
     {
       "model": "MLB_GAME",
       "current_weight": 0.8,
-      "suggested_weight": 0.75,
-      "delta": -0.05,
-      "action": "LOWER",
+      "suggested_weight": 0.8,
+      "delta": 0.0,
+      "action": "HOLD",
       "confidence": "MEDIUM",
-      "n": 32,
-      "brier": 0.2579,
+      "n": 45,
+      "brier": 0.2421,
       "reason": [
-        "Below random: Brier=0.2579 (random=0.25) (n=32)"
+        "Fair calibration: Brier=0.2421 -- marginal, hold for more data"
       ]
     },
     {
