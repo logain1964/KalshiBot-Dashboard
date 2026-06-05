@@ -478,12 +478,12 @@
     "edge_cents": 39.7,
     "thesis": "Claims model 4-week MA consensus 209.5K. Model gives 74.2% probability claims will NOT exceed 215K. NO at 34c massively underpriced relative to model. Resolves June 4 at 8:30AM ET. Fastest validation cycle in SEDE. MEDIUM confidence.",
     "event_date": "2026-06-04",
-    "status": "OPEN",
-    "exit_price_cents": null,
-    "exit_date": null,
-    "pnl_dollars": null,
-    "result": null,
-    "close_note": null
+    "status": "CLOSED",
+    "exit_price_cents": 0,
+    "exit_date": "2026-06-04 12:01 CT",
+    "pnl_dollars": -24.82,
+    "result": "LOST",
+    "close_note": "[AUTO-CLOSED] Kalshi NO price 0c -- market confirms exact outcome occurred (<3c threshold)"
   },
   {
     "id": 22,
@@ -500,11 +500,11 @@
     "edge_cents": 28.5,
     "thesis": "Claims model gives 87.5% probability claims will NOT exceed 220K. NO at 59c underpriced. Higher threshold, higher confidence, tighter edge. Resolves June 4 at 8:30AM ET. HIGH confidence. Separate market from Trade #21 -- two independent data points for validation.",
     "event_date": "2026-06-04",
-    "status": "OPEN",
-    "exit_price_cents": null,
-    "exit_date": null,
-    "pnl_dollars": null,
-    "result": null,
-    "close_note": null
+    "status": "CLOSED",
+    "exit_price_cents": 0,
+    "exit_date": "2026-06-04 12:01 CT",
+    "pnl_dollars": -24.78,
+    "result": "LOST",
+    "close_note": "[AUTO-CLOSED] Kalshi NO price 0c -- market confirms exact outcome occurred (<3c threshold)"
   }
 ]

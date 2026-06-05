@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-06-04T07:02:45.796319",
+  "generated_at": "2026-06-04T21:03:43.468298",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 1.0,
     "JOBS": 0.87,
     "CPI": 0.9,
-    "CLAIMS": 0.75,
+    "CLAIMS": 0.55,
     "NBA": 0.85,
     "BTC": 0.8,
     "MLB_GAME": 0.75,
@@ -41,9 +41,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 43,
+      "n_above": 48,
       "n_below": 0,
-      "brier_above": 0.133895,
+      "brier_above": 0.13431,
       "brier_below": null,
       "reason": []
     },
@@ -76,8 +76,8 @@
     },
     {
       "model": "CLAIMS",
-      "current_weight": 0.75,
-      "suggested_weight": 0.75,
+      "current_weight": 0.55,
+      "suggested_weight": 0.55,
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
@@ -133,10 +133,10 @@
       "delta": 0.02,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n": 61,
-      "brier": 0.1357,
+      "n": 66,
+      "brier": 0.1359,
       "reason": [
-        "Good calibration: Brier=0.1357 (n=61)"
+        "Good calibration: Brier=0.1359 (n=66)"
       ]
     },
     {
@@ -159,10 +159,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "MEDIUM",
-      "n": 45,
-      "brier": 0.2421,
+      "n": 55,
+      "brier": 0.2456,
       "reason": [
-        "Fair calibration: Brier=0.2421 -- marginal, hold for more data"
+        "Fair calibration: Brier=0.2456 -- marginal, hold for more data"
       ]
     },
     {
