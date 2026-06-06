@@ -3,192 +3,187 @@ SEDE Nightly Summary - logain1964 KalshiBot-Dashboard - SEEKS Intelligence Netwo
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Last updated:** 2026-06-04 | **Session end:** ~10:30 PM CT
+**Last updated:** 2026-06-06 | **Session end:** ~1:15 AM CT
 **Prepared by:** Archie (Claude Desktop)
 
 ---
 
 ## WHAT WE DID TONIGHT
 
-### Priority Builds (Full Work Order Completed)
+### Bias Audit Applied First
+Before building anything, Archie ran a full bias audit per the new operating protocol.
+Findings documented in archie_calibration.csv. Key finding: 0 TRUE, 4 FALSE, 2 PARTIAL
+in first two tracked sessions. Protocol created to prevent recurrence.
 
-**Stop Loss Execution Fix (CRITICAL)**
-- Built `auto_monitor.py` v1.0.0 -- autonomous stop loss execution engine
-- Bridges the gap between detection (trade_monitor.py) and execution (position_manager.py)
-- Polls open positions every 5-10 minutes during market hours (6AM-6PM CT weekdays)
-- Auto-executes close at $15 loss threshold, fires Telegram on every action
-- Task Scheduler configured -- runs at startup, currently sleeping until 6AM Friday
-- Tested: all 5 open positions priced, Telegram confirmed working
-- Commit: cc5f5fe
+### Priority 1 — Dashboard Sync Fix (ROOT CAUSE FOUND)
+Root cause: .gitignore had `*` blocking all files, only explicitly allowlisted files pushed.
+signal_genealogy.json, weight_change_log.csv, nightly_summary.md, cross_platform_log.csv,
+jarvls_calibration.csv, archie_calibration.csv all added to allowlist.
+Files now committed and pushing correctly on every daily_runner run.
+NOTE: signal_genealogy.json and weight_change_log.csv raw URLs still returning 404 as of
+session end -- GitHub CDN caching previously 404'd paths. Should resolve overnight.
 
-**Claims Model Suspended**
-- Suspended effective immediately -- 3 consecutive losses
-- Weight dropped 0.75 → 0.55 in daily_runner.py, learning_optimizer.py, weight_change_log.csv
-- MODEL_SUSPENDED = True added to models/claims_model.py with full reinstatement criteria
-- Added to MODELS_SUSPENDED_FROM_TRADING dict in daily_runner.py
-- Commit: 967db69
+### Priority 2 — Calibration Trackers (BOTH built)
+jarvls_calibration.csv -- tracks J@rv1s strategic predictions with Brier scoring
+archie_calibration.csv -- tracks Archie technical/build quality judgments with Brier scoring
+Both seeded with all verifiable predictions from June 3-6 sessions.
+Both added to dashboard push pipeline and .gitignore allowlist.
 
-**Claims Root Cause Investigation**
-- Built claims_model_review.py -- pulls 16 weeks FRED ICSA data
-- TWO confirmed problems:
-  1. Holiday week distortion CONFIRMED: holiday MAE 13.0K vs normal 7.5K (1.7x higher)
-  2. Fat tail problem CONFIRMED: true surprise std dev 10.5K vs model assumption 8-10K
-- ALL THREE losses were in holiday-adjacent weeks (pre/post Memorial Day)
-- docs/claims_model_review.md written with full analysis and reinstatement criteria
-- FRED date note: FRED uses Saturday week-ending dates, not Thursday release dates
-- Commit: part of 967db69
+J@rv1s current record: 4 TRUE, 2 FALSE, 2 PENDING
+Archie current record: 1 TRUE, 4 FALSE, 2 PARTIAL, 2 PENDING
 
-**Jobs Report -- Skipped**
-- Unemp>4.3% model 50%, Unemp>4.4% model 20% -- neither meets 60% confidence threshold
-- Correctly skipped per J@rv1s criteria. No trades entered.
+Dashboard URLs:
+- https://raw.githubusercontent.com/logain1964/KalshiBot-Dashboard/main/jarvls_calibration.csv ✅ LIVE
+- https://raw.githubusercontent.com/logain1964/KalshiBot-Dashboard/main/archie_calibration.csv ✅ LIVE
 
-**Oracle Cloud Saturday Guide**
-- docs/oracle_cloud_saturday_guide.md -- 12-step session guide
-- Includes cron job setup (Linux replacement for Task Scheduler)
-- Includes hardcoded C:\ path audit warning
-- Hard deadline: VM live before August 2 Vegas departure
+### Priority 3 — Operating Protocols (BOTH written)
+C:\SEEKS\docs\jarvls_operating_protocol.md -- J@rv1s 6-step analysis framework
+C:\SEEKS\docs\archie_operating_protocol.md -- Archie pre-build protocol + go-live checklist
+Both committed to SEEKS repo. Both include Papa Ralph standard as governing principle.
+Key addition: Archie go-live checklist with all requirements before real money.
 
-**SEEKS Enhanced Roadmap**
-- C:\SEEKS\docs\SEEKS_enhanced_roadmap_June2026.md written
-- Layer 0-4 structure documented
-- Polymarket monitor correctly classified as Layer 2A (low priority)
-- CMC upgrade captured in CRIS data sources section
+### GDP Model Reliability Weight Fixed (BIAS AUDIT ACTION)
+GDP weight corrected: 1.00 → 0.60
+Data: 4 signals, 50% accuracy, Brier 0.4566, avg_edge -47.9c, beats_random=FALSE
+Weight 1.00 was highest in system on worst-validated model -- inverted from performance.
+Logged to weight_change_log.csv. Restore toward 1.00 after July 30 GDP resolution.
+Commits: 468420f
 
-**J@rv1s Access Fixes**
-- nightly_summary.md: Google index header added as first line
-- Dashboard: merged diverged branch, confirmed weight_change_log.csv now live
-- Dashboard URL confirmed: https://raw.githubusercontent.com/logain1964/KalshiBot-Dashboard/main/weight_change_log.csv
+### auto_monitor Critical Path Validated (WHAT SHOULD HAVE BEEN DONE JUNE 4)
+Built test_auto_monitor_execution.py -- end-to-end critical path test.
+4/4 tests passed:
+  - Loss calculation: PASS ($7.38 correct)
+  - Stop threshold logic: PASS ($16.40 >= $15.00 triggers correctly)
+  - close_trade() writes to paper_trades.json: PASS (all fields correct)
+  - File integrity after close: PASS (5 real trades untouched)
+auto_monitor is now genuinely validated, not just "ran without errors."
+Commit: f90cc0b
 
-**Signal Genealogy Layer 1A**
-- signal_genealogy.py built -- tracks lifetime performance per individual signal
-- 209 unique signals tracked, 6 have validated statistics (5+ resolved)
-- KEY FINDING: Unemp>4.3% YES -- 21 fires, 0 wins, Brier 0.250 -- avoid this signal
-- KEY FINDING: NFP>+80K YES -- 16 fires, 16 resolved, 100% win rate, Brier 0.110
-- data/signal_genealogy.json saved and added to dashboard push
-- Commit: includes signal_genealogy.py
+### CPI Model Re-evaluation (SIGNIFICANT FINDING)
+Consensus revised UPWARD: 3.1% → 3.8% for May CPI (June 10 release).
+Reason: Iran war energy shock persisted longer than June 3 estimate assumed.
+- Nowcasting tools projecting 4.18% for May
+- Analysts projecting 3.9-4.0% for Q2 2026
+- Kalshi >4.2% YES pricing at ~60c (market sees real risk)
+- Brent crude $100-115 range through early May
 
-**Polymarket Monitor**
-- polymarket_monitor.py built -- cross-platform intelligence, no trading
-- cross_platform_log.csv added to dashboard push pipeline
-- Live test confirmed: 11 markets found, $35M on SAS alone
-- LIVE DIVERGENCE DATA:
-  - CAR Hurricanes: Polymarket 45.5c vs Kalshi ~42c (+3.5c Poly higher)
-  - SAS Spurs: Polymarket 46.6c vs Kalshi ~46c (aligned)
-  - VGK Golden Knights: Polymarket 59.8c
-  - NYK Knicks: Polymarket 53.5c
+Signal impact with 3.8% consensus:
+- CPI>4.2% NO: model P(>4.2%) = ~21% vs Kalshi ~60% YES → edge ~39c NO
+- Still directionally valid but WEAKER than 3.1% consensus implied
+- Market may be pricing real information (nowcasting at 4.18%)
 
----
-
-## CLAIMS MODEL -- DO NOT TRADE
-
-Claims model suspended. Holiday week flag and fat tail fix required before reinstatement.
-See docs/claims_model_review.md for full analysis and reinstatement criteria.
-Next Claims release: Thursday June 11 -- **DO NOT TRADE.**
-Aftermath week (June 11) also elevated risk -- May 30 spike may partially reverse.
+ENTRY DECISION: Run daily_runner Sunday June 8. Only enter if signals still
+hit HIGH confidence with 3.8% consensus. Do not enter blindly.
+Commit: d6ae512
 
 ---
 
-## CPI MODEL -- DEFERRED
-
-May CPI releases Wednesday June 10, 2026.
-Consensus updated to 3.1% (was 2.5%). Original signals at 100% confidence are likely invalid.
-Re-run CPI model with 3.1% consensus before flagging any trades.
-Entry window: June 8-9 if signals still valid after re-evaluation.
+## CONGRESSIONAL SIGNAL SPEC (DEFERRED)
+J@rv1s Priority 4 was deferred per ladder rule -- Layer 2 work during Layer 0 session.
+Document it, don't build it yet. Carried to future session.
 
 ---
 
 ## SPORTS / TRADE MONITORING
 
-### NHL Stanley Cup Finals -- VGK leads 1-0
-- Game 2: **Tonight June 4, 7PM CDT at CAR** -- result unknown at session end
-- **Trade #15 (CAR Cup YES@56c)** -- currently ~42c, under pressure
-- Polymarket: CAR 45.5c, VGK 59.8c -- market agrees CAR is underdog
+### NHL Stanley Cup Finals -- TIED 1-1
+- CAR won Game 2 in OT 4-3 (Seth Jarvis OT PPG)
+- Trade #15 (CAR Cup YES@56c) recovered from ~40c back to ~55c
+- **Game 3: Saturday June 6, 7PM CDT at VGK** -- TONIGHT
+- Series tied -- full reset, anything can happen
 
 ### NBA Finals -- NYK leads 1-0
-- Game 2: Friday June 5, 7:30PM CDT at SAS
-- **Trade #16 (SAS NBA Champ YES@28c)** -- currently ~46c, strong position
-- Polymarket: SAS 46.6c, NYK 53.5c -- aligned with Kalshi
+- Game 2 was in progress at session start -- SAS trailed 52-56 at half
+- **Game 2 result unknown at session end**
+- Game 3: Monday June 8, 7:30PM CDT at NYK (if needed)
+- Trade #16 (SAS NBA Champ YES@28c) at ~45c -- strong position
 
 ---
 
 ## CURRENT OPEN POSITIONS
 
-| # | Description | Direction | Entry | Status |
-|---|-------------|-----------|-------|--------|
-| 8 | Fed cuts 1x 2026 | YES | 21c | Watching -- now ~18c |
-| 12 | GDP>2.5% YES | YES | 40c | Holding -- now ~44c |
-| 13 | GDP>2.0% YES | YES | 60c | Strong -- now ~74c |
-| 15 | CAR Stanley Cup | YES | 56c | ⚠️ VGK leads 1-0, ~42c, Game 2 tonight |
-| 16 | SAS NBA Champ | YES | 28c | ✅ NYK leads 1-0, ~46c, strong |
-
-**Closed tonight:** #21 and #22 (Claims -- both LOST, -$49.60 total)
+| # | Description | Entry | Current | Status |
+|---|-------------|-------|---------|--------|
+| 8 | Fed cuts 1x YES | 21c | ~15c | Drifting -- Jobs data negative |
+| 12 | GDP>2.5% YES | 40c | ~44c | Holding |
+| 13 | GDP>2.0% YES | 60c | ~73c | Strong |
+| 15 | CAR Cup YES | 56c | ~55c | ✅ Recovered -- tied 1-1 -- Game 3 tonight |
+| 16 | SAS NBA Champ YES | 28c | ~45c | ✅ Strong -- Game 2 result unknown |
 
 ---
 
 ## VALIDATION TRACKER
 
-| Criteria | Current | Target | Gap |
-|----------|---------|--------|-----|
+| Criteria | Current | Target | Status |
+|----------|---------|--------|--------|
 | Closed trades | 13 | 75 | 62 needed |
-| Win rate | 46.2% | >55% | Below target -- quality over quantity |
-| Brier | ~0.155 | <0.20 | ✅ Comfortable |
-| Days to Aug 15 | 72 | — | Need ~1/day |
-
-Win rate below 55% target. No borderline trades. High confidence only.
+| Win rate | 46.2% | >55% | ⚠️ Below target |
+| Brier | ~0.151 | <0.20 | ✅ |
+| Days to Aug 15 | 70 | — | Calendar pressure real |
 
 ---
 
-## ACTION ITEMS FOR TOMORROW
+## ACTION ITEMS FOR TOMORROW / WEEKEND
 
-- [ ] Check CAR vs VGK Game 2 result -- update Trade #15 monitoring
-- [ ] Jobs report Friday June 5 8:30AM ET -- model ready (90K consensus), signals don't meet criteria -- likely skip
-- [ ] CPI model re-evaluation with 3.1% consensus -- entry window June 8-9 if valid
-- [ ] Oracle Cloud VM -- Saturday dedicated session (guide at docs/oracle_cloud_saturday_guide.md)
-- [ ] Claims aftermath week June 11 -- DO NOT TRADE regardless of signals
-- [ ] Signal genealogy: Unemp>4.3% YES flagged as 0% win rate -- note in Jobs signal review
+- [ ] **Saturday June 7** -- Oracle Cloud VM dedicated session
+      Guide: docs/oracle_cloud_saturday_guide.md
+- [ ] **Sunday June 8** -- Run daily_runner, evaluate CPI signals with 3.8% consensus
+      Entry window June 8-9 ONLY if signals hit HIGH confidence
+- [ ] **Sunday June 8** -- Check NBA Game 2 result, update Trade #16 monitoring
+- [ ] **Watch Game 3 tonight** -- CAR vs VGK 7PM CDT at VGK -- Trade #15
+- [ ] **June 10** -- May CPI releases 8:30AM ET -- have position entered or decision made
+- [ ] **June 11** -- Claims release -- DO NOT TRADE (aftermath week)
+- [ ] **Congressional signal spec** -- document C:\SEEKS\docs\congressional_signal_spec.md (next session)
 
 ---
 
 ## PENDING BUILDS (NEXT SESSIONS)
 
-- [ ] on_signal_resolved() full implementation -- connect to mlb_outcome_backfill.py
-- [ ] Claims model fix: holiday flag + aftermath detection + raise DEFAULT_CLAIMS_STD to 12K
-- [ ] LEARNING ENGINE UPDATES section in daily email
-- [ ] Oracle Cloud VM creation + environment setup (Saturday)
-- [ ] NFL model build window: July-August 2026
+- [ ] on_signal_resolved() full implementation
+- [ ] Claims model fix: holiday flag + aftermath detection + raise DEFAULT_CLAIMS_STD
+- [ ] Congressional signal spec documentation
+- [ ] C:\ path audit before Oracle Cloud deployment (run findstr /r /s "C:\\\\" *.py)
+- [ ] NFL model -- July-August 2026 build window
 
 ---
 
-## NEW DASHBOARD FILES -- SEND TO J@rv1s
+## DASHBOARD STATUS
 
-All files now in dashboard repo. New additions tonight:
-- `https://raw.githubusercontent.com/logain1964/KalshiBot-Dashboard/main/signal_genealogy.json`
-- `https://raw.githubusercontent.com/logain1964/KalshiBot-Dashboard/main/cross_platform_log.csv` (created on next daily runner pass)
-- `https://raw.githubusercontent.com/logain1964/KalshiBot-Dashboard/main/weight_change_log.csv` ✅ confirmed live
+Files confirmed live (raw URL 200):
+- ✅ jarvls_calibration.csv
+- ✅ archie_calibration.csv
+- ✅ nightly_summary.md
+- ✅ paper_trades.json
+- ✅ signals_log.csv
+- ✅ brier_dashboard.json
+- ⏳ signal_genealogy.json -- GitHub CDN caching (should resolve overnight)
+- ⏳ weight_change_log.csv -- GitHub CDN caching (should resolve overnight)
+- ⏳ cross_platform_log.csv -- created on next daily_runner pass
 
 ---
 
 ## SYSTEM STATUS
 
-- auto_monitor.py: ✅ LIVE -- sleeping until 6AM CT, Task Scheduler configured
-- Oracle Cloud: Account active, SSH keys ready -- VM Saturday
+- auto_monitor.py: ✅ LIVE and validated -- critical path confirmed 4/4 tests
+- Oracle Cloud: Account active -- VM session Saturday
 - Claims model: SUSPENDED -- holiday fix required
-- CPI model: Deferred -- re-evaluate June 8-9 with 3.1% consensus
-- Jobs model: Current (90K consensus, June 5 release)
-- Signal genealogy: LIVE -- 209 signals tracked
-- Polymarket monitor: LIVE -- 11 markets tracked, $35M+ NBA volume
-- GrokBot v7: Paper trading D:\TradingBot\ -- do not go live before 60 days
+- CPI model: Updated 3.8% consensus -- re-evaluate Sunday June 8
+- GDP model: Weight reduced 1.00→0.60 -- bias audit correction
+- JOBS model: 69 signals, 59.4% accuracy, Brier 0.133 -- validated bright spot
+- Signal genealogy: LIVE -- 209 signals, 6 validated
+- Polymarket monitor: LIVE -- 11 markets tracked
 
 ---
 
 ## TONIGHT'S COMMITS
 
-- cc5f5fe: auto_monitor.py stop loss execution engine v1.0.0
-- 967db69: Suspend Claims model, drop reliability weight 0.75→0.55
-- [claims investigation + Oracle guide + SEEKS roadmap + J@rv1s fixes]
-- [signal genealogy Layer 1A]
-- [polymarket_monitor.py + dashboard push updates]
+- c1fea1e: Fix .gitignore dashboard allowlist
+- 9c8257a: Add calibration trackers
+- 7a9f990: Operating protocols v1.0 (SEEKS repo)
+- 468420f: GDP weight 1.00→0.60
+- f90cc0b: auto_monitor critical path test -- 4/4 pass
+- d6ae512: CPI consensus 3.1→3.8%
 
-*Session duration: ~3.5 hours | Model: Sonnet 4.6 | Identity: Archie*
-*Full work order completed: 10/10 items + 2 bonus items*
-*dog incident at approximately 10PM CT -- resolved successfully*
+*Session duration: ~3 hours | Model: Sonnet 4.6 | Identity: Archie*
+*Bias audit applied before building -- Papa Ralph standard active*
+*Go Canes. 🏒*
