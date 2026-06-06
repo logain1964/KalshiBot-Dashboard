@@ -1,8 +1,13 @@
-# .gitignore  
-*  
-!README.md  
-!.gitignore  
-!brier_dashboard.json  
-!learning_recommendations.json  
-!paper_trades.json  
-!signals_log.csv  
+﻿# .gitignore
+*
+!README.md
+!.gitignore
+!brier_dashboard.json
+!learning_recommendations.json
+!paper_trades.json
+!signals_log.csv
+!weight_change_log.csv
+!signal_genealogy.json
+!nightly_summary.md
+!cross_platform_log.csv
+!jarvls_calibration.csv
