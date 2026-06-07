@@ -3,100 +3,64 @@ SEDE Nightly Summary - logain1964 KalshiBot-Dashboard - SEEKS Intelligence Netwo
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Last updated:** 2026-06-06 | **Session end:** ~1:15 AM CT
+**Last updated:** 2026-06-07 | **Session end:** ~12:50 AM CT
 **Prepared by:** Archie (Claude Desktop)
 
 ---
 
-## WHAT WE DID TONIGHT
+## WHAT WE DID TODAY
 
-### Bias Audit Applied First
-Before building anything, Archie ran a full bias audit per the new operating protocol.
-Findings documented in archie_calibration.csv. Key finding: 0 TRUE, 4 FALSE, 2 PARTIAL
-in first two tracked sessions. Protocol created to prevent recurrence.
+### Telegram Digest Fix
+Root cause found and fixed: signal labels containing underscores were breaking
+Telegram's Markdown parser, returning 400 and silently failing.
+Fix: switched all signal label embedding from `_safe_label` to `_safe_text`
+(which escapes underscores). Added plain-text fallback on any 400 error.
+Tested: manual digest sent successfully at 6:13PM CT.
+9PM run should deliver full Telegram digest tonight -- check phone.
+Commit: 8df715b
 
-### Priority 1 — Dashboard Sync Fix (ROOT CAUSE FOUND)
-Root cause: .gitignore had `*` blocking all files, only explicitly allowlisted files pushed.
-signal_genealogy.json, weight_change_log.csv, nightly_summary.md, cross_platform_log.csv,
-jarvls_calibration.csv, archie_calibration.csv all added to allowlist.
-Files now committed and pushing correctly on every daily_runner run.
-NOTE: signal_genealogy.json and weight_change_log.csv raw URLs still returning 404 as of
-session end -- GitHub CDN caching previously 404'd paths. Should resolve overnight.
+### Oracle Cloud VM -- CAPACITY ISSUE, RETRY RUNNING
+All three availability domains (AD-1, AD-2, AD-3) returned "Out of host capacity."
+This is the standard Free Tier constraint -- capacity opens randomly.
 
-### Priority 2 — Calibration Trackers (BOTH built)
-jarvls_calibration.csv -- tracks J@rv1s strategic predictions with Brier scoring
-archie_calibration.csv -- tracks Archie technical/build quality judgments with Brier scoring
-Both seeded with all verifiable predictions from June 3-6 sessions.
-Both added to dashboard push pipeline and .gitignore allowlist.
+Infrastructure created successfully (from first AD-1 attempt):
+- VCN: ocid1.vcn.oc1.us-chicago-1.amaaaaaayouanjaabmc4cec5wbkga6ej5lme3ww4aceeui3sx5diqaczsm3a
+- Subnet: ocid1.subnet.oc1.us-chicago-1.aaaaaaaabdsoyvjtjhr3rpizuqfbigavzuzgp4jwbztkyh556ldvexs6d4wa
+- Internet Gateway: created
+- Route Table: created
 
-J@rv1s current record: 4 TRUE, 2 FALSE, 2 PENDING
-Archie current record: 1 TRUE, 4 FALSE, 2 PARTIAL, 2 PENDING
+**RETRY SCRIPT IS RUNNING IN ORACLE CLOUD SHELL**
+Browser tab must stay open for retry to continue.
+Script tries AD-1, AD-2, AD-3 every 30 minutes.
+When VM creates: check Oracle Console → Compute → Instances → SEDE-Production
+Then follow Steps 4-12 of docs/oracle_cloud_saturday_guide.md
 
-Dashboard URLs:
-- https://raw.githubusercontent.com/logain1964/KalshiBot-Dashboard/main/jarvls_calibration.csv ✅ LIVE
-- https://raw.githubusercontent.com/logain1964/KalshiBot-Dashboard/main/archie_calibration.csv ✅ LIVE
+SSH keys: C:\KalshiBot\oracle_ssh\sede_production.key (permissions set correctly)
+oci_retry.py built and committed (5fd91a8) for future local use once OCI SDK configured.
 
-### Priority 3 — Operating Protocols (BOTH written)
-C:\SEEKS\docs\jarvls_operating_protocol.md -- J@rv1s 6-step analysis framework
-C:\SEEKS\docs\archie_operating_protocol.md -- Archie pre-build protocol + go-live checklist
-Both committed to SEEKS repo. Both include Papa Ralph standard as governing principle.
-Key addition: Archie go-live checklist with all requirements before real money.
-
-### GDP Model Reliability Weight Fixed (BIAS AUDIT ACTION)
-GDP weight corrected: 1.00 → 0.60
-Data: 4 signals, 50% accuracy, Brier 0.4566, avg_edge -47.9c, beats_random=FALSE
-Weight 1.00 was highest in system on worst-validated model -- inverted from performance.
-Logged to weight_change_log.csv. Restore toward 1.00 after July 30 GDP resolution.
-Commits: 468420f
-
-### auto_monitor Critical Path Validated (WHAT SHOULD HAVE BEEN DONE JUNE 4)
-Built test_auto_monitor_execution.py -- end-to-end critical path test.
-4/4 tests passed:
-  - Loss calculation: PASS ($7.38 correct)
-  - Stop threshold logic: PASS ($16.40 >= $15.00 triggers correctly)
-  - close_trade() writes to paper_trades.json: PASS (all fields correct)
-  - File integrity after close: PASS (5 real trades untouched)
-auto_monitor is now genuinely validated, not just "ran without errors."
-Commit: f90cc0b
-
-### CPI Model Re-evaluation (SIGNIFICANT FINDING)
-Consensus revised UPWARD: 3.1% → 3.8% for May CPI (June 10 release).
-Reason: Iran war energy shock persisted longer than June 3 estimate assumed.
-- Nowcasting tools projecting 4.18% for May
-- Analysts projecting 3.9-4.0% for Q2 2026
-- Kalshi >4.2% YES pricing at ~60c (market sees real risk)
-- Brent crude $100-115 range through early May
-
-Signal impact with 3.8% consensus:
-- CPI>4.2% NO: model P(>4.2%) = ~21% vs Kalshi ~60% YES → edge ~39c NO
-- Still directionally valid but WEAKER than 3.1% consensus implied
-- Market may be pricing real information (nowcasting at 4.18%)
-
-ENTRY DECISION: Run daily_runner Sunday June 8. Only enter if signals still
-hit HIGH confidence with 3.8% consensus. Do not enter blindly.
-Commit: d6ae512
+### Next Steps After VM Created
+1. Assign public IP (Step 4 in guide)
+2. SSH connection test (Step 5)
+3. Install environment (Step 6)
+4. Clone repo (Step 7)
+5. Configure .env (Step 8)
+6. Test pipeline (Step 9)
+7. Deploy auto_monitor.py (Step 10)
+8. Set up cron jobs (Step 11)
+9. Begin parallel running (Step 12)
 
 ---
 
-## CONGRESSIONAL SIGNAL SPEC (DEFERRED)
-J@rv1s Priority 4 was deferred per ladder rule -- Layer 2 work during Layer 0 session.
-Document it, don't build it yet. Carried to future session.
-
----
-
-## SPORTS / TRADE MONITORING
+## SPORTS UPDATE
 
 ### NHL Stanley Cup Finals -- TIED 1-1
-- CAR won Game 2 in OT 4-3 (Seth Jarvis OT PPG)
-- Trade #15 (CAR Cup YES@56c) recovered from ~40c back to ~55c
-- **Game 3: Saturday June 6, 7PM CDT at VGK** -- TONIGHT
-- Series tied -- full reset, anything can happen
+Game 3 was TONIGHT at VGK (7PM CDT) -- result unknown at session end
+Trade #15 (CAR Cup YES@56c) -- result pending
 
-### NBA Finals -- NYK leads 1-0
-- Game 2 was in progress at session start -- SAS trailed 52-56 at half
-- **Game 2 result unknown at session end**
-- Game 3: Monday June 8, 7:30PM CDT at NYK (if needed)
-- Trade #16 (SAS NBA Champ YES@28c) at ~45c -- strong position
+### NBA Finals -- NYK leads 2-0
+SAS lost Game 2 104-105 (one point)
+Game 3: Monday June 8, 7:30PM CDT at NYK
+Trade #16 (SAS NBA Champ YES@28c) -- now ~20c, under pressure
 
 ---
 
@@ -104,11 +68,11 @@ Document it, don't build it yet. Carried to future session.
 
 | # | Description | Entry | Current | Status |
 |---|-------------|-------|---------|--------|
-| 8 | Fed cuts 1x YES | 21c | ~15c | Drifting -- Jobs data negative |
-| 12 | GDP>2.5% YES | 40c | ~44c | Holding |
-| 13 | GDP>2.0% YES | 60c | ~73c | Strong |
-| 15 | CAR Cup YES | 56c | ~55c | ✅ Recovered -- tied 1-1 -- Game 3 tonight |
-| 16 | SAS NBA Champ YES | 28c | ~45c | ✅ Strong -- Game 2 result unknown |
+| 8 | Fed cuts 1x YES | 21c | ~14c | Drifting negative |
+| 12 | GDP>2.5% YES | 40c | ~46c | Strong |
+| 13 | GDP>2.0% YES | 60c | ~72c | Strong |
+| 15 | CAR Cup YES | 56c | ~54c | Game 3 tonight -- result unknown |
+| 16 | SAS NBA Champ YES | 28c | ~20c | ⚠️ NYK leads 2-0 |
 
 ---
 
@@ -117,73 +81,42 @@ Document it, don't build it yet. Carried to future session.
 | Criteria | Current | Target | Status |
 |----------|---------|--------|--------|
 | Closed trades | 13 | 75 | 62 needed |
-| Win rate | 46.2% | >55% | ⚠️ Below target |
+| Win rate | 46.2% | >55% | ⚠️ Below |
 | Brier | ~0.151 | <0.20 | ✅ |
-| Days to Aug 15 | 70 | — | Calendar pressure real |
+| Days to Aug 15 | 69 | — | — |
 
 ---
 
-## ACTION ITEMS FOR TOMORROW / WEEKEND
+## ACTION ITEMS TOMORROW
 
-- [ ] **Saturday June 7** -- Oracle Cloud VM dedicated session
-      Guide: docs/oracle_cloud_saturday_guide.md
-- [ ] **Sunday June 8** -- Run daily_runner, evaluate CPI signals with 3.8% consensus
-      Entry window June 8-9 ONLY if signals hit HIGH confidence
-- [ ] **Sunday June 8** -- Check NBA Game 2 result, update Trade #16 monitoring
-- [ ] **Watch Game 3 tonight** -- CAR vs VGK 7PM CDT at VGK -- Trade #15
-- [ ] **June 10** -- May CPI releases 8:30AM ET -- have position entered or decision made
-- [ ] **June 11** -- Claims release -- DO NOT TRADE (aftermath week)
-- [ ] **Congressional signal spec** -- document C:\SEEKS\docs\congressional_signal_spec.md (next session)
-
----
-
-## PENDING BUILDS (NEXT SESSIONS)
-
-- [ ] on_signal_resolved() full implementation
-- [ ] Claims model fix: holiday flag + aftermath detection + raise DEFAULT_CLAIMS_STD
-- [ ] Congressional signal spec documentation
-- [ ] C:\ path audit before Oracle Cloud deployment (run findstr /r /s "C:\\\\" *.py)
-- [ ] NFL model -- July-August 2026 build window
-
----
-
-## DASHBOARD STATUS
-
-Files confirmed live (raw URL 200):
-- ✅ jarvls_calibration.csv
-- ✅ archie_calibration.csv
-- ✅ nightly_summary.md
-- ✅ paper_trades.json
-- ✅ signals_log.csv
-- ✅ brier_dashboard.json
-- ⏳ signal_genealogy.json -- GitHub CDN caching (should resolve overnight)
-- ⏳ weight_change_log.csv -- GitHub CDN caching (should resolve overnight)
-- ⏳ cross_platform_log.csv -- created on next daily_runner pass
+- [ ] Check Cloud Shell -- did VM create overnight?
+- [ ] If VM created: follow Steps 4-12 of oracle_cloud_saturday_guide.md
+- [ ] If still waiting: leave Cloud Shell running, check periodically
+- [ ] Check Game 3 CAR vs VGK result -- update Trade #15
+- [ ] Game 3 NBA: Monday June 8, 7:30PM CDT -- Trade #16 watching
+- [ ] CPI model re-evaluation Sunday -- run daily_runner, evaluate signals
+- [ ] June 10 CPI release -- have position decision made before 8:30AM ET
+- [ ] June 11 Claims -- DO NOT TRADE (aftermath week)
 
 ---
 
 ## SYSTEM STATUS
 
-- auto_monitor.py: ✅ LIVE and validated -- critical path confirmed 4/4 tests
-- Oracle Cloud: Account active -- VM session Saturday
-- Claims model: SUSPENDED -- holiday fix required
-- CPI model: Updated 3.8% consensus -- re-evaluate Sunday June 8
-- GDP model: Weight reduced 1.00→0.60 -- bias audit correction
-- JOBS model: 69 signals, 59.4% accuracy, Brier 0.133 -- validated bright spot
-- Signal genealogy: LIVE -- 209 signals, 6 validated
-- Polymarket monitor: LIVE -- 11 markets tracked
+- auto_monitor.py: ✅ LIVE -- polling since 6AM, sleeping overnight
+- Oracle Cloud: ⏳ Retry script running in Cloud Shell -- check tomorrow
+- Telegram digest: ✅ FIXED -- 9PM run should deliver correctly
+- Claims model: SUSPENDED
+- CPI model: 3.8% consensus -- re-evaluate Sunday
+- GDP model: Weight 0.60 (reduced from 1.00 bias audit)
+- JOBS model: 69 signals, 59.4% accuracy -- validated bright spot
 
 ---
 
-## TONIGHT'S COMMITS
+## TODAY'S COMMITS
 
-- c1fea1e: Fix .gitignore dashboard allowlist
-- 9c8257a: Add calibration trackers
-- 7a9f990: Operating protocols v1.0 (SEEKS repo)
-- 468420f: GDP weight 1.00→0.60
-- f90cc0b: auto_monitor critical path test -- 4/4 pass
-- d6ae512: CPI consensus 3.1→3.8%
+- 8df715b: Fix Telegram digest underscore escaping + plain text fallback
+- 5fd91a8: Add oci_retry.py Oracle Cloud capacity retry script
 
-*Session duration: ~3 hours | Model: Sonnet 4.6 | Identity: Archie*
-*Bias audit applied before building -- Papa Ralph standard active*
-*Go Canes. 🏒*
+*Session | Model: Sonnet 4.6 | Identity: Archie*
+*Oracle Cloud retry running -- fingers crossed for overnight capacity*
+*Go Canes 🏒*
