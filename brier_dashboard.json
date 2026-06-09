@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-08T22:18:17.068213",
+  "generated_at": "2026-06-09T07:02:34.880460",
   "total_resolved": 175,
   "by_model": {
     "MLB_GAME": {
@@ -30,119 +30,6 @@
       "beats_random": true
     }
   },
-  "edge_buckets": {
-    "0-3c   (noise)": {
-      "n": 0,
-      "correct": 0,
-      "win_rate": null,
-      "avg_brier": null
-    },
-    "4-7c   (sub-threshold)": {
-      "n": 26,
-      "correct": 11,
-      "win_rate": 42.3,
-      "avg_brier": 0.2549
-    },
-    "8-11c  (threshold band)": {
-      "n": 46,
-      "correct": 37,
-      "win_rate": 80.4,
-      "avg_brier": 0.1369
-    },
-    "12-15c (solid edge)": {
-      "n": 30,
-      "correct": 9,
-      "win_rate": 30.0,
-      "avg_brier": 0.2228
-    },
-    "16-24c (strong edge)": {
-      "n": 56,
-      "correct": 28,
-      "win_rate": 50.0,
-      "avg_brier": 0.2211
-    },
-    "25c+   (very strong)": {
-      "n": 17,
-      "correct": 11,
-      "win_rate": 64.7,
-      "avg_brier": 0.2708
-    }
-  },
-  "signal_dist": {
-    "0-3c   (noise)": {
-      "above": 0,
-      "below": 1,
-      "total": 1
-    },
-    "4-7c   (sub-threshold)": {
-      "above": 0,
-      "below": 75,
-      "total": 75
-    },
-    "8-11c  (threshold band)": {
-      "above": 868,
-      "below": 22,
-      "total": 890
-    },
-    "12-15c (solid edge)": {
-      "above": 408,
-      "below": 15,
-      "total": 423
-    },
-    "16-24c (strong edge)": {
-      "above": 249,
-      "below": 19,
-      "total": 268
-    },
-    "25c+   (very strong)": {
-      "above": 147,
-      "below": 11,
-      "total": 158
-    }
-  },
-  "threshold_calibration": {
-    "generated_at": "2026-06-08T21:02:01.989680",
-    "total_scored": 51,
-    "total_skipped": 1764,
-    "above_threshold": {
-      "JOBS": {
-        "n": 51,
-        "correct": 29,
-        "acc_pct": 56.86,
-        "avg_brier": 0.130969,
-        "avg_logloss": 0.43549
-      }
-    },
-    "below_threshold": {},
-    "edge_buckets": {
-      "8-11c|above": {
-        "n": 24,
-        "correct": 22,
-        "acc_pct": 91.67,
-        "avg_brier": 0.057859,
-        "avg_logloss": 0.271869
-      },
-      "25c+|above": {
-        "n": 1,
-        "correct": 1,
-        "acc_pct": 100.0,
-        "avg_brier": 0.109561,
-        "avg_logloss": 0.401971
-      },
-      "12-15c|above": {
-        "n": 10,
-        "correct": 0,
-        "acc_pct": 0.0,
-        "avg_brier": 0.207139,
-        "avg_logloss": 0.603519
-      },
-      "16-24c|above": {
-        "n": 16,
-        "correct": 6,
-        "acc_pct": 37.5,
-        "avg_brier": 0.194367,
-        "avg_logloss": 0.577999
-      }
-    }
-  }
+  "edge_buckets": {},
+  "signal_dist": {}
 }
