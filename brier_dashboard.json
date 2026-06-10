@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-06-09T07:02:34.880460",
-  "total_resolved": 175,
+  "generated_at": "2026-06-10T00:31:02.318138",
+  "total_resolved": 191,
   "by_model": {
     "MLB_GAME": {
-      "n": 102,
-      "correct": 53,
-      "acc_pct": 52.0,
-      "avg_brier": 0.2507,
-      "avg_logloss": 0.694,
-      "avg_edge": 14.7,
+      "n": 118,
+      "correct": 56,
+      "acc_pct": 47.5,
+      "avg_brier": 0.2584,
+      "avg_logloss": 0.7097,
+      "avg_edge": 14.1,
       "beats_random": false
     },
     "GDP": {
