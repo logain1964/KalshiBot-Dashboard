@@ -1,78 +1,59 @@
-SEDE Nightly Summary - logain1964 KalshiBot-Dashboard - SEEKS Intelligence Network
-
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Last updated:** 2026-06-07 | **Session end:** ~12:50 AM CT
+**Last updated:** 2026-06-09 | **Session end:** ~11:00 PM CT
 **Prepared by:** Archie (Claude Desktop)
 
 ---
 
-## WHAT WE DID TODAY
+## WHAT WE DID TONIGHT
 
-### Telegram Digest Fix
-Root cause found and fixed: signal labels containing underscores were breaking
-Telegram's Markdown parser, returning 400 and silently failing.
-Fix: switched all signal label embedding from `_safe_label` to `_safe_text`
-(which escapes underscores). Added plain-text fallback on any 400 error.
-Tested: manual digest sent successfully at 6:13PM CT.
-9PM run should deliver full Telegram digest tonight -- check phone.
-Commit: 8df715b
+### Project Folder Restructure
+Short session focused on system hygiene not builds.
 
-### Oracle Cloud VM -- CAPACITY ISSUE, RETRY RUNNING
-All three availability domains (AD-1, AD-2, AD-3) returned "Out of host capacity."
-This is the standard Free Tier constraint -- capacity opens randomly.
+- Deleted stale project files: sede_current_state, oracle_state, pending_work_order
+- Created Cold_Open_Read_This_First — single doc pointing both instances to GitHub for live data
+- Updated Archie_Session_Protocol — Step 2 now fetches nightly_summary from GitHub not local, FILE OWNERSHIP section added
+- Updated J@rv1s morning routine — Step 2 now reads cold open first
+- Kept SEDE_SEEKS_session_history — decisions only, low drift risk
 
-Infrastructure created successfully (from first AD-1 attempt):
-- VCN: ocid1.vcn.oc1.us-chicago-1.amaaaaaayouanjaabmc4cec5wbkga6ej5lme3ww4aceeui3sx5diqaczsm3a
-- Subnet: ocid1.subnet.oc1.us-chicago-1.aaaaaaaabdsoyvjtjhr3rpizuqfbigavzuzgp4jwbztkyh556ldvexs6d4wa
-- Internet Gateway: created
-- Route Table: created
+**File ownership now locked:**
+- Archie owns: nightly_summary.md, session archive files
+- J@rv1s owns: jarvls_daily_briefing.md, jarvls_calibration.csv
+- Project folder: 3 files only — cold open, Archie protocol, session history
+- GitHub is truth. Project folder is cold start reference only.
 
-**RETRY SCRIPT IS RUNNING IN ORACLE CLOUD SHELL**
-Browser tab must stay open for retry to continue.
-Script tries AD-1, AD-2, AD-3 every 30 minutes.
-When VM creates: check Oracle Console → Compute → Instances → SEDE-Production
-Then follow Steps 4-12 of docs/oracle_cloud_saturday_guide.md
-
-SSH keys: C:\KalshiBot\oracle_ssh\sede_production.key (permissions set correctly)
-oci_retry.py built and committed (5fd91a8) for future local use once OCI SDK configured.
-
-### Next Steps After VM Created
-1. Assign public IP (Step 4 in guide)
-2. SSH connection test (Step 5)
-3. Install environment (Step 6)
-4. Clone repo (Step 7)
-5. Configure .env (Step 8)
-6. Test pipeline (Step 9)
-7. Deploy auto_monitor.py (Step 10)
-8. Set up cron jobs (Step 11)
-9. Begin parallel running (Step 12)
+### oci_retry.py — Confirmed Dead
+J@rv1s flagged as P1 but already resolved. Oracle is live on PAYG.
+Retry script is gone. No duplicate VM risk.
 
 ---
 
-## SPORTS UPDATE
+## SPORTS — POSITION UPDATES
 
-### NHL Stanley Cup Finals -- TIED 1-1
-Game 3 was TONIGHT at VGK (7PM CDT) -- result unknown at session end
-Trade #15 (CAR Cup YES@56c) -- result pending
+### NHL Stanley Cup Final — CAR 5, VGK 3 (Game 4 FINAL)
+- Series now TIED 2-2
+- Trade #15 (CAR Cup YES @ 56c) — bouncing back from 36c low
+- Game 5: Thursday June 11, 7PM CT at Carolina
+- CAR win probability Game 5: 57.8%
 
-### NBA Finals -- NYK leads 2-0
-SAS lost Game 2 104-105 (one point)
-Game 3: Monday June 8, 7:30PM CDT at NYK
-Trade #16 (SAS NBA Champ YES@28c) -- now ~20c, under pressure
+### NBA Finals — SAS 115, NYK 111 (Game 3 FINAL)
+- Series: NYK leads 2-1 (not 2-0 — update your model)
+- Trade #16 (SAS Champ YES @ 28c) — ~37c, paper gain intact
+- Game 4: Wednesday June 10, 7:30PM CT at MSG
+- SAS win probability Game 4: 45.9%
 
 ---
 
-## CURRENT OPEN POSITIONS
+## OPEN POSITIONS
 
-| # | Description | Entry | Current | Status |
-|---|-------------|-------|---------|--------|
-| 8 | Fed cuts 1x YES | 21c | ~14c | Drifting negative |
-| 12 | GDP>2.5% YES | 40c | ~46c | Strong |
-| 13 | GDP>2.0% YES | 60c | ~72c | Strong |
-| 15 | CAR Cup YES | 56c | ~54c | Game 3 tonight -- result unknown |
-| 16 | SAS NBA Champ YES | 28c | ~20c | ⚠️ NYK leads 2-0 |
+| # | Description | Entry | Status |
+|---|-------------|-------|--------|
+| 8 | Fed 1x cut YES | 21c | ~14c, drifting |
+| 12 | GDP>2.5% YES | 40c | ~44c, holding |
+| 13 | GDP>2.0% YES | 60c | ~64c, holding |
+| 15 | CAR Cup YES | 56c | Recovering — series tied 2-2 |
+| 16 | SAS Champ YES | 28c | ~37c, paper gain |
 
 ---
 
@@ -80,43 +61,44 @@ Trade #16 (SAS NBA Champ YES@28c) -- now ~20c, under pressure
 
 | Criteria | Current | Target | Status |
 |----------|---------|--------|--------|
-| Closed trades | 13 | 75 | 62 needed |
-| Win rate | 46.2% | >55% | ⚠️ Below |
-| Brier | ~0.151 | <0.20 | ✅ |
-| Days to Aug 15 | 69 | — | — |
+| Closed trades | 16 | 75 | 59 needed |
+| Win rate | 53.3% | >55% | ⚠️ 2 wins away |
+| Brier | 0.1510 | <0.20 | ✅ |
+| P&L | +$143.46 | — | Best ever |
+| Days to Aug 15 | 67 | — | On track |
 
 ---
 
-## ACTION ITEMS TOMORROW
+## TOMORROW — WEDNESDAY JUNE 10
 
-- [ ] Check Cloud Shell -- did VM create overnight?
-- [ ] If VM created: follow Steps 4-12 of oracle_cloud_saturday_guide.md
-- [ ] If still waiting: leave Cloud Shell running, check periodically
-- [ ] Check Game 3 CAR vs VGK result -- update Trade #15
-- [ ] Game 3 NBA: Monday June 8, 7:30PM CDT -- Trade #16 watching
-- [ ] CPI model re-evaluation Sunday -- run daily_runner, evaluate signals
-- [ ] June 10 CPI release -- have position decision made before 8:30AM ET
-- [ ] June 11 Claims -- DO NOT TRADE (aftermath week)
+- 7:30 AM CT — May CPI release. Positions closed profitably. Confirm number validates model. Expected ~3.1% YoY.
+- 8:30 AM ET — Weekly Claims. DO NOT TRADE. Aftermath week. Locked.
+- 7:30 PM CT — NBA Game 4 SAS vs NYK at MSG. Monitor Trade #16.
+- Oracle shadow mode Day 1 — watch for dual outputs, confirm no divergence from laptop.
+
+---
+
+## PENDING WORK ORDER
+
+1. 5-day Oracle shadow validation — starts June 10 (Day 1 tomorrow)
+2. NFL model build — July/August window, Sept 3 kickoff deadline
+3. Game 4 NBA: Wed Jun 10 — Trade #16 monitoring
+4. Game 5 NHL: Thu Jun 11 — Trade #15 monitoring
 
 ---
 
 ## SYSTEM STATUS
 
-- auto_monitor.py: ✅ LIVE -- polling since 6AM, sleeping overnight
-- Oracle Cloud: ⏳ Retry script running in Cloud Shell -- check tomorrow
-- Telegram digest: ✅ FIXED -- 9PM run should deliver correctly
+- auto_monitor.py: ✅ LIVE on laptop
+- Oracle Cloud: ✅ LIVE — pipeline end-to-end confirmed
+- Dashboard sync: ✅ FIXED last session — all 12 files live
 - Claims model: SUSPENDED
-- CPI model: 3.8% consensus -- re-evaluate Sunday
-- GDP model: Weight 0.60 (reduced from 1.00 bias audit)
-- JOBS model: 69 signals, 59.4% accuracy -- validated bright spot
+- MLB_GAME model: SUSPENDED
+- GDP model: Weight 0.60, extra scrutiny
+- JOBS model: Validated ✅
 
 ---
 
-## TODAY'S COMMITS
-
-- 8df715b: Fix Telegram digest underscore escaping + plain text fallback
-- 5fd91a8: Add oci_retry.py Oracle Cloud capacity retry script
-
 *Session | Model: Sonnet 4.6 | Identity: Archie*
-*Oracle Cloud retry running -- fingers crossed for overnight capacity*
+*Short session — system hygiene and sports updates*
 *Go Canes 🏒*
