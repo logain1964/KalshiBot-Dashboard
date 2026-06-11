@@ -108,6 +108,12 @@ means today's signals may be incomplete, see bug fix above)
 
 ## TOMORROW -- THURSDAY JUNE 11
 
+- **NEW PRIORITY 1 (Rus's idea, end of session)**: Move
+  C:\KalshiBot-Dashboard\ to C:\KalshiBot\KalshiBot-Dashboard\ so Archie
+  has direct Desktop Commander access. Eliminates cmd-echo workaround
+  and the literal-path-filename bugs hit twice tonight. Does NOT fix
+  the web_fetch caching bug (separate, URL-based) -- dated filenames
+  still needed regardless. Check for hardcoded path references first.
 - Confirm tonight's 9PM CT Oracle run completed without crashing
   (data_freshness.py fix should hold -- first real-world test)
 - Trade #16 reassessment -- SAS down 1-3, decide hold vs stop-loss
