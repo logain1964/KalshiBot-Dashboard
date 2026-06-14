@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T07:02:31.143148",
+  "generated_at": "2026-06-13T21:54:16.343408",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -41,9 +41,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 53,
+      "n_above": 55,
       "n_below": 0,
-      "brier_above": 0.131514,
+      "brier_above": 0.132019,
       "brier_below": null,
       "reason": []
     },
@@ -56,6 +56,18 @@
       "n_above": 0,
       "n_below": 0,
       "brier_above": null,
+      "brier_below": null,
+      "reason": []
+    },
+    {
+      "model": "WC_GAME",
+      "current_threshold": 8,
+      "suggested_threshold": 8,
+      "action": "HOLD",
+      "confidence": "LOW",
+      "n_above": 94,
+      "n_below": 0,
+      "brier_above": 0.124476,
       "brier_below": null,
       "reason": []
     }
@@ -133,10 +145,10 @@
       "delta": 0.02,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n": 71,
-      "brier": 0.1337,
+      "n": 73,
+      "brier": 0.134,
       "reason": [
-        "Good calibration: Brier=0.1337 (n=71)"
+        "Good calibration: Brier=0.1340 (n=73)"
       ]
     },
     {
@@ -159,10 +171,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 118,
-      "brier": 0.2584,
+      "n": 121,
+      "brier": 0.2571,
       "reason": [
-        "Below random: Brier=0.2584 (random=0.25) (n=118)"
+        "Below random: Brier=0.2571 (random=0.25) (n=121)"
       ]
     },
     {
@@ -259,14 +271,14 @@
     {
       "model": "WC_GAME",
       "current_weight": 0.6,
-      "suggested_weight": 0.6,
-      "delta": 0.0,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n": 0,
-      "brier": null,
+      "suggested_weight": 0.62,
+      "delta": 0.02,
+      "action": "RAISE",
+      "confidence": "MEDIUM",
+      "n": 115,
+      "brier": 0.1232,
       "reason": [
-        "Need 20 more resolved signals (have 0)"
+        "Good calibration: Brier=0.1232 (n=115)"
       ]
     },
     {
