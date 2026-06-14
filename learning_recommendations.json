@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-13T07:00:27.886970",
+  "generated_at": "2026-06-14T02:00:47.949579",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -41,9 +41,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 51,
+      "n_above": 53,
       "n_below": 0,
-      "brier_above": 0.130969,
+      "brier_above": 0.131514,
       "brier_below": null,
       "reason": []
     },
@@ -133,10 +133,10 @@
       "delta": 0.02,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n": 69,
-      "brier": 0.1333,
+      "n": 71,
+      "brier": 0.1337,
       "reason": [
-        "Good calibration: Brier=0.1333 (n=69)"
+        "Good calibration: Brier=0.1337 (n=71)"
       ]
     },
     {
@@ -159,10 +159,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 118,
-      "brier": 0.2584,
+      "n": 121,
+      "brier": 0.2571,
       "reason": [
-        "Below random: Brier=0.2584 (random=0.25) (n=118)"
+        "Below random: Brier=0.2571 (random=0.25) (n=121)"
       ]
     },
     {
