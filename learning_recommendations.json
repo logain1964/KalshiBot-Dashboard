@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-14T07:00:49.835033",
+  "generated_at": "2026-06-15T02:00:56.534605",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -41,9 +41,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 55,
+      "n_above": 57,
       "n_below": 0,
-      "brier_above": 0.132019,
+      "brier_above": 0.132488,
       "brier_below": null,
       "reason": []
     },
@@ -56,6 +56,18 @@
       "n_above": 0,
       "n_below": 0,
       "brier_above": null,
+      "brier_below": null,
+      "reason": []
+    },
+    {
+      "model": "WC_GAME",
+      "current_threshold": 8,
+      "suggested_threshold": 8,
+      "action": "HOLD",
+      "confidence": "LOW",
+      "n_above": 296,
+      "n_below": 0,
+      "brier_above": 0.188026,
       "brier_below": null,
       "reason": []
     }
@@ -129,14 +141,14 @@
     {
       "model": "JOBS",
       "current_weight": 0.87,
-      "suggested_weight": 0.89,
-      "delta": 0.02,
-      "action": "RAISE",
-      "confidence": "MEDIUM",
-      "n": 73,
-      "brier": 0.134,
+      "suggested_weight": 0.87,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 6,
+      "brier": 0.121,
       "reason": [
-        "Good calibration: Brier=0.1340 (n=73)"
+        "Need 14 more resolved signals (have 6)"
       ]
     },
     {
@@ -159,10 +171,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 121,
-      "brier": 0.2571,
+      "n": 54,
+      "brier": 0.2615,
       "reason": [
-        "Below random: Brier=0.2571 (random=0.25) (n=121)"
+        "Below random: Brier=0.2615 (random=0.25) (n=54)"
       ]
     },
     {
@@ -263,10 +275,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n": 0,
-      "brier": null,
+      "n": 13,
+      "brier": 0.1715,
       "reason": [
-        "Need 20 more resolved signals (have 0)"
+        "Need 7 more resolved signals (have 13)"
       ]
     },
     {
