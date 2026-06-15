@@ -344,12 +344,12 @@
     "edge_cents": 8.6,
     "thesis": "OKC vs SAS tied 3-3, Game 7 tonight. SAS model 35.6% Cup probability vs Kalshi 27c implied. NYK already in Finals. Game 7 coin flip with positive edge. SAS has Wembanyama factor. Entry at ask 28c.",
     "event_date": "2026-06-30",
-    "status": "OPEN",
-    "exit_price_cents": null,
-    "exit_date": null,
-    "pnl_dollars": null,
-    "result": null,
-    "close_note": null
+    "status": "CLOSED",
+    "exit_price_cents": 0,
+    "exit_date": "2026-06-13 21:30 CT",
+    "pnl_dollars": -24.92,
+    "result": "LOST",
+    "close_note": "NYK won 2026 NBA Championship 4-1. SAS YES resolves at 0c. Series: SAS won Game 3 only. Held to resolution per deliberate decision (paper-trade validation needs losses to be meaningful)."
   },
   {
     "id": 17,
