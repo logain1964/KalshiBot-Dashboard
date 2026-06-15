@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-15T02:00:56.534605",
+  "generated_at": "2026-06-15T07:00:51.665345",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -65,9 +65,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 296,
+      "n_above": 297,
       "n_below": 0,
-      "brier_above": 0.188026,
+      "brier_above": 0.188464,
       "brier_below": null,
       "reason": []
     }
