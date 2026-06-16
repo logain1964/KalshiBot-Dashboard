@@ -322,12 +322,12 @@
     "edge_cents": 20.1,
     "thesis": "CAR leads MTL 3-1 in WCF, one win from Finals. Log5 bracket model gives CAR 76.1% Cup probability. Kalshi pricing 56c = 20c edge. VGK already in Finals. Finals matchup CAR vs VGK. CAR has home ice in WCF. Goalie not gated -- series state risk acknowledged.",
     "event_date": "2026-06-30",
-    "status": "OPEN",
-    "exit_price_cents": null,
-    "exit_date": null,
-    "pnl_dollars": null,
-    "result": null,
-    "close_note": null
+    "status": "CLOSED",
+    "exit_price_cents": 100,
+    "exit_date": "2026-06-14 21:00 CT",
+    "pnl_dollars": 19.36,
+    "result": "WON",
+    "close_note": "CAR won 2026 Stanley Cup Championship 4-2 over VGK. Game 6: CAR 3, VGK 0. Trade held to resolution per protocol."
   },
   {
     "id": 16,
