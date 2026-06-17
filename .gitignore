@@ -1,4 +1,4 @@
-﻿# .gitignore
+# .gitignore
 *
 !README.md
 !.gitignore
@@ -9,7 +9,9 @@
 !weight_change_log.csv
 !signal_genealogy.json
 !nightly_summary.md
+!nightly_summary_*.md
 !cross_platform_log.csv
 !jarvls_calibration.csv
 !archie_calibration.csv
 !jarvls_daily_briefing.md
+!jarvls_daily_briefing_*.md
