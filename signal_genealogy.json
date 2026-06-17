@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-16T21:03:00.887598",
-  "total_signals": 347,
+  "generated_at": "2026-06-17T07:02:14.128974",
+  "total_signals": 343,
   "signals_with_stats": 20,
   "min_resolved_required": 5,
   "signals": {
@@ -34,10 +34,10 @@
       "avg_brier": null,
       "beats_random": null,
       "avg_edge_cents": 36.9,
-      "avg_kalshi_cents": 46.6,
+      "avg_kalshi_cents": 46.5,
       "avg_model_pct": 83.4,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "GDP > 2.0%|YES|GDP": {
@@ -109,7 +109,7 @@
       "avg_kalshi_cents": 67.2,
       "avg_model_pct": 81.8,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "BTC<$50k Dec31|NO|BTC": {
@@ -127,7 +127,7 @@
       "avg_kalshi_cents": 54.9,
       "avg_model_pct": 71.1,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "BTC>$110k Dec31|NO|BTC": {
@@ -163,7 +163,7 @@
       "avg_kalshi_cents": 44.2,
       "avg_model_pct": 63.8,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Fed cuts 2x 2026|YES|FED": {
@@ -531,7 +531,7 @@
       "direction": "NO",
       "model": "BTC",
       "market_type": "CRYPTO_BTC",
-      "fires": 65,
+      "fires": 64,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -559,7 +559,7 @@
       "avg_kalshi_cents": 64.4,
       "avg_model_pct": 77.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Canadiens wins 4-2 vs Sabres [VERIFY GOALIE]|NO|NHL": {
@@ -627,11 +627,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 41.2,
+      "avg_edge_cents": 41.3,
       "avg_kalshi_cents": 30.9,
       "avg_model_pct": 72.2,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Spurs wins 4-3 vs Timberwolves|YES|NBA": {
@@ -747,17 +747,17 @@
       "direction": "YES",
       "model": "GDP",
       "market_type": "GDP",
-      "fires": 74,
+      "fires": 75,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 35.2,
+      "avg_edge_cents": 34.8,
       "avg_kalshi_cents": 6.7,
-      "avg_model_pct": 41.9,
+      "avg_model_pct": 41.5,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "CPI YoY>3.2% JUL|YES|CPI": {
@@ -1477,7 +1477,7 @@
       "avg_kalshi_cents": 55.9,
       "avg_model_pct": 73.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Hurricanes Win SC [VERIFY GOALIE]|YES|NHL_CHAMP": {
@@ -1485,17 +1485,17 @@
       "direction": "YES",
       "model": "NHL_CHAMP",
       "market_type": "NHL_CHAMPIONSHIP",
-      "fires": 34,
+      "fires": 35,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 21.4,
-      "avg_kalshi_cents": 44.8,
-      "avg_model_pct": 66.2,
+      "avg_edge_cents": 21.1,
+      "avg_kalshi_cents": 43.9,
+      "avg_model_pct": 65.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Golden Knights Win SC [VERIFY GOALIE]|NO|NHL_CHAMP": {
@@ -1521,17 +1521,17 @@
       "direction": "YES",
       "model": "NHL_CHAMP",
       "market_type": "NHL_CHAMPIONSHIP",
-      "fires": 6,
+      "fires": 7,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 10.9,
-      "avg_kalshi_cents": 5.8,
-      "avg_model_pct": 16.7,
+      "avg_edge_cents": 11.6,
+      "avg_kalshi_cents": 5.4,
+      "avg_model_pct": 17.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "CPI YoY>-0.1% JUN|YES|CPI": {
@@ -2607,11 +2607,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 12.4,
-      "avg_kalshi_cents": 7.8,
+      "avg_edge_cents": 12.5,
+      "avg_kalshi_cents": 7.7,
       "avg_model_pct": 20.2,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Unemp>4.2% Apr ?|YES|JOBS": {
@@ -2647,7 +2647,7 @@
       "avg_kalshi_cents": 34.0,
       "avg_model_pct": 50.0,
       "confidence": "HIGH",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": true
     },
     "PHI @ LAD [THIN MARKET]|YES|MLB_GAME": {
@@ -2751,11 +2751,11 @@
       "win_rate_pct": 100.0,
       "avg_brier": 0.0408,
       "beats_random": true,
-      "avg_edge_cents": 11.6,
-      "avg_kalshi_cents": 68.2,
+      "avg_edge_cents": 11.5,
+      "avg_kalshi_cents": 68.3,
       "avg_model_pct": 79.8,
       "confidence": "MEDIUM",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": true
     },
     "NYY @ ATH|NO|MLB_GAME": {
@@ -2805,11 +2805,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 16.4,
-      "avg_kalshi_cents": 63.5,
+      "avg_edge_cents": 16.3,
+      "avg_kalshi_cents": 63.6,
       "avg_model_pct": 79.9,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Thunder Win NBA Championship|YES|NBA_CHAMP": {
@@ -4731,11 +4731,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 26.2,
+      "avg_edge_cents": 26.1,
       "avg_kalshi_cents": 73.2,
       "avg_model_pct": 99.4,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Unemp>4.4% Apr|NO|JOBS": {
@@ -4767,11 +4767,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 17.3,
-      "avg_kalshi_cents": 82.7,
+      "avg_edge_cents": 17.2,
+      "avg_kalshi_cents": 82.8,
       "avg_model_pct": 100.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Hurricanes Win SC [VERIFY GOALIE]|NO|NHL_CHAMP": {
@@ -5157,17 +5157,17 @@
       "direction": "YES",
       "model": "MLB_GAME",
       "market_type": "MLB_GAME",
-      "fires": 2,
+      "fires": 1,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 7.2,
-      "avg_kalshi_cents": 47.8,
-      "avg_model_pct": 54.9,
+      "avg_edge_cents": 6.6,
+      "avg_kalshi_cents": 47.0,
+      "avg_model_pct": 53.6,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-14",
       "has_stats": false
     },
     "TB @ LAD [THIN MARKET]|YES|MLB_GAME": {
@@ -5193,17 +5193,17 @@
       "direction": "YES",
       "model": "FED",
       "market_type": "FED_RATE",
-      "fires": 2,
+      "fires": 1,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 9.3,
-      "avg_kalshi_cents": 67.7,
+      "avg_edge_cents": 10.5,
+      "avg_kalshi_cents": 66.5,
       "avg_model_pct": 76.9,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-15",
       "has_stats": false
     },
     "Celtics Win NBA Championship|NO|NBA_CHAMP": {
@@ -5217,11 +5217,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 8.3,
-      "avg_kalshi_cents": 86.1,
+      "avg_edge_cents": 8.4,
+      "avg_kalshi_cents": 86.0,
       "avg_model_pct": 94.4,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Thunder Win NBA Championship|NO|NBA_CHAMP": {
@@ -5239,7 +5239,7 @@
       "avg_kalshi_cents": 73.4,
       "avg_model_pct": 92.7,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "England vs Croatia -- Croatia wins|YES|WC_GAME": {
@@ -5283,17 +5283,17 @@
       "direction": "YES",
       "model": "MLB_GAME",
       "market_type": "MLB_GAME",
-      "fires": 4,
+      "fires": 2,
       "resolved": 2,
       "wins": 2,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 10.7,
-      "avg_kalshi_cents": 51.6,
-      "avg_model_pct": 62.3,
+      "avg_edge_cents": 12.8,
+      "avg_kalshi_cents": 50.2,
+      "avg_model_pct": 63.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-15",
       "has_stats": false
     },
     "NYM @ CIN [THIN MARKET]|YES|MLB_GAME": {
@@ -5319,17 +5319,17 @@
       "direction": "YES",
       "model": "MLB_GAME",
       "market_type": "MLB_GAME",
-      "fires": 4,
+      "fires": 2,
       "resolved": 2,
       "wins": 2,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 11.6,
-      "avg_kalshi_cents": 40.5,
-      "avg_model_pct": 52.4,
+      "avg_edge_cents": 13.0,
+      "avg_kalshi_cents": 41.5,
+      "avg_model_pct": 54.5,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-15",
       "has_stats": false
     },
     "PIT @ ATH|YES|MLB_GAME": {
@@ -5373,17 +5373,17 @@
       "direction": "YES",
       "model": "NHL_CHAMP",
       "market_type": "NHL_CHAMPIONSHIP",
-      "fires": 3,
+      "fires": 4,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 29.4,
+      "avg_edge_cents": 24.9,
       "avg_kalshi_cents": 13.5,
-      "avg_model_pct": 42.9,
+      "avg_model_pct": 38.5,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Fed cuts 2x 2026|NO|FED": {
@@ -5404,102 +5404,12 @@
       "last_fired": "2026-06-16",
       "has_stats": false
     },
-    "TOR @ BOS [THIN MARKET]|YES|MLB_GAME": {
-      "market": "TOR @ BOS [THIN MARKET]",
-      "direction": "YES",
-      "model": "MLB_GAME",
-      "market_type": "MLB_GAME",
-      "fires": 2,
-      "resolved": 0,
-      "wins": 0,
-      "win_rate_pct": null,
-      "avg_brier": null,
-      "beats_random": null,
-      "avg_edge_cents": 6.5,
-      "avg_kalshi_cents": 45.5,
-      "avg_model_pct": 48.0,
-      "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
-      "has_stats": false
-    },
-    "DET @ HOU [THIN MARKET]|YES|MLB_GAME": {
-      "market": "DET @ HOU [THIN MARKET]",
-      "direction": "YES",
-      "model": "MLB_GAME",
-      "market_type": "MLB_GAME",
-      "fires": 1,
-      "resolved": 0,
-      "wins": 0,
-      "win_rate_pct": null,
-      "avg_brier": null,
-      "beats_random": null,
-      "avg_edge_cents": 12.6,
-      "avg_kalshi_cents": 49.5,
-      "avg_model_pct": 62.1,
-      "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
-      "has_stats": false
-    },
-    "DET @ HOU|YES|MLB_GAME": {
-      "market": "DET @ HOU",
-      "direction": "YES",
-      "model": "MLB_GAME",
-      "market_type": "MLB_GAME",
-      "fires": 1,
-      "resolved": 0,
-      "wins": 0,
-      "win_rate_pct": null,
-      "avg_brier": null,
-      "beats_random": null,
-      "avg_edge_cents": 11.9,
-      "avg_kalshi_cents": 49.5,
-      "avg_model_pct": 61.4,
-      "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
-      "has_stats": false
-    },
-    "PIT @ ATH [THIN MARKET]|NO|MLB_GAME": {
-      "market": "PIT @ ATH [THIN MARKET]",
-      "direction": "NO",
-      "model": "MLB_GAME",
-      "market_type": "MLB_GAME",
-      "fires": 1,
-      "resolved": 0,
-      "wins": 0,
-      "win_rate_pct": null,
-      "avg_brier": null,
-      "beats_random": null,
-      "avg_edge_cents": 8.8,
-      "avg_kalshi_cents": 47.5,
-      "avg_model_pct": 43.7,
-      "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
-      "has_stats": false
-    },
-    "TB @ LAD|YES|MLB_GAME": {
-      "market": "TB @ LAD",
-      "direction": "YES",
-      "model": "MLB_GAME",
-      "market_type": "MLB_GAME",
-      "fires": 2,
-      "resolved": 0,
-      "wins": 0,
-      "win_rate_pct": null,
-      "avg_brier": null,
-      "beats_random": null,
-      "avg_edge_cents": 6.5,
-      "avg_kalshi_cents": 36.5,
-      "avg_model_pct": 57.0,
-      "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
-      "has_stats": false
-    },
     "Wild Win SC [VERIFY GOALIE]|YES|NHL_CHAMP": {
       "market": "Wild Win SC [VERIFY GOALIE]",
       "direction": "YES",
       "model": "NHL_CHAMP",
       "market_type": "NHL_CHAMPIONSHIP",
-      "fires": 1,
+      "fires": 2,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -5509,7 +5419,7 @@
       "avg_kalshi_cents": 6.5,
       "avg_model_pct": 17.5,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Flyers Win SC [VERIFY GOALIE]|YES|NHL_CHAMP": {
@@ -5517,7 +5427,7 @@
       "direction": "YES",
       "model": "NHL_CHAMP",
       "market_type": "NHL_CHAMPIONSHIP",
-      "fires": 1,
+      "fires": 2,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -5527,43 +5437,7 @@
       "avg_kalshi_cents": 2.0,
       "avg_model_pct": 15.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
-      "has_stats": false
-    },
-    "Argentina vs Algeria -- Algeria wins|YES|SOCCER_GAME": {
-      "market": "Argentina vs Algeria -- Algeria wins",
-      "direction": "YES",
-      "model": "SOCCER_GAME",
-      "market_type": "WORLD_CUP_GAME",
-      "fires": 1,
-      "resolved": 0,
-      "wins": 0,
-      "win_rate_pct": null,
-      "avg_brier": null,
-      "beats_random": null,
-      "avg_edge_cents": 13.8,
-      "avg_kalshi_cents": 3.5,
-      "avg_model_pct": 17.3,
-      "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
-      "has_stats": false
-    },
-    "Argentina vs Algeria -- Argentina wins|NO|SOCCER_GAME": {
-      "market": "Argentina vs Algeria -- Argentina wins",
-      "direction": "NO",
-      "model": "SOCCER_GAME",
-      "market_type": "WORLD_CUP_GAME",
-      "fires": 1,
-      "resolved": 0,
-      "wins": 0,
-      "win_rate_pct": null,
-      "avg_brier": null,
-      "beats_random": null,
-      "avg_edge_cents": 21.2,
-      "avg_kalshi_cents": 17.5,
-      "avg_model_pct": 38.7,
-      "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "England vs Croatia -- England wins|NO|SOCCER_GAME": {
@@ -5577,11 +5451,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 13.2,
-      "avg_kalshi_cents": 42.5,
+      "avg_edge_cents": 12.2,
+      "avg_kalshi_cents": 43.5,
       "avg_model_pct": 55.7,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "England vs Croatia -- Croatia wins|YES|SOCCER_GAME": {
@@ -5599,7 +5473,25 @@
       "avg_kalshi_cents": 18.5,
       "avg_model_pct": 26.9,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
+      "has_stats": false
+    },
+    "Ghana vs Panama -- Panama wins|NO|SOCCER_GAME": {
+      "market": "Ghana vs Panama -- Panama wins",
+      "direction": "NO",
+      "model": "SOCCER_GAME",
+      "market_type": "WORLD_CUP_GAME",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 9.0,
+      "avg_kalshi_cents": 70.5,
+      "avg_model_pct": 79.5,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Ghana vs Panama -- Ghana wins|YES|SOCCER_GAME": {
@@ -5617,7 +5509,7 @@
       "avg_kalshi_cents": 42.5,
       "avg_model_pct": 52.6,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Uzbekistan vs Colombia -- Uzbekistan wins|YES|SOCCER_GAME": {
@@ -5635,7 +5527,7 @@
       "avg_kalshi_cents": 9.5,
       "avg_model_pct": 18.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Uzbekistan vs Colombia -- Colombia wins|NO|SOCCER_GAME": {
@@ -5649,11 +5541,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 10.8,
-      "avg_kalshi_cents": 29.5,
+      "avg_edge_cents": 11.8,
+      "avg_kalshi_cents": 28.5,
       "avg_model_pct": 40.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Canada vs Qatar -- Qatar wins|YES|SOCCER_GAME": {
@@ -5671,7 +5563,7 @@
       "avg_kalshi_cents": 8.5,
       "avg_model_pct": 20.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Canada vs Qatar -- Canada wins|NO|SOCCER_GAME": {
@@ -5689,7 +5581,7 @@
       "avg_kalshi_cents": 24.5,
       "avg_model_pct": 42.6,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Switzerlan vs Bosnia -- Switzerland wins|NO|SOCCER_GAME": {
@@ -5707,7 +5599,7 @@
       "avg_kalshi_cents": 37.5,
       "avg_model_pct": 53.5,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Switzerlan vs Bosnia -- Bosnia wins|YES|SOCCER_GAME": {
@@ -5725,7 +5617,7 @@
       "avg_kalshi_cents": 15.5,
       "avg_model_pct": 25.1,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Mexico vs South Kore -- Mexico wins|NO|SOCCER_GAME": {
@@ -5743,7 +5635,7 @@
       "avg_kalshi_cents": 51.5,
       "avg_model_pct": 62.1,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Mexico vs South Kore -- South Korea wins|YES|SOCCER_GAME": {
@@ -5761,7 +5653,7 @@
       "avg_kalshi_cents": 23.5,
       "avg_model_pct": 32.7,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "United Sta vs Australia -- United States wins|NO|SOCCER_GAME": {
@@ -5779,7 +5671,7 @@
       "avg_kalshi_cents": 38.5,
       "avg_model_pct": 56.4,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "United Sta vs Australia -- Australia wins|YES|SOCCER_GAME": {
@@ -5797,7 +5689,7 @@
       "avg_kalshi_cents": 17.5,
       "avg_model_pct": 27.6,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Belgium vs Iran -- Draw wins|YES|SOCCER_GAME": {
@@ -5815,7 +5707,7 @@
       "avg_kalshi_cents": 19.5,
       "avg_model_pct": 27.9,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Belgium vs Iran -- Iran wins|YES|SOCCER_GAME": {
@@ -5833,7 +5725,7 @@
       "avg_kalshi_cents": 11.5,
       "avg_model_pct": 23.4,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Belgium vs Iran -- Belgium wins|NO|SOCCER_GAME": {
@@ -5851,7 +5743,7 @@
       "avg_kalshi_cents": 31.5,
       "avg_model_pct": 51.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Spain vs Saudi Arab -- Spain wins|NO|SOCCER_GAME": {
@@ -5869,7 +5761,7 @@
       "avg_kalshi_cents": 11.5,
       "avg_model_pct": 22.5,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Tunisia vs Japan -- Tunisia wins|YES|SOCCER_GAME": {
@@ -5883,11 +5775,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 12.2,
-      "avg_kalshi_cents": 12.5,
+      "avg_edge_cents": 11.2,
+      "avg_kalshi_cents": 13.5,
       "avg_model_pct": 24.7,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Tunisia vs Japan -- Japan wins|NO|SOCCER_GAME": {
@@ -5905,7 +5797,7 @@
       "avg_kalshi_cents": 35.5,
       "avg_model_pct": 53.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "France vs Iraq -- France wins|NO|SOCCER_GAME": {
@@ -5923,7 +5815,7 @@
       "avg_kalshi_cents": 11.5,
       "avg_model_pct": 23.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Norway vs Senegal -- Norway wins|NO|SOCCER_GAME": {
@@ -5941,7 +5833,7 @@
       "avg_kalshi_cents": 58.5,
       "avg_model_pct": 66.5,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "England vs Ghana -- England wins|NO|SOCCER_GAME": {
@@ -5959,7 +5851,7 @@
       "avg_kalshi_cents": 24.5,
       "avg_model_pct": 36.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Panama vs Croatia -- Croatia wins|YES|SOCCER_GAME": {
@@ -5977,7 +5869,7 @@
       "avg_kalshi_cents": 61.5,
       "avg_model_pct": 71.5,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Portugal vs Uzbekistan -- Portugal wins|NO|SOCCER_GAME": {
@@ -5995,7 +5887,7 @@
       "avg_kalshi_cents": 20.5,
       "avg_model_pct": 32.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Bosnia vs Qatar -- Bosnia wins|NO|SOCCER_GAME": {
@@ -6009,11 +5901,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 8.8,
-      "avg_kalshi_cents": 39.5,
+      "avg_edge_cents": 9.8,
+      "avg_kalshi_cents": 38.5,
       "avg_model_pct": 48.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Czechia vs Mexico -- Mexico wins|NO|SOCCER_GAME": {
@@ -6027,11 +5919,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 11.8,
-      "avg_kalshi_cents": 46.5,
+      "avg_edge_cents": 12.8,
+      "avg_kalshi_cents": 45.5,
       "avg_model_pct": 58.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Czechia vs Mexico -- Czechia wins|YES|SOCCER_GAME": {
@@ -6049,7 +5941,7 @@
       "avg_kalshi_cents": 19.5,
       "avg_model_pct": 29.2,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Morocco vs Haiti -- Morocco wins|YES|SOCCER_GAME": {
@@ -6067,7 +5959,7 @@
       "avg_kalshi_cents": 75.5,
       "avg_model_pct": 87.8,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "South Afri vs South Kore -- South Korea wins|NO|SOCCER_GAME": {
@@ -6081,11 +5973,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 9.3,
-      "avg_kalshi_cents": 38.5,
+      "avg_edge_cents": 10.3,
+      "avg_kalshi_cents": 37.5,
       "avg_model_pct": 47.8,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Ecuador vs Germany -- Germany wins|NO|SOCCER_GAME": {
@@ -6103,7 +5995,7 @@
       "avg_kalshi_cents": 41.5,
       "avg_model_pct": 52.2,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Paraguay vs Australia -- Paraguay wins|NO|SOCCER_GAME": {
@@ -6121,7 +6013,7 @@
       "avg_kalshi_cents": 56.5,
       "avg_model_pct": 67.6,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Paraguay vs Australia -- Australia wins|YES|SOCCER_GAME": {
@@ -6135,11 +6027,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 10.7,
-      "avg_kalshi_cents": 27.5,
+      "avg_edge_cents": 9.7,
+      "avg_kalshi_cents": 28.5,
       "avg_model_pct": 38.2,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Tunisia vs Netherland -- Tunisia wins|YES|SOCCER_GAME": {
@@ -6157,7 +6049,7 @@
       "avg_kalshi_cents": 9.5,
       "avg_model_pct": 19.4,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Tunisia vs Netherland -- Netherlands wins|NO|SOCCER_GAME": {
@@ -6175,7 +6067,25 @@
       "avg_kalshi_cents": 25.5,
       "avg_model_pct": 41.9,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
+      "has_stats": false
+    },
+    "Cape Verde vs Saudi Arab -- Saudi Arabia wins|NO|SOCCER_GAME": {
+      "market": "Cape Verde vs Saudi Arab -- Saudi Arabia wins",
+      "direction": "NO",
+      "model": "SOCCER_GAME",
+      "market_type": "WORLD_CUP_GAME",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 8.7,
+      "avg_kalshi_cents": 58.5,
+      "avg_model_pct": 67.2,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Egypt vs Iran -- Iran wins|YES|SOCCER_GAME": {
@@ -6193,7 +6103,7 @@
       "avg_kalshi_cents": 24.5,
       "avg_model_pct": 38.2,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Egypt vs Iran -- Egypt wins|NO|SOCCER_GAME": {
@@ -6207,11 +6117,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 13.1,
-      "avg_kalshi_cents": 54.5,
+      "avg_edge_cents": 14.1,
+      "avg_kalshi_cents": 53.5,
       "avg_model_pct": 67.6,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Senegal vs Iraq -- Senegal wins|NO|SOCCER_GAME": {
@@ -6229,7 +6139,25 @@
       "avg_kalshi_cents": 27.5,
       "avg_model_pct": 40.2,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
+      "has_stats": false
+    },
+    "Senegal vs Iraq -- Iraq wins|YES|SOCCER_GAME": {
+      "market": "Senegal vs Iraq -- Iraq wins",
+      "direction": "YES",
+      "model": "SOCCER_GAME",
+      "market_type": "WORLD_CUP_GAME",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 8.8,
+      "avg_kalshi_cents": 9.5,
+      "avg_model_pct": 18.3,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-06-17",
       "has_stats": false
     },
     "Uruguay vs Spain -- Spain wins|NO|SOCCER_GAME": {
@@ -6243,11 +6171,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 12.5,
-      "avg_kalshi_cents": 37.5,
+      "avg_edge_cents": 13.5,
+      "avg_kalshi_cents": 36.5,
       "avg_model_pct": 50.0,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-16",
+      "last_fired": "2026-06-17",
       "has_stats": false
     }
   }
