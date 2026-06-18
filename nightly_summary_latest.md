@@ -224,6 +224,32 @@ All staged for commit. Oracle needs `git pull` after laptop pushes.
 
 ---
 
+ADDENDUM — Post-Summary Fixes (June 17, late)
+Three additional bugs fixed after nightly summary was written.
+
+A1. THUNDER/SPURS/CAR STALE ALERTS — FIXED (commit 69eed86)
+Root cause: NBA and NHL championship models had no "season over" gate. When all series in nba_playoff_state.json / nhl_playoff_state.json were marked completed: true, the bracket logic fell through to a win_pct² fallback that generated signals for all teams. Since NYK won at 27c YES, every other team flagged as a strong NO — generating "Thunder Win NBA Championship NO +19c" and "Spurs Win NBA Championship NO +19c" every run. Same issue in NHL for CAR/MTL/BUF/PHI.
+Fix: Season-over gate added to both models/nba_model.py and models/nhl_model.py. If all known series are completed: true AND a Finals winner exists (4 wins), the model logs NBA/NHL season complete -- champion: Knicks/Hurricanes and returns [] immediately. No signals, no fallback math.
+Expected on next run:
+NBA season complete -- champion: Knicks
+Skipping championship model -- no tradeable edges post-Finals
+
+NHL season complete -- champion: Hurricanes
+Skipping championship model -- no tradeable edges post-Finals
+
+A2. JOBS MODEL STALE LABELS — FIXED (commit 715ce11)
+Root cause: Signal labels hardcoded "Apr" regardless of which month's report was being evaluated. Every jobs signal since May has shown Unemp>4.3% Apr in Telegram/email.
+Fix: Labels now derive from REPORT_DATE.strftime("%b%y") — e.g. Unemp>4.3% Jul26.
+
+A3. JOBS MODEL WRONG-MONTH MARKETS — FIXED (commit 134e669)
+Root cause (deeper): Kalshi opens unemployment and payrolls markets for future data months well before those reports release. KXU3-26OCT (October data, reported November) and KXU3-26JUL (July data, reported August) were both live and being evaluated against the June consensus — generating meaningless signals for the wrong report entirely.
+Fix: Market filter added to run_jobs_model(). Only markets whose title contains REPORT_MONTH (currently "June 2026") are evaluated. All other months log [FILTER] Skipped N markets (wrong month -- not June 2026) and are excluded.
+Expected on next run: NFP markets: 0 | Unemp markets: 0 until Kalshi opens June data markets (~June 25-27). That's correct — no edge exists until those markets open.
+
+Three fixes | Commits 715ce11, 134e669, 69eed86 | All pushed to GitHub main
+
+Oracle: run git pull origin main --no-edit to pick up all three.
+
 *Session | Model: Sonnet 4.6 | Identity: Archie*
 *Oracle SSH fixed after two sessions of fast-fail. Root cause: SYSTEM key permissions.*
 *SOCCER_GAME 34.9% WR is a scoring bug, not model failure. Fix before drawing conclusions.*
