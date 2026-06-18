@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-17T07:02:14.083230",
+  "generated_at": "2026-06-17T21:02:34.442784",
   "total_resolved": 84,
   "by_model": {
     "MLB_GAME": {
@@ -35,7 +35,7 @@
       "acc_pct": 16.7,
       "avg_brier": 0.121,
       "avg_logloss": 0.4125,
-      "avg_edge": 15.9,
+      "avg_edge": 15.6,
       "beats_random": true
     }
   },
