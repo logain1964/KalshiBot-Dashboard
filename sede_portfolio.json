@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "created": "2026-06-18",
+    "version": "1.0",
+    "description": "SEDE autonomous portfolio -- subscriber-facing track record. SEPARATE from paper_trades.json (Rus validation record). Never write to paper_trades.json from portfolio_manager_sede.py.",
+    "starting_bankroll": 1000.00,
+    "current_bankroll": 1000.00,
+    "currency": "USD",
+    "status": "paper",
+    "last_updated": "2026-06-18T00:00:00"
+  },
+  "config": {
+    "sizing": {
+      "MEDIUM": 15.00,
+      "HIGH": 25.00,
+      "HIGH_LARGE": 30.00,
+      "HIGH_LARGE_EDGE_THRESHOLD_CENTS": 25
+    },
+    "entry_criteria": {
+      "min_edge_cents": 20,
+      "min_model_confidence_pct": 60,
+      "required_sede_rating": "HIGH",
+      "max_concurrent_positions": 8
+    },
+    "risk": {
+      "hard_drawdown_stop_dollars": 200.00,
+      "hard_drawdown_stop_pct": 20.0,
+      "max_single_trade_dollars": 30.00
+    }
+  },
+  "performance": {
+    "total_trades": 0,
+    "open_trades": 0,
+    "closed_trades": 0,
+    "wins": 0,
+    "losses": 0,
+    "early_exits": 0,
+    "win_rate_pct": null,
+    "total_pnl": 0.00,
+    "running_bankroll": 1000.00,
+    "peak_bankroll": 1000.00,
+    "max_drawdown_dollars": 0.00,
+    "avg_edge_cents": null,
+    "avg_brier_score": null
+  },
+  "open_positions": [],
+  "closed_positions": [],
+  "daily_snapshots": []
+}
