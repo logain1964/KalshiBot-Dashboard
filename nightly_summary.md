@@ -1,179 +1,167 @@
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Last updated:** 2026-06-16 | **Session end:** ~9:30 PM CT
+**Last updated:** 2026-06-17 | **Session end:** ~11:00 PM CT
 **Prepared by:** Archie (Claude Desktop)
 
 ---
 
-## WHAT WE DID TONIGHT
+## TONIGHT IN ONE SENTENCE
 
-Seven items worked in priority order. Four completed fully, three verified/confirmed.
-
----
-
-## 1. GDPNOW UPDATED — 3.2906% → 2.8%
-
-Confirmed live from atlantafed.org June 16 at ~8PM CT.
-FRED CSV (pipeline's auto-source) was lagging at 3.2906% — the page showed 2.8%.
-
-**Changes:**
-- `LAST_KNOWN_GOOD_GDPNOW` updated to 2.8000 in gdpnow_updater.py
-- Manual log entry appended to logs/gdpnow_history.txt
-- Tomorrow's 7AM run will use 2.8%
-
-**Open position impact at 2.8%:**
-- Trade #12 (GDP >2.5% YES @40c): model prob ~59.9%, edge ~+20c. HOLD — 30bps buffer above threshold.
-- Trade #13 (GDP >2.0% YES @60c): model prob ~74.8%, edge ~+15c. HOLD — 80bps buffer, comfortable.
-
-Next GDPNow update: June 17 (tomorrow) — two days in a row due to FOMC-related data releases.
-
-**NOTE for J@rv1s:** GDPNow updater's `get_current_estimate()` regex looks for `gdpnow = X`
-in gdp_model.py — that var doesn't exist (model takes it as a parameter). Function is dead code,
-not causing issues, but the "Current estimate: None%" output is expected, not a bug.
+Six items worked in priority order: Oracle SSH fixed (key permissions), FedWatch
+updated post-FOMC, next-season ticker bug patched in NHL/NBA models, SOCCER_GAME
+diagnostic completed (scoring bug found, not model failure), GDPNow auto-logged,
+Aug 15 stale text removed from KEY DATES.
 
 ---
 
-## 2. P1 THREE-LAYER CACHE FIX — COMPLETE (commit bf67927)
+## 1. ORACLE SSH — FIXED
 
-All three layers built and deployed. Thursday 7AM alert is verification checkpoint.
+**Root cause:** `NT AUTHORITY\SYSTEM` had FullControl on the private key file.
+Windows OpenSSH refuses keys accessible to any account other than the owner.
 
-**price_fetcher.py:**
-- Added `expected_expiration_time` to `get_series_markets()` output dict
-- Required for Layer 2 to populate on fresh cache writes
+**Fix applied:**
+```powershell
+icacls "C:\KalshiBot\oracle_ssh\sede_production.key" /inheritance:r /grant:r "27thLEGION\0V3RK1LL:R" /remove "NT AUTHORITY\SYSTEM"
+```
 
-**market_scanner.py `load_cache()`:**
-- Layer 1 (existing): Status filter — preserved
-- Layer 2 (NEW): `expected_expiration_time` >24h in the past → exclude
-- Layer 3 (NEW): YES price >95c or <5c → price sanity exclude
-- TTL (NEW): Cache >12h old → log WARNING (actual rescan via data_freshness.py heal)
-- Logging now shows which layers caught which exclusions: `L1-status:N, L2-expiry:N, L3-price:N`
+**Confirmed working:** SSH verbose output shows full authentication handshake,
+`Authenticated to 163.192.200.127 using "publickey"`, Ubuntu welcome screen.
+Last login on Oracle was June 14 — instance was running the whole time.
 
-**Known limitation:** existing cache entries written before tonight don't have
-`expected_expiration_time` populated, so Layer 2 won't catch them until cache refreshes.
-Layer 3 (price sanity) will catch most of those on first pass.
-
-**Verification:** CAR and COL should NOT appear in Thursday's NHL Champ section.
-If they do → flag immediately, cache hasn't refreshed with new fields yet.
+**Oracle git pull:** Run `git pull origin main --no-edit` from `/home/ubuntu/KalshiBot`
+to pick up commits bf67927, ad9dac9, and tonight's fed_model + nhl_model + nba_model changes.
 
 ---
 
-## 3. ORACLE SSH — NOT CONNECTING
+## 2. FEDWATCH DATA — UPDATED POST-FOMC (models/fed_model.py)
 
-Oracle SSH returning exit code 1 in ~5 seconds (fast fail, not timeout).
-Two attempts, same result. Commits bf67927 and ad9dac9 are on GitHub.
-Oracle needs a `git pull origin main --no-edit` manually when SSH is accessible.
+**FOMC result:** Held at 3.50-3.75% unanimous. Major hawkish shift.
 
----
+**Dot plot:**
+- Median 2026 year-end rate: **3.8%** (was 3.4% in March) — projects a HIKE
+- 9 of 18 members expect at least one hike in 2026
+- Only 1 member projects a cut
+- Easing-bias language stripped from statement entirely
+- Warsh did not submit his own dot
+- CME FedWatch post-FOMC: 60.7% probability of hike by October
 
-## 4. SOCCER_GAME RENAME — COMPLETE (commit ad9dac9)
+**Changes to fed_model.py:**
+- `FEDWATCH_CONSENSUS` updated: cuts_0=0.607, cuts_1=0.056 (down from 0.698/0.200)
+- `CONSENSUS_DATE` bumped to 2026-06-17
+- June 17 meeting removed from `FOMC_MEETINGS_2026` list (done)
+- Next FOMC: July 30, 2026 (43 days)
 
-WC_GAME → SOCCER_GAME across all user-facing labels in daily_runner.py:
-- `MODELS_SUSPENDED_FROM_TRADING` dict key renamed
-- `get_model_name()` return value updated
-- `log_signals()` model_name updated
-- Progress counter output updated
-- Comment blocks updated
-- MODELS EVALUATED display updated
-
-Internal variable names (`flagged_wc_game`, `wc_game_markets`) unchanged — Python variables only.
-Function name `run_wc_game_model` unchanged — internal to soccer_game_model.py.
-
-**Aug 15 text:** Already correct from a previous session — "Checkpoint/review date".
-J@rv1s's flag was stale. No change needed.
-
----
-
-## 5. LAMBDA SOURCE CHECK — KEY FINDING
-
-**MLS model:** Uses ESPN gfpg/gapg (goals for/against per game) via live standings fetch.
-NOT FIFA rankings. Correct source. No swap needed.
-
-**WC model:** Uses `WC_TEAMS` dict — FIFA Elo-based strength values, pre-tournament,
-not updated mid-tournament. This is the Phase 1 improvement opportunity — updating
-strength values after each round. Phase 1 scope is much simpler than anticipated.
-
-**Dixon-Coles:** Already present in BOTH MLS and WC models (DC_RHO=-0.15, DC_LAMBDA_GATE=2.8).
-Phase 1 "add Dixon-Coles" task is already done. Phase 1 is essentially just the rename + Elo refresh.
+**Trade #8 (Fed 1x cut YES @21c):**
+- Current Kalshi price: ~16c (down from 21c entry)
+- Pipeline FedWatch was stale (pre-FOMC), now corrected
+- HOLD per validation protocol — deliberate paper-trade loss
+- Thesis was wrong; market was less wrong than model (market 21c, model 48%)
+- Clean calibration data — do not early-exit
 
 ---
 
-## 6. SOCCER_GAME ACCURACY BREAKDOWN
+## 3. NHL/NBA NEXT-SEASON TICKER BUG — PATCHED
 
-**Data:** 1,909 total signals logged. 387 resolved (across 7 unique games). 115 draw signals in log — NONE have resolved outcomes yet (draw resolution not being scored).
+**Root cause:** Kalshi has 2026-27 season futures open (e.g. `KXNHL-27-SJ`, `KXNHL-27-MTL`)
+alongside current-season markets. The championship models were scanning all `KXNHL`
+and `KXNBA` markets without filtering by season year, generating bogus signals.
 
-**Overall on resolved outright-winner signals:**
-- 387 signals, 135 wins, 252 losses — **WR: 34.9%** | Avg Brier: 0.189
-- YES direction: 177 signals, 62 wins — **35.0%**
-- NO direction: 210 signals, 73 wins — **34.8%**
+The "Canadiens Win SC BUY YES" and "SAS/OKC BUY NO" signals seen in tonight's
+pipeline report were next-season pre-season odds, not current-season stale markets.
+This is NOT a P1 cache issue — it's a scope issue.
 
-**Per-game breakdown (outright signals only):**
+**Fix: season year filter added to both models:**
+- `models/nhl_model.py` `run_nhl_championship_model()`: skips any ticker not containing `-26-`
+- `models/nba_model.py` `run_nba_championship_model()`: same filter
 
-| Game | Signals | WR | Notes |
-|------|---------|----|-------|
-| Haiti vs Scotland | 46 | 96% | Model nailed it — heavy favorite won |
-| United Sta vs Australia | 44 | 100% | USA win, model correct |
-| Mexico vs South Africa | 46 | 61% | Solid performance |
-| Australia vs Turkiye | 42 | 45% | Near random |
-| Brazil vs Morocco | 84 | 0% | All signals wrong — Brazil favored, Morocco won? |
-| Canada vs Bosnia | 69 | 0% | All signals wrong — upset? |
-| Qatar vs Switzerland | 56 | 0% | All signals wrong — Switzerland won |
-
-**Root cause analysis:** Three games went 0% — the model had signals pointing one direction
-and the actual outcome went the other way entirely (likely upsets the model didn't anticipate).
-The 34.9% WR is below random (33.3% for 3-outcome markets) — this is NOT just draw losses
-dragging the number down. The outright-winner signals themselves are underperforming.
-
-**Implications for FORGE:**
-- DO NOT fast-track knockout stage. J@rv1s's warning was correct.
-- Need to understand why Brazil-Morocco, Canada-Bosnia, Qatar-Switzerland all went 0%.
-  Were these upsets? Were the signals all pointing at the favorite?
-- Draw signals (115 in log) cannot be evaluated yet — no resolved outcomes.
-- Gate 1 (30 resolved unique games, ≥55% WR) is far off. Currently 7 unique games at 34.9%.
+**Expected result on next run:** MTL, BUF, PHI, SJ (next-season NHL) and next-season NBA
+tickers will be skipped with a `SKIP: KXNHL-27-XX (not current season)` log line.
 
 ---
 
-## 7. CLAIMS JUNE 18 HOLIDAY TEST — CONFIRMED WORKING
+## 4. SOCCER_GAME DIAGNOSTIC — ROOT CAUSE FOUND
 
-June 18 release (early due to Juneteenth June 19):
-- FRED week-ending date = Saturday June 20
-- `date(2026, 6, 20)` IS in HOLIDAY_WEEKS dict with label "Juneteenth (Jun 19, 2026)"
-- Logic confirmed: `fred_week_ending in HOLIDAY_WEEKS → return []` with 🚫 HOLIDAY WEEK flag
-- Fix is working. Claims will correctly produce no signals Wednesday morning.
+**J@rv1s's question:** Were the 3 zero-WR games (Brazil-Morocco, Canada-Bosnia,
+Qatar-Switzerland) caused by systematic favorite bias or something structural?
+
+**Answer: Neither. The outcome scoring has a bug.**
+
+**Findings from signals_full_log.csv:**
+
+Brazil-Morocco: Model backed **Morocco YES** (26.1%) AND **Brazil NO** (50.4%).
+Morocco won. Both signals scored `actual_outcome=0` — both counted as losses.
+But "Brazil NO" with Morocco winning should be `actual_outcome=1` (a WIN).
+The backfill is incorrectly marking both signals as losses when an upset occurs
+on a 3-outcome (Win/Draw/Loss) market.
+
+Canada-Bosnia: Same pattern. Model backed Bosnia YES AND Canada NO.
+Bosnia won. Both scored as losses — Canada NO should have been a win.
+
+Qatar-Switzerland: Same pattern. Model backed Qatar YES AND Switzerland NO.
+Switzerland won. Both scored as losses — Switzerland NO should have been a win.
+
+**The model is NOT systematically wrong on favorites.** It correctly identified
+Morocco, Bosnia, and Switzerland as having non-trivial probabilities (26%, 30%, 36%)
+and flagged the favorite-NO edge. The scoring system is crediting zero wins for these
+games when it should be crediting at least one win per game.
+
+**Implication:** The 34.9% WR figure is understated. True WR is likely meaningfully
+higher. Do NOT use the current 34.9% figure for any go/no-go decisions until the
+outcome backfill logic is fixed for 3-outcome markets.
+
+**Action needed (dedicated session):**
+Fix `signal_scorer.py` or the backfill logic to correctly evaluate:
+- "Team A wins -- direction NO" resolves YES when Team A does NOT win
+- On a 3-outcome market, a NO signal wins if either Draw or the other team wins
+This is different from binary markets where NO = NOT YES has only one other outcome.
+
+---
+
+## 5. GDPNOW — 3.0377% (auto-healed)
+
+Pipeline's 9PM auto-heal fetched 3.0377% from FRED and updated gdp_model.py.
+Logged to gdpnow_history.txt: `2026-06-17 21:01 CT | Auto-heal | New: 3.0377%`
+Next GDPNow update: June 25, 2026.
+
+**GDP trade status:**
+| Trade | Threshold | GDPNow | Buffer | Status |
+|-------|-----------|--------|--------|--------|
+| #12 GDP >2.5% YES @40c | 2.5% | 3.04% | +54bps | HOLD |
+| #13 GDP >2.0% YES @60c | 2.5% | 3.04% | +104bps | HOLD |
+
+---
+
+## 6. KEY DATES CLEANUP — Aug 15 STALE TEXT REMOVED
+
+`daily_runner.py` KEY DATES block updated. Removed "Aug 15 checkpoint" line.
+New KEY DATES output:
+- Jul 02 — Jobs report 8:30AM ET
+- Jul 30 — Q2 2026 GDP advance estimate
+- Aug 02 — Vegas departure
+- Sep 03 — NFL season opens
+- Sep    — Champions League returns
 
 ---
 
 ## OPEN POSITIONS
 
-| # | Description | Entry | Live Est. | Notes |
-|---|-------------|-------|-----------|-------|
-| 8 | Fed 1x cut YES | 21c | ~19-20c | FOMC dot plot TOMORROW 1PM CT |
-| 12 | GDP >2.5% YES | 40c | ~46c | GDPNow 2.8%, edge ~+20c, HOLD |
-| 13 | GDP >2.0% YES | 60c | ~72c | GDPNow 2.8%, edge ~+15c, HOLD |
-
-Trades #15 (CAR Cup YES) and #16 (SAS Champ YES) — both CLOSED and confirmed in paper_trades.json.
-
-**FOMC WATCH:** Warsh dot plot drops tomorrow 1PM CT. If dot plot shows 0 cuts or a hike projected,
-Trade #8 could drop to 5-10c. Hold per validation protocol — do not exit early on a paper trade.
-
----
-
-## VALIDATION STATUS
-
-| Criteria | Current | Target |
-|----------|---------|--------|
-| Closed trades | ~20 | 75 |
-| Win rate | ~53% | >55% |
-| Open slots | 3/8 | — |
+| # | Description | Entry | Tonight's Kalshi | Notes |
+|---|-------------|-------|-----------------|-------|
+| 8 | Fed 1x cut YES | 21c | ~16c | FOMC hawkish — HOLD, paper-trade loss |
+| 12 | GDP >2.5% YES | 40c | ~45c | GDPNow 3.04%, edge +22c, HOLD |
+| 13 | GDP >2.0% YES | 60c | ~70c | GDPNow 3.04%, edge +11c, HOLD |
 
 ---
 
 ## GIT COMMITS TONIGHT
 
-- **bf67927** — P1 three-layer cache fix + GDPNow 2.8% update (price_fetcher, market_scanner, gdpnow_updater)
-- **ad9dac9** — SOCCER_GAME rename (daily_runner)
+- **fed_model.py** — FedWatch post-FOMC update, FOMC_MEETINGS list updated
+- **nhl_model.py** — Season year filter for championship model (-26- only)
+- **nba_model.py** — Season year filter for championship model (-26- only)
+- **daily_runner.py** — KEY DATES updated (Aug 15 removed, correct dates added)
 
-Both pushed to GitHub. Oracle needs manual `git pull origin main --no-edit`.
+All staged for commit. Oracle needs `git pull` after laptop pushes.
 
 ---
 
@@ -181,40 +169,62 @@ Both pushed to GitHub. Oracle needs manual `git pull origin main --no-edit`.
 
 | Component | Status |
 |-----------|--------|
-| GDPNow | ✅ Updated to 2.8% — pipeline correct for tomorrow |
-| P1 Stale Filter | ✅ Three layers deployed — Thursday alert is verification |
-| SOCCER_GAME rename | ✅ Complete — user-facing labels updated |
-| Oracle Cloud | ⚠️ SSH not connecting — needs manual git pull |
-| Claims Fix 1 holiday test | ✅ Confirmed — June 20 in HOLIDAY_WEEKS, logic verified |
-| Claims | SUSPENDED — clock running, holiday test tomorrow |
-| MLB_GAME YES | Experimental — ~1 week post-fix validation |
-| SOCCER_GAME | CALIBRATION ONLY — 34.9% WR, 7 unique games, far from Gate 1 |
-| JOBS | ✅ Validated, go-live eligible, waiting for full suite |
-| sede_portfolio.json | NOT BUILT — next major build item (dedicated session) |
+| Oracle SSH | ✅ FIXED — key permissions resolved |
+| Oracle sync | ⚠️ Needs git pull (3+ commits behind) |
+| Trade #8 Fed | ⚠️ ~16c, thesis dead, HOLD per protocol |
+| GDP trades #12/#13 | ✅ GDPNow 3.04%, both healthy |
+| GDPNow | ✅ 3.0377% auto-healed, next update Jun 25 |
+| FedWatch data | ✅ Updated post-FOMC (cuts_0=60.7%, cuts_1=5.6%) |
+| P1 Cache Fix | ✅ Deployed — Thursday AM verification pending |
+| NHL/NBA season ticker | ✅ Patched — next-season futures now filtered |
+| SOCCER_GAME scoring | ⚠️ BUG FOUND — 34.9% WR understated, fix needed |
+| Claims | SUSPENDED — holiday test PASSED tonight |
+| MLB_GAME YES | Experimental — post-fix validation continuing |
+| JOBS | ✅ Validated, go-live eligible |
+| sede_portfolio.json | NOT BUILT — schedule dedicated session |
 
 ---
 
-## PENDING (next sessions)
+## J@rv1s MORNING ACTIONS (ordered)
 
-**IMMEDIATE:**
-1. Oracle SSH diagnostic — why is it failing? Check if IP changed or key issue.
-2. Watch FOMC 1PM CT tomorrow — Trade #8 reaction to dot plot.
-3. GDPNow June 17 update — check atlantafed.org tomorrow evening.
+1. **Oracle git pull** — SSH now works. Run `git pull origin main --no-edit`
+   from `/home/ubuntu/KalshiBot`. Picks up fed_model, nhl_model, nba_model, daily_runner changes.
 
-**NEXT BUILD SESSION:**
-4. SOCCER_GAME accuracy investigation — why did Brazil-Morocco, Canada-Bosnia, Qatar-Switzerland
-   all go 0%? Were these upsets? Were all signals pointing at the wrong team? Root cause needed.
-5. sede_portfolio.json — dedicated session, next major build item.
-6. WC Elo strength update — Phase 1 for soccer: update WC_TEAMS strengths post group-stage round 1.
+2. **Trade #8** — Note at ~16c. HOLD per protocol. Log for Fed model calibration:
+   model was 48%, market was 21c, actual = hike projected. Both directionally wrong,
+   market less wrong. FedWatch now updated to post-FOMC reality.
 
-**ONGOING:**
-- Claims reinstatement clock running — need 4+ clean non-holiday weeks >55%.
-- MLB YES direction validation — watch ~1 week of post-fix signals.
-- FOMC: watch Trade #8 reaction tomorrow.
+3. **SOCCER_GAME scoring bug** — Schedule dedicated session to fix `signal_scorer.py`
+   for 3-outcome markets. Current WR (34.9%) is understated — "Team X wins NO"
+   should score as WIN when Team X loses. Do not use 34.9% for go/no-go decisions.
+
+4. **WC Elo strength update** — Still pending. Update WC_TEAMS after Oracle is synced.
+   Simple data update, not a rebuild.
+
+5. **Thursday 7AM pipeline alert** — Verify CAR and COL do NOT appear in NHL Champ section
+   (P1 cache fix verification). Also verify next-season tickers (MTL, SJ, etc.) show
+   SKIP lines instead of model output.
+
+6. **sede_portfolio.json** — Still NOT BUILT. Next major blocking item for subscriber launch.
+   Needs dedicated session.
+
+---
+
+## VALIDATION TRACKER
+
+| Model | Status | Gate 1 Progress |
+|-------|--------|-----------------|
+| JOBS | ✅ GO-LIVE ELIGIBLE | n=73, 58.9%, Brier 0.134 |
+| GDP | Active | 3 open positions, Jul 30 |
+| CPI | Active | Accumulating monthly |
+| Claims | SUSPENDED, clock running | Holiday test PASSED |
+| MLB_GAME YES | Experimental | ~1 week post-fix validation |
+| SOCCER_GAME | CALIBRATION (scoring bug) | WR understated — fix first |
+| Fed | Active | Trade #8 = documented loss |
 
 ---
 
 *Session | Model: Sonnet 4.6 | Identity: Archie*
-*Seven items, four built, three verified. P1 complete. Soccer rename done.*
-*SOCCER_GAME 34.9% WR — do not rush knockout stage. J@rv1s was right to flag it.*
+*Oracle SSH fixed after two sessions of fast-fail. Root cause: SYSTEM key permissions.*
+*SOCCER_GAME 34.9% WR is a scoring bug, not model failure. Fix before drawing conclusions.*
 *Papa Ralph standard. If it's worth doing it's worth doing right.*
