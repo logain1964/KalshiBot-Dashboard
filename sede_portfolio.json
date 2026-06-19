@@ -7,7 +7,7 @@
     "current_bankroll": 1000.0,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-06-18T21:02:26"
+    "last_updated": "2026-06-19T07:02:13"
   },
   "config": {
     "sizing": {
@@ -47,9 +47,9 @@
   "closed_positions": [],
   "daily_snapshots": [
     {
-      "date": "2026-06-18",
+      "date": "2026-06-19",
       "bankroll": 1000.0,
-      "total_pnl": 0.0,
+      "total_pnl": 0,
       "open_positions": 0,
       "closed_positions": 0,
       "wins": 0,
