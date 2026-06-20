@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-19T21:07:52.040680",
+  "generated_at": "2026-06-20T07:02:12.108882",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -60,14 +60,28 @@
       "reason": []
     },
     {
+      "model": "SOCCER_GAME",
+      "current_threshold": 8,
+      "suggested_threshold": 8,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n_above": 0,
+      "n_below": 0,
+      "brier_above": null,
+      "brier_below": null,
+      "reason": [
+        "Need 26 more resolved signals"
+      ]
+    },
+    {
       "model": "WC_GAME",
       "current_threshold": 8,
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 355,
+      "n_above": 405,
       "n_below": 0,
-      "brier_above": 0.173545,
+      "brier_above": 0.183241,
       "brier_below": null,
       "reason": []
     }
@@ -276,7 +290,7 @@
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
       "n": 17,
-      "brier": 0.1676,
+      "brier": 0.1538,
       "reason": [
         "Need 3 more resolved signals (have 17)"
       ]

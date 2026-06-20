@@ -7,7 +7,7 @@
     "current_bankroll": 1000.0,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-06-19T21:07:52"
+    "last_updated": "2026-06-20T07:02:12"
   },
   "config": {
     "sizing": {
@@ -48,6 +48,17 @@
   "daily_snapshots": [
     {
       "date": "2026-06-19",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 0,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-20",
       "bankroll": 1000.0,
       "total_pnl": 0,
       "open_positions": 0,
