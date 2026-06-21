@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-20T07:02:12.108882",
+  "generated_at": "2026-06-20T21:02:30.569684",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -181,14 +181,14 @@
     {
       "model": "MLB_GAME",
       "current_weight": 0.75,
-      "suggested_weight": 0.7,
-      "delta": -0.05,
-      "action": "LOWER",
+      "suggested_weight": 0.75,
+      "delta": 0.0,
+      "action": "HOLD",
       "confidence": "MEDIUM",
-      "n": 61,
-      "brier": 0.2511,
+      "n": 64,
+      "brier": 0.2484,
       "reason": [
-        "Below random: Brier=0.2511 (random=0.25) (n=61)"
+        "Fair calibration: Brier=0.2484 -- marginal, hold for more data"
       ]
     },
     {
@@ -309,6 +309,6 @@
       ]
     }
   ],
-  "any_actionable": true,
+  "any_actionable": false,
   "auto_apply_ready": false
 }
