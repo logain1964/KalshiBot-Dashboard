@@ -7,7 +7,7 @@
     "current_bankroll": 1000.0,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-06-21T19:14:28"
+    "last_updated": "2026-06-21T21:01:37"
   },
   "config": {
     "sizing": {
@@ -29,8 +29,8 @@
     }
   },
   "performance": {
-    "total_trades": 1,
-    "open_trades": 1,
+    "total_trades": 2,
+    "open_trades": 2,
     "closed_trades": 0,
     "wins": 0,
     "losses": 0,
@@ -66,7 +66,29 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 0.0,
-      "last_checked": "2026-06-21 19:14 CT"
+      "last_checked": "2026-06-21 21:01 CT"
+    },
+    {
+      "id": 2,
+      "entered_at": "2026-06-21 21:01 CT",
+      "market_ticker": "KXGDP-26JUL30-T2.5",
+      "description": "GDP > 2.5%",
+      "direction": "YES",
+      "entry_price_cents": 45.5,
+      "contracts": 54,
+      "size_dollars": 25.0,
+      "max_loss_dollars": 25.0,
+      "max_profit_dollars": 29.43,
+      "model_probability_pct": 67.29534505481625,
+      "edge_cents": 21.795345054816256,
+      "sede_rating": "HIGH",
+      "status": "OPEN",
+      "result": null,
+      "exit_price_cents": null,
+      "exit_date": null,
+      "pnl_dollars": null,
+      "brier_score": null,
+      "close_note": null
     }
   ],
   "closed_positions": [],
