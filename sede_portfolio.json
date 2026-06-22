@@ -4,10 +4,10 @@
     "version": "1.0",
     "description": "SEDE autonomous portfolio -- subscriber-facing track record. SEPARATE from paper_trades.json (Rus validation record). Never write to paper_trades.json from portfolio_manager_sede.py.",
     "starting_bankroll": 1000.0,
-    "current_bankroll": 1000.0,
+    "current_bankroll": 975.0,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-06-21T21:01:37"
+    "last_updated": "2026-06-22T07:02:35"
   },
   "config": {
     "sizing": {
@@ -30,18 +30,18 @@
   },
   "performance": {
     "total_trades": 2,
-    "open_trades": 2,
-    "closed_trades": 0,
+    "open_trades": 1,
+    "closed_trades": 1,
     "wins": 0,
-    "losses": 0,
+    "losses": 1,
     "early_exits": 0,
-    "win_rate_pct": null,
-    "total_pnl": 0,
-    "running_bankroll": 1000.0,
+    "win_rate_pct": 0.0,
+    "total_pnl": -25.0,
+    "running_bankroll": 975.0,
     "peak_bankroll": 1000.0,
-    "max_drawdown_dollars": 0.0,
+    "max_drawdown_dollars": 25.0,
     "avg_edge_cents": null,
-    "avg_brier_score": null
+    "avg_brier_score": 0.4529
   },
   "open_positions": [
     {
@@ -66,8 +66,10 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 0.0,
-      "last_checked": "2026-06-21 21:01 CT"
-    },
+      "last_checked": "2026-06-22 07:02 CT"
+    }
+  ],
+  "closed_positions": [
     {
       "id": 2,
       "entered_at": "2026-06-21 21:01 CT",
@@ -82,16 +84,15 @@
       "model_probability_pct": 67.29534505481625,
       "edge_cents": 21.795345054816256,
       "sede_rating": "HIGH",
-      "status": "OPEN",
-      "result": null,
-      "exit_price_cents": null,
-      "exit_date": null,
-      "pnl_dollars": null,
-      "brier_score": null,
-      "close_note": null
+      "status": "CLOSED",
+      "result": "LOST",
+      "exit_price_cents": 0.0,
+      "exit_date": "2026-06-22 07:02 CT",
+      "pnl_dollars": -25.0,
+      "brier_score": 0.4529,
+      "close_note": "[AUTO-CLOSE] YES price 0c <= 3c threshold"
     }
   ],
-  "closed_positions": [],
   "daily_snapshots": [
     {
       "date": "2026-06-19",
@@ -120,6 +121,17 @@
       "bankroll": 1000.0,
       "total_pnl": 0,
       "open_positions": 1,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-22",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 2,
       "closed_positions": 0,
       "wins": 0,
       "losses": 0,
