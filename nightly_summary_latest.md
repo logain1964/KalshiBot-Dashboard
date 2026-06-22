@@ -1,252 +1,293 @@
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Last updated:** 2026-06-18 | **Session end:** ~11:30 PM CT
+**Last updated:** 2026-06-21 | **Session end:** ~9:30 PM CT
 **Prepared by:** Archie (Claude Desktop)
+**Covers:** Friday June 19 evening session + Sunday June 21 (Father's Day) session
 
 ---
 
-## TONIGHT IN ONE SENTENCE
+## TONIGHT (AND FRIDAY) IN ONE SENTENCE
 
-Six deliverables: MLB post-fix WR confirmed healthy (65.4%), sede_portfolio.json
-built and wired, signal_scorer.py Unicode crash fixed, Fed cuts 0x NO signal
-suppressed in hike-bias environment, WC Elo updated post Round 1, England/France
-results scored -- WC_GAME WR now 44% on 18 signals, genuine model flag.
-
----
-
-## 1. MLB POST-FIX ACCURACY CHECK
-
-Post-fix (June 14+): 7 resolved signals, 7/7 wins (100% WR), Brier 0.172.
-Sample too small to be conclusive but directionally excellent.
-
-All-time deduped: 81 resolved signals, **65.4% WR**, Brier 0.254.
-Well above Gate 1 threshold (55%). Green light trajectory.
-
-Only YES direction in post-fix window -- NO direction hasn't had resolved
-signals since the fix, so the direction bug impact still can't be isolated.
+Ticker lookup bug fixed and verified live (Friday), subscriber-facing
+SEDE alert system built end-to-end with real plain-English translation,
+a genuine WC_GAME/SOCCER_GAME model-identity bug found and fixed (1909
+signals were silently using the wrong reliability weight), and a human
+approval workflow for learning engine recommendations built, tested,
+and used for a real weight change tonight.
 
 ---
 
-## 2. SEDE_PORTFOLIO.JSON -- BUILT (commit c01c465)
+## FRIDAY JUNE 19 SESSION RECAP
 
-Primary deliverable. Subscriber-facing autonomous portfolio operational.
-
-**Files created:**
-- `data/sede_portfolio.json` -- initialized at $1,000 bankroll, paper status,
-  zero trades. On both GitHub repos including public dashboard.
-- `portfolio_manager_sede.py` -- autonomous manager with full feature set:
-  - 6-gate auto-entry: edge>=20c, confidence>=60%, rating=HIGH,
-    max 8 concurrent, hard drawdown stop at -$200, no duplicate tickers
-  - Auto-close: polls live Kalshi prices, closes on resolution/97c/3c
-  - Daily snapshot for subscriber charting
-  - `--status` CLI for quick checks
-- Wired into `daily_runner.py` as Step 10b -- fires after signal generation,
-  before Telegram/email delivery
-- `sede_portfolio.json` added to dashboard .gitignore allowlist
-
-**Known gap:** ticker lookup in daily_runner wire is fuzzy match. Will miss
-some signals and log "no market ticker" skip. Fix: pass tickers explicitly
-from each model at signal generation time. Low priority follow-up.
-
-**This is what Anthony sees in 45 days.**
-
----
-
-## 3. SIGNAL_SCORER.PY UNICODE CRASH -- FIXED (commit 88f6bb4)
-
-Unicode box-drawing characters (U+2500) and emoji (U+2705, U+1F6AB)
-caused CP1252 encode errors on Windows console, silently crashing
-score_full_log() partway through the table print. Fixed by replacing
-with ASCII equivalents ([OK], [X], -).
-
-**Key finding from running clean scorer:**
-WC_GAME was already at **58% WR** in full log -- the 34.9% figure
-J@rv!s had was stale, predating the Draw entries in RESOLVED_MARKETS.
-The scoring logic was correct all along.
+1. **Ticker lookup bug -- fixed and verified.** GDP/Fed/BTC models now
+   pass real Kalshi tickers directly instead of relying on a broken
+   fuzzy-match. Found and fixed 5 downstream crash sites the fix
+   exposed (signal logging, summary writer, email/Telegram digests,
+   SEDE scoring). Full pipeline run confirmed clean end to end.
+2. **WC results backfill** -- USA 2-0 Australia, Scotland 0-1 Morocco
+   added to RESOLVED_MARKETS. Two false leads from prior notes
+   (Ecuador-Germany, Scotland-Brazil) correctly declined -- verified
+   both are future fixtures, not yet played.
+3. **"Aug 15" stale text -- root-caused.** Three hardcoded instances
+   found in email_alerts.py and telegram_alerts.py (never in
+   daily_runner.py, which is why 3 prior fix attempts missed it).
+4. **19 dead legacy scripts archived** to archive/legacy_fix_scripts/ --
+   old one-off patch scripts and pre-portfolio manual trade loggers,
+   confirmed unused before moving.
+5. **Bashrc duplicate** on Oracle identified and removed (duplicate
+   `export SEDE_MACHINE=oracle` line).
+6. **Cron timing "discrepancy" investigated -- no actual bug.** Cron
+   fires correctly at 02:00 and 07:00 UTC. What looked like a
+   discrepancy was nested sub-report headers (Brier Dashboard,
+   Learning Optimizer) each stamping their own timestamp within one
+   pipeline run, not duplicate fires.
 
 ---
 
-## 4. FED CUTS 0X NO SIGNAL SUPPRESSED (commit ef3ef3e)
+## SUNDAY JUNE 21 SESSION
 
-J@rv!s flagged: "Fed cuts 0x 2026 -- BUY NO +19.9c, model 39.3%" as
-confusing post-FOMC.
+### 1. SUBSCRIBER-FACING SEDE ALERT SYSTEM -- BUILT
 
-**Root cause:** BUY NO on "cuts 0x" = betting the Fed cuts at least
-once. Post-FOMC with dot plot projecting a hike, Kalshi pricing 81c on
-zero cuts is rational -- it agrees with the hike bias. The apparent 20c
-edge was a FedWatch/Kalshi alignment artifact, not a real trade.
+New module `sede_subscriber_alerts.py`. This is what Anthony actually
+sees -- strictly separate from internal diagnostics.
 
-**Fix:** Suppression gate added to `run_fed_model()`. When cuts_0 > 55%
-(hike-bias environment), "Fed cuts 0x BUY NO" is suppressed with a
-log line explaining why. Auto-reinstates when cuts_0 drops below 55%.
+**Hard rules enforced in code, not just convention:**
+Never includes edge cents, model probability, Kalshi implied price,
+internal model names, Brier scores, or suspension status.
+
+**What it does:**
+- Per-model plain-English translation table (GDP, Fed cuts, Fed rate
+  level, JOBS NFP/Unemployment, CPI, Claims, BTC) built from real
+  label formats pulled from signals_log.csv, not guessed
+- Caught and fixed a real bug during testing: Fed cuts 0x direction
+  was producing a double-negative ("does not... does NOT happen") --
+  fixed before it ever reached a real alert
+- Signal alert format: outcome statement, Kalshi market/side, simple
+  version, confidence tier, resolution date, max profit/loss
+- No-signal daily update, gated to the ~2AM CT run only (not both
+  cron fires, avoids double-pinging subscribers)
+- Subject line bug caught by Rus and fixed: was "SEDE: SEDE SIGNAL"
+  (redundant), now "New SEDE Trading Signal: [market]" -- specific
+  and scannable
+
+**Delivery:** TELEGRAM_SEDE_CHAT_ID / SEDE_ALERT_EMAIL env vars, both
+fall back to existing internal channels until Rus sets up the
+dedicated subscriber channel/address. Verified live -- two real test
+alerts sent and confirmed delivered via both Telegram and email.
+
+**portfolio_manager_sede.py changed:** attempt_auto_entry() now
+returns the entered position dict instead of bool, so the new alert
+system can format a message from it. run_sede_portfolio() collects
+new_positions list in its return summary.
 
 ---
 
-## 5. WC ELO STRENGTH UPDATE -- POST ROUND 1 (commit 2e5f18d)
+### 2. WC_GAME / SOCCER_GAME MODEL IDENTITY BUG -- FOUND AND FIXED
 
-`models/world_cup_model.py` WC_TEAMS strength values updated.
+**This is the important one.** While scoping the learning engine
+work, discovered that `detect_signal_model()` in daily_runner.py can
+**never return "WC_GAME"** -- it has no rule that produces that
+string. WC_GAME signals (the real, active World Cup individual-match
+model -- 1909 signals in signals_log.csv) and the older SOCCER_GAME
+label format are **textually identical**
+(`"Team vs Team -- Team wins"`), so the classifier was silently
+routing all WC_GAME signals through SOCCER_GAME's reliability weight
+(0.60) for SEDE scoring and portfolio entry decisions. SEDE_RELIABILITY
+in daily_runner.py also had no WC_GAME key at all.
 
-**Source:** eloratings.net January 2026 Elo points, normalized to 0-1
-scale anchored on Spain=2171=0.94.
+**Root-caused, not patched.** Rather than try to improve the
+text-pattern regex (which would still be guessing), built a
+ground-truth `label_to_true_model` map directly from each model's own
+flagged signal list at the point it's known -- before it ever gets
+flattened into the shared `all_flagged` list. Threaded this through
+the three real consumers: SEDE confidence scoring
+(compute_sede_confidence), the FLAGGED EDGES summary display
+(write_summary), and the live portfolio entry gate. Added the missing
+WC_GAME key to SEDE_RELIABILITY (started at 0.60, matching what it
+had silently been using, so this fix doesn't change today's behavior
+-- it just makes future tracking and weight changes correct and
+traceable going forward).
 
-**Key corrections from pre-tournament values:**
-- Spain correctly moved to #1 (was incorrectly behind France)
-- Colombia and Ecuador elevated per actual Elo standing
-- Germany up after 7-1 Curacao
-- Australia up after 2-0 Turkey
-- Japan held -- drew Netherlands, confirmed mid-pack quality
-- Turkey, Curacao, Haiti, South Africa all down post R1 losses
-- Norway elevated -- Elo 1922, higher than originally assigned
+**Verified live:** ran full pipeline, confirmed Brier Dashboard now
+shows WC_GAME (17 resolved, 0.1538 Brier) and SOCCER_GAME (4 resolved,
+0.2002 Brier) as genuinely separate models with no bleed-through.
 
 ---
 
-## 6. WC RESULTS SCORED -- ENGLAND/FRANCE -- MODEL FLAG
+### 3. LEARNING ENGINE -- APPROVAL WORKFLOW BUILT (not "foundation" --
+### that already existed)
 
-**Added to RESOLVED_MARKETS:**
-- England 4-2 Croatia (June 15) -- England wins YES
-- France 3-1 Senegal (June 16) -- France wins YES
+**Important correction to prior notes:** Friday's brief said the
+learning engine was "NOT BUILT -- foundation tonight." That was
+wrong. `learning_optimizer.py` already existed, fully built --
+527 lines, per-model HOLD/RAISE/LOWER recommendations, sample-size
+gating (30+ for threshold, 20+ for weight), bounded deltas
+(+-0.05/0.10 max per cycle), auto-apply explicitly disabled via
+NotImplementedError, already wired into the daily report and
+producing real output every run. What was actually missing was
+narrower: the on_signal_resolved() real-time hook (still stubbed),
+auto-apply itself (deliberately disabled), and a human approval
+workflow to act on recommendations without hand-editing code.
 
-**Result: WC_GAME WR dropped from 57% (14 signals) to 44% (18 signals)**
+**Built tonight:** `review_learning_recs.py` -- reads
+learning_recommendations.json, displays actionable (non-HOLD) weight
+recommendations with full context, and applies approved changes to
+daily_runner.py's SEDE_RELIABILITY dict.
 
-**This is a genuine model flag, not a scoring artifact.**
+**Real safety mechanism, not just a confirmation prompt:** before
+writing, verifies the file's actual current value matches what the
+recommendation expected. If the file has drifted since the
+recommendation was generated, it refuses to write -- no silent
+overwrites. Tested both paths: confirmed it refuses on a deliberately
+wrong expected value, and confirmed it refuses a stale re-application
+after a value has already changed.
 
-The model had flagged:
-- England wins NO (model 55.7%, betting against England) -- LOST
-- Croatia wins YES (model 26.9%, backing Croatia) -- LOST
-- France wins NO (model 42%, betting against France) -- LOST
-- Senegal wins YES (model 19.8%, backing Senegal) -- LOST
+**Used for a real weight change tonight:** MLB_GAME 0.75 -> 0.70
+(MEDIUM confidence, n=69, Brier 0.2548, below random). Applied,
+verified the file write, verified daily_runner.py still compiles,
+verified the audit log entry landed correctly via
+log_weight_change() (applied_by="HUMAN") -- which, notably, already
+had 4 prior manual entries from June 3-5, meaning this formalizes a
+workflow Rus and J@rv!s were already doing by hand.
 
-Pattern: model is systematically underestimating tournament favorite
-win probability and generating NO signals on favorites that then win
-comfortably. This is a calibration problem, not a scoring bug.
+**Threshold recommendations are display-only for now, deliberately.**
+Found that MIN_EDGE_CENTS is NOT a shared per-model dict like
+SEDE_RELIABILITY -- each model file (gdp_model.py, fed_model.py,
+btc_model.py, etc.) has its own independent hardcoded constant.
+Applying threshold recs safely means editing inside each model file
+individually with the same drift-detection pattern. Deferred to its
+own focused session rather than rushed at the end of a long night.
 
-**Action for J@rv!s:**
-- WC_GAME remains CALIBRATION ONLY
-- DO NOT allow portfolio_manager_sede.py to trade WC_GAME signals
-  until WR recovers above 55% with 30+ signals
-- Investigate: are lambda values underweighting strong favorites?
-  The Spain/Cape Verde problem pattern may be recurring
-- June 26 group stage checkpoint is now a model review, not just
-  a sample size check
+---
+
+## HARD PREREQUISITE BEFORE SUBSCRIBER ONBOARDING
+
+Per Rus tonight, explicit: **the on_signal_resolved() real-time hook
+in learning_optimizer.py must be built before any real subscriber
+onboarding.** Currently a stub that prints a placeholder. This is not
+optional polish -- treat as a blocker, not a nice-to-have, in any
+future planning around the Vegas timeline or subscriber rollout.
 
 ---
 
 ## OPEN POSITIONS
 
-| # | Description | Entry | Status |
-|---|-------------|-------|--------|
-| 8 | Fed 1x cut YES | 21c | HOLD -- thesis dead, documented loss |
-| 12 | GDP >2.5% YES | 40c | GDPNow 3.04%, buffer +54bps, HOLD |
-| 13 | GDP >2.0% YES | 60c | GDPNow 3.04%, comfortable, HOLD |
+| # | Description | Entry | Current | Status |
+|---|---|---|---|---|
+| 8 | Fed cuts 1x 2026 YES | 21c | 16c | HOLD -- thesis dead, documented loss |
+| 12 | GDP > 2.5% YES | 40c | 48c | HOLD -- healthy |
+| 13 | GDP > 2.0% YES | 60c | 68c | HOLD -- healthy |
+
+GDPNow: 3.0377% (confirmed June 17/21 reads consistent), next update Jun 25.
+FOMC held rates 3.50-3.75% on June 17, unanimous 12-0 -- no surprise,
+Trade #8 thesis remains dead as expected.
 
 ---
 
-## SEDE PORTFOLIO STATUS (new tonight)
+## SEDE PORTFOLIO STATUS
 
-Bankroll: $1,000.00 | Trades: 0 | Status: paper
-No auto-entries yet -- portfolio manager needs tickers from models
-to fire. First real entries expected on tomorrow's pipeline run.
+Bankroll: $1,000.00 | Open: 1 (BTC<$50k Dec31 entered sometime between
+sessions) | Closed: 0 | Zero subscriber-facing auto-entries fired yet
+-- all evaluated signals correctly rejected on legitimate gates
+(edge < 20c minimum, confidence < 60% minimum, or duplicate ticker
+already held), not due to any plumbing bug. Ticker fix from Friday is
+confirmed working -- gates are evaluating real data now, not silently
+skipping everything.
 
 ---
 
-## COMMIT LOG (tonight)
+## COMMIT LOG (since last nightly summary, June 18)
 
-| Commit | Description |
-|--------|-------------|
-| c01c465 | Build sede_portfolio.json + portfolio_manager_sede.py |
-| 88f6bb4 | Fix signal_scorer.py Unicode/emoji crash (CP1252) |
-| ef3ef3e | Suppress Fed cuts 0x NO in hike-bias environment |
-| 2e5f18d | WC Elo post Round 1 + England/France scored |
-| 762744d | Merge: Oracle pipeline data |
+| Commit (approx) | Description |
+|---|---|
+| 8cd5cd1 | Auto-update 2026-06-19 21:06 CT (ticker fix session) |
+| (several) | WC backfill, Aug 15 fix, legacy script archive, bashrc note |
+| 468a655 | Build subscriber-facing SEDE alert system |
+| 0f79ee0 | Remove stray commit message temp file |
+| f298067 | Auto-update -- WC_GAME/SOCCER_GAME identity fix |
+| 39b7751 | Remove WC fix test log |
+| 15ed3bf | Auto-update 2026-06-21 19:12 CT -- learning engine + MLB_GAME weight change |
 
-Oracle: run `sede-pull` to sync all tonight's commits.
+All commits pushed clean on both KalshiBot and KalshiBot-Dashboard repos.
 
 ---
 
 ## SYSTEM STATUS
 
 | Component | Status |
-|-----------|--------|
-| Oracle SSH | ✅ Fixed (key permissions) |
-| Oracle sync | ✅ sede-pull confirmed clean before dinner |
-| sede_portfolio.json | ✅ BUILT -- $1,000 bankroll, 0 trades |
-| portfolio_manager_sede.py | ✅ Built and wired into daily_runner |
-| FedWatch data | ✅ Post-FOMC, cuts_0=60.7% |
-| Fed cuts 0x NO | ✅ Suppressed in hike-bias environment |
-| GDPNow | ✅ 3.04%, next update Jun 25 |
+|---|---|
+| Oracle cron | ✅ Confirmed healthy -- fires correctly 02:00/07:00 UTC |
+| Ticker lookup (GDP/Fed/BTC) | ✅ Fixed Friday, verified live both sessions |
+| Subscriber alert system | ✅ Built, tested live, awaiting dedicated channel setup |
+| WC_GAME model identity | ✅ Fixed -- now tracked separately from SOCCER_GAME |
+| Learning engine recommendations | ✅ Already existed, confirmed working |
+| Learning engine approval workflow | ✅ Built tonight, tested with real apply |
+| on_signal_resolved() real-time hook | 🔴 STILL STUBBED -- hard blocker before subscribers |
+| Threshold auto-apply | 🔴 NOT BUILT -- deferred, needs per-model-file approach |
+| MLB_GAME reliability weight | Changed 0.75 -> 0.70 tonight (human-approved) |
 | GDP trades | ✅ Both healthy |
 | Trade #8 Fed | ⚠️ Documented loss, HOLD |
-| MLB_GAME | ✅ 65.4% WR all-time, 100% post-fix (n=7) |
-| WC_GAME | ⚠️ 44% WR (18 signals) -- MODEL FLAG |
-| WC Elo | ✅ Updated post Round 1 |
-| signal_scorer.py | ✅ Unicode crash fixed, runs clean |
-| JOBS | ✅ Go-live eligible |
-| Claims | SUSPENDED -- holiday test passed |
-| sede-pull alias | ✅ Live on Oracle |
+| JOBS | ✅ Go-live eligible (only model to clear Gate 1 solo) |
+| Bashrc duplicate | ✅ Fixed Friday |
 
 ---
 
 ## J@rv1s MORNING ACTIONS (ordered)
 
-1. **Oracle sede-pull** -- sync tonight's commits (c01c465 through 762744d)
-
-2. **WC_GAME model flag** -- 44% WR on 18 signals. Pattern is systematic:
-   model underestimates strong favorites, generates losing NO signals.
-   Flag for dedicated investigation before June 26 checkpoint.
-   Do NOT allow portfolio_manager_sede.py to trade WC_GAME signals.
-
-3. **Portfolio manager first run** -- check daily_report for "SEDE PORTFOLIO
-   MANAGER" section. Were any signals passed with valid tickers? If zero
-   entries, the ticker lookup is the gap -- flag for Archie.
-
-4. **sede_portfolio.json** -- now public on dashboard. Confirm file is
-   visible at github.com/logain1964/KalshiBot-Dashboard
-
-5. **WC results backfill** -- Several Round 1 results not yet in
-   RESOLVED_MARKETS (NED 2-2 JPN, GER 7-1 CUW, IVC 1-0 ECU, USA 4-1 PAR,
-   BEL vs IRN, AUS 2-0 TUR). Verify Kalshi market name strings in
-   signals_log.csv before adding -- wrong name = wrong score.
-
-6. **Today's June 18 results** -- Switzerland vs Bosnia, Canada vs Qatar,
-   Mexico vs South Korea, Czechia vs South Africa all played today.
-   Add to RESOLVED_MARKETS once Kalshi market strings confirmed.
+1. **Oracle sede-pull** -- sync all commits since June 18.
+2. **Read this summary in full** -- significant ground covered across
+   two sessions, including a correction to the prior "learning engine
+   not built" framing.
+3. **on_signal_resolved() hook** -- flag this clearly in any future
+   Vegas/subscriber timeline planning. Hard blocker per Rus, not
+   negotiable polish.
+4. **Threshold auto-apply** -- when picked up, scope as its own
+   session. Needs a per-model-file edit approach, not a shared dict
+   like the weight script used.
+5. **Subscriber channel setup** -- TELEGRAM_SEDE_CHAT_ID and
+   SEDE_ALERT_EMAIL env vars not yet configured. Alerts currently
+   fall back to internal channels. Flag if this needs prioritizing
+   ahead of Vegas.
+6. **MLB_GAME weight change** -- now 0.70 (was 0.75), human-approved
+   tonight via the new review script. Audit trail in
+   data/weight_change_log.csv.
 
 ---
 
 ## VALIDATION TRACKER
 
 | Model | Status | Gate 1 Progress |
-|-------|--------|-----------------|
-| JOBS | ✅ GO-LIVE ELIGIBLE | n=73, 58.9%, Brier 0.134 |
+|---|---|---|
+| JOBS | ✅ GO-LIVE ELIGIBLE | n=81, 58.0%, Brier 0.135 |
 | GDP | Active | 3 open positions, Jul 30 |
 | CPI | Active | Accumulating monthly |
-| Claims | SUSPENDED | Holiday test passed |
-| MLB_GAME YES | Active | 65.4% WR, 7/7 post-fix |
-| WC_GAME | ⚠️ CALIBRATION -- MODEL FLAG | 44% WR (18), below random |
+| Claims | SUSPENDED | 3 consecutive losses, holiday hypothesis |
+| MLB_GAME YES | Active, experimental tier | n=29 unique, 55.2% WR |
+| MLB_GAME (overall) | Weight lowered 0.75->0.70 | n=69, Brier 0.2548, below random |
+| WC_GAME | Now correctly tracked separately | n=17 (n=502 in full calibration), Brier 0.1538-0.1832 |
+| SOCCER_GAME | CALIBRATION ONLY, separate from WC_GAME now | n=4-8 depending on log |
 | Fed | Active | Trade #8 = documented loss |
-| SEDE Portfolio | ✅ BUILT | $1,000 starting bankroll |
+| SEDE Portfolio | ✅ Live, gates working | 1 open, 0 closed, 0 subscriber alerts fired |
 
 ---
 
 ## KEY DATES
 
 | Date | Event |
-|------|-------|
-| Jun 19 | Juneteenth -- federal holiday |
+|---|---|
 | Jun 25 | GDPNow next update |
-| Jun 25-27 | Kalshi opens June unemployment markets |
 | Jun 26 | WC group stage ends -- WC_GAME model review |
 | Jul 1 | NFL build window opens |
 | Jul 2 | Jobs report 8:30 AM CT |
+| Jul 14 | CPI release |
 | Jul 30 | Q2 2026 GDP advance estimate |
-| Aug 2 | Vegas -- 8rain demo (Anthony) |
+| Aug 2 | Vegas -- 8rain demo (Anthony), ~42 days out |
 | Sep 3 | NFL season opens |
 
 ---
 
 *Session | Model: Sonnet 4.6 | Identity: Archie*
-*sede_portfolio.json exists. Anthony has something to see in 45 days.*
-*WC_GAME at 44% WR is a real flag -- don't paper over it.*
-*sede-pull alias live on Oracle. No more manual conflict resolution.*
-*Papa Ralph standard. If it's worth doing it's worth doing right.*
+*Two sessions, one real bug found and fixed before it mattered (WC_GAME).*
+*on_signal_resolved() is the line in the sand before subscribers.*
+*Real fix, always the real fix. Papa Ralph standard.*
