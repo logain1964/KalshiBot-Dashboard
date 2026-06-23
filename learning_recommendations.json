@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-22T21:02:23.488773",
+  "generated_at": "2026-06-23T07:02:14.307543",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -8,17 +8,17 @@
     "CLAIMS": 0.55,
     "NBA": 0.85,
     "BTC": 0.8,
-    "MLB_GAME": 0.75,
+    "MLB_GAME": 0.7,
     "NHL": 0.78,
     "MLB_CHAMP": 0.75,
     "NHL_CHAMP": 0.7,
     "WC_WINNER": 0.5,
-    "MLS_GAME": 0.65,
     "WC_GAME": 0.6,
+    "MLS_GAME": 0.65,
     "FED": 0.65,
-    "NBA_GAME": 0.78,
-    "NHL_GAME": 0.72,
-    "NBA_CHAMP": 0.8
+    "NBA_GAME": 0.68,
+    "NHL_GAME": 0.68,
+    "NBA_CHAMP": 0.72
   },
   "threshold_recs": [
     {
@@ -64,14 +64,12 @@
       "current_threshold": 8,
       "suggested_threshold": 8,
       "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
+      "confidence": "LOW",
       "n_above": 0,
       "n_below": 0,
       "brier_above": null,
       "brier_below": null,
-      "reason": [
-        "Need 26 more resolved signals"
-      ]
+      "reason": []
     },
     {
       "model": "WC_GAME",
@@ -79,9 +77,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 405,
+      "n_above": 772,
       "n_below": 0,
-      "brier_above": 0.183241,
+      "brier_above": 0.165411,
       "brier_below": null,
       "reason": []
     }
@@ -140,19 +138,6 @@
       ]
     },
     {
-      "model": "GDP",
-      "current_weight": 0.6,
-      "suggested_weight": 0.6,
-      "delta": 0.0,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n": 4,
-      "brier": 0.4566,
-      "reason": [
-        "Need 16 more resolved signals (have 4)"
-      ]
-    },
-    {
       "model": "JOBS",
       "current_weight": 0.87,
       "suggested_weight": 0.87,
@@ -180,8 +165,8 @@
     },
     {
       "model": "MLB_GAME",
-      "current_weight": 0.75,
-      "suggested_weight": 0.7,
+      "current_weight": 0.7,
+      "suggested_weight": 0.65,
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
@@ -219,8 +204,8 @@
     },
     {
       "model": "NBA_CHAMP",
-      "current_weight": 0.8,
-      "suggested_weight": 0.8,
+      "current_weight": 0.72,
+      "suggested_weight": 0.72,
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
@@ -232,8 +217,8 @@
     },
     {
       "model": "NBA_GAME",
-      "current_weight": 0.78,
-      "suggested_weight": 0.78,
+      "current_weight": 0.68,
+      "suggested_weight": 0.68,
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
@@ -271,8 +256,8 @@
     },
     {
       "model": "NHL_GAME",
-      "current_weight": 0.72,
-      "suggested_weight": 0.72,
+      "current_weight": 0.68,
+      "suggested_weight": 0.68,
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
@@ -285,14 +270,14 @@
     {
       "model": "WC_GAME",
       "current_weight": 0.6,
-      "suggested_weight": 0.6,
-      "delta": 0.0,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n": 17,
-      "brier": 0.1538,
+      "suggested_weight": 0.62,
+      "delta": 0.02,
+      "action": "RAISE",
+      "confidence": "LOW",
+      "n": 23,
+      "brier": 0.1429,
       "reason": [
-        "Need 3 more resolved signals (have 17)"
+        "Good calibration: Brier=0.1429 (n=23)"
       ]
     },
     {
@@ -307,8 +292,29 @@
       "reason": [
         "Need 20 more resolved signals (have 0)"
       ]
+    },
+    {
+      "model": "GDP",
+      "n": 4,
+      "brier": 0.4566,
+      "current_weight": 0.6,
+      "suggested_weight": 0.6,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "reason": [
+        "Insufficient sample (need 20+, have 4)"
+      ],
+      "auto_apply_eligible": false
     }
   ],
   "any_actionable": true,
-  "auto_apply_ready": false
+  "auto_apply_ready": false,
+  "last_signal_resolved": {
+    "market": "GDP > 2.5%",
+    "model": "GDP",
+    "direction": "YES",
+    "outcome": "LOST",
+    "timestamp": "2026-06-23T07:02:15.079754"
+  }
 }

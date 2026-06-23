@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-06-22T21:02:23.478557",
-  "total_resolved": 100,
+  "generated_at": "2026-06-23T07:02:14.297333",
+  "total_resolved": 115,
   "by_model": {
     "MLB_GAME": {
       "n": 69,
@@ -12,21 +12,21 @@
       "beats_random": false
     },
     "WC_GAME": {
-      "n": 17,
-      "correct": 5,
-      "acc_pct": 29.4,
-      "avg_brier": 0.1538,
-      "avg_logloss": 0.4783,
+      "n": 23,
+      "correct": 7,
+      "acc_pct": 30.4,
+      "avg_brier": 0.1429,
+      "avg_logloss": 0.4546,
       "avg_edge": 11.4,
       "beats_random": true
     },
     "SOCCER_GAME": {
-      "n": 4,
-      "correct": 2,
-      "acc_pct": 50.0,
-      "avg_brier": 0.2002,
-      "avg_logloss": 0.583,
-      "avg_edge": 13.3,
+      "n": 13,
+      "correct": 8,
+      "acc_pct": 61.5,
+      "avg_brier": 0.1917,
+      "avg_logloss": 0.5657,
+      "avg_edge": 12.3,
       "beats_random": true
     },
     "GDP": {
