@@ -4,10 +4,10 @@
     "version": "1.0",
     "description": "SEDE autonomous portfolio -- subscriber-facing track record. SEPARATE from paper_trades.json (Rus validation record). Never write to paper_trades.json from portfolio_manager_sede.py.",
     "starting_bankroll": 1000.0,
-    "current_bankroll": 975.0,
+    "current_bankroll": 1000.0,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-06-23T07:02:17"
+    "last_updated": "2026-06-23T21:02:46"
   },
   "config": {
     "sizing": {
@@ -29,19 +29,19 @@
     }
   },
   "performance": {
-    "total_trades": 3,
+    "total_trades": 2,
     "open_trades": 2,
-    "closed_trades": 1,
+    "closed_trades": 0,
     "wins": 0,
-    "losses": 1,
+    "losses": 0,
     "early_exits": 0,
-    "win_rate_pct": 0.0,
-    "total_pnl": -25.0,
-    "running_bankroll": 975.0,
+    "win_rate_pct": null,
+    "total_pnl": 0,
+    "running_bankroll": 1000.0,
     "peak_bankroll": 1000.0,
-    "max_drawdown_dollars": 25.0,
+    "max_drawdown_dollars": 0.0,
     "avg_edge_cents": null,
-    "avg_brier_score": 0.4529
+    "avg_brier_score": null
   },
   "open_positions": [
     {
@@ -66,21 +66,21 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 0.0,
-      "last_checked": "2026-06-23 07:02 CT"
+      "last_checked": "2026-06-23 21:02 CT"
     },
     {
       "id": 3,
-      "entered_at": "2026-06-23 07:02 CT",
+      "entered_at": "2026-06-23 02:00 CT",
       "market_ticker": "KXGDP-26JUL30-T2.5",
       "description": "GDP > 2.5%",
       "direction": "YES",
-      "entry_price_cents": 41.0,
-      "contracts": 73,
-      "size_dollars": 30.0,
-      "max_loss_dollars": 30.0,
-      "max_profit_dollars": 43.07,
+      "entry_price_cents": 47.0,
+      "contracts": 53,
+      "size_dollars": 25.0,
+      "max_loss_dollars": 25.0,
+      "max_profit_dollars": 28.09,
       "model_probability_pct": 67.29534505481625,
-      "edge_cents": 26.29534505481626,
+      "edge_cents": 20.29534505481626,
       "sede_rating": "HIGH",
       "status": "OPEN",
       "result": null,
@@ -88,33 +88,12 @@
       "exit_date": null,
       "pnl_dollars": null,
       "brier_score": null,
-      "close_note": null
+      "close_note": null,
+      "current_price_cents": 0.0,
+      "last_checked": "2026-06-23 21:02 CT"
     }
   ],
-  "closed_positions": [
-    {
-      "id": 3,
-      "entered_at": "2026-06-22 21:02 CT",
-      "market_ticker": "KXGDP-26JUL30-T2.5",
-      "description": "GDP > 2.5%",
-      "direction": "YES",
-      "entry_price_cents": 45.0,
-      "contracts": 55,
-      "size_dollars": 25.0,
-      "max_loss_dollars": 25.0,
-      "max_profit_dollars": 30.25,
-      "model_probability_pct": 67.29534505481625,
-      "edge_cents": 22.295345054816256,
-      "sede_rating": "HIGH",
-      "status": "CLOSED",
-      "result": "LOST",
-      "exit_price_cents": 0.0,
-      "exit_date": "2026-06-23 07:02 CT",
-      "pnl_dollars": -25.0,
-      "brier_score": 0.4529,
-      "close_note": "[AUTO-CLOSE] YES price 0c <= 3c threshold"
-    }
-  ],
+  "closed_positions": [],
   "daily_snapshots": [
     {
       "date": "2026-06-19",
