@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-23T07:00:28.988247",
+  "generated_at": "2026-06-24T02:00:30.785422",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -135,6 +135,19 @@
       "brier": null,
       "reason": [
         "Need 20 more resolved signals (have 0)"
+      ]
+    },
+    {
+      "model": "GDP",
+      "current_weight": 0.6,
+      "suggested_weight": 0.6,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 4,
+      "brier": 0.4566,
+      "reason": [
+        "Need 16 more resolved signals (have 4)"
       ]
     },
     {
@@ -292,29 +305,8 @@
       "reason": [
         "Need 20 more resolved signals (have 0)"
       ]
-    },
-    {
-      "model": "GDP",
-      "n": 4,
-      "brier": 0.4566,
-      "current_weight": 0.6,
-      "suggested_weight": 0.6,
-      "delta": 0.0,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "reason": [
-        "Insufficient sample (need 20+, have 4)"
-      ],
-      "auto_apply_eligible": false
     }
   ],
   "any_actionable": true,
-  "auto_apply_ready": false,
-  "last_signal_resolved": {
-    "market": "GDP > 2.5%",
-    "model": "GDP",
-    "direction": "YES",
-    "outcome": "LOST",
-    "timestamp": "2026-06-23T07:00:29.178958"
-  }
+  "auto_apply_ready": false
 }
