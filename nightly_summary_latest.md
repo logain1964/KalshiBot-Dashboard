@@ -1,152 +1,264 @@
-# SEDE Nightly Summary
-**Date:** 2026-06-24 | **Generated:** ~22:30 CT | **Session:** Archie (Evening Build)
+# J@rv1s Morning Briefing
+# Prepared by Archie (Evening Session Jun 25 2026)
+# For: J@rv1s Web Session -- Friday June 26, 2026
+# Priority read: MLB section -- Rus has a gut feeling we are missing something
 
 ---
 
-## System Status
+## TOP OF FILE -- READ MLB SECTION BEFORE ANYTHING ELSE
 
-| Component | Status |
-|---|---|
-| False auto-close | ✅ Holding stable — status-only close confirmed |
-| BTC/GDP price read | ✅ FIXED TONIGHT — _dollars field rename |
-| MLB_GAME auto-trading | ✅ Ticker fixed (Jun 23) — awaiting right signal |
-| Subscriber alerts | ✅ Real numbers on next resolution |
-| Duplicate ticker gate | ✅ Tightened (Jun 23) |
-| WC diagnostic script | ✅ Written, run, output in hand for Jun 26 review |
-| WC_GAME | CALIBRATION — Jun 26 review tomorrow |
-| SEDE Portfolio | ✅ $1,000, 2 open, prices now reading live |
-| JOBS | ✅ Validated, go-live eligible |
-| GDPNow | ✅ 3.04% — next update TOMORROW Jun 25 |
-| Oracle cron | ✅ 07:00 UTC (02:00 CT) — pulling tonight's commits |
+Rus has been wrestling with a nagging feeling all evening that something
+is off with the MLB picture. He can't put his finger on it yet. We peeled
+back three layers of the onion tonight but he still feels it. A fresh set
+of eyes in the morning may shake it loose. Full context below.
 
 ---
 
-## SEDE Portfolio
+## SESSION SUMMARY -- WHAT GOT DONE TONIGHT
 
-| Field | Value |
-|---|---|
-| Bankroll | $1,000.00 |
-| P&L | $0.00 |
-| Record | 0W-0L |
-| Open | 2 of 8 slots |
+All 7 priority items from J@rv1s briefing completed:
 
-### Open Positions (live prices now working)
+1. GDPNow updated to 2.5438% -- gdpnow_updater.py, gdp_model.py,
+   daily_runner.py all updated. gdpnow_history.txt merge conflict
+   cleaned and manual entry logged. 9PM cron will confirm.
 
-| ID | Market | Dir | Entry | Live Mid | Drift | Thesis |
-|----|--------|-----|-------|----------|-------|--------|
-| 1 | BTC < $50k Dec 31 | NO | 43.5c | **36.5c** | -7c | BTC ~$63k, well above $50k. Thesis intact, market drifting against us short term. |
-| 3 | GDP > 2.5% Q2 | YES | 47c | **44.5c** | -2.5c | GDPNow 3.04%. Next update TOMORROW. Watch closely. |
+2. WC_GAME Fix 1 + Fix 2 -- BOTH IMPLEMENTED AND COMMITTED.
+   Fix 1: YES signals now require model_prob >= 45% gate.
+   Fix 2: NO fades now require faded team >= 20c on Kalshi.
+   Commit: 3458bf8. Syntax verified clean.
 
-**paper_trades open:**
-- #8 Fed 1x cut YES @ 21c — documented loss, hold to resolution
-- #12 GDP >2.5% YES @ 40c — watch GDPNow tomorrow
-- #13 GDP >2.0% YES @ 60c — healthy at 65c
+3. MLB ticker verification -- CONFIRMED WORKING. log_signals()
+   correctly unpacks 6-tuple (sig[5] = market_ticker). Post-fix
+   silence (Jun 23-25) is genuine -- today's best edge was 5.9c
+   on HOU@DET, just under 6c threshold. Not a bug.
 
----
+4. WC backfill -- Jun 25 4PM and 7PM games complete.
+   10PM games (TUR vs USA, PAR vs AUS) still live at session end.
+   Add tomorrow morning. Turkey led USA 2-1 at halftime.
 
-## Tonight's Builds
+5. JOBS check -- KXU3 (13 markets) and KXPAYROLLS (24 markets)
+   confirmed live on Kalshi. JOBS signals fire at 9PM full runner,
+   not the 4PM refresh. By design. Jul 2 jobs report is catalyst.
 
-### Fix — current_price_cents: 0.0 ✅ (Priority 1)
-**File:** `portfolio_manager_sede.py` — `_fetch_kalshi_price()`
-**Root cause:** Private fetch function used bare field names (`yes_bid`, `yes_ask`) but Kalshi API returns `yes_bid_dollars` / `yes_ask_dollars`. `price_fetcher.py` was already correct — only this internal function was stale.
-**Fix 1:** Renamed all four fields to `*_dollars` variants, multiply by 100 for cents.
-**Fix 2:** Added 0c safety guard — if both sides return 0c on active market, treat as fetch failure (return None, hold position). Belt-and-suspenders on top of status-only close.
-**Verified live:** BTC NO mid=36.5c, GDP YES mid=44.5c. Both reading correctly.
-**Commit:** f78c7a5
+6. Oracle confirmed healthy -- 07:00 CT auto-update in git log.
+   Tonight's commits land on Oracle at 02:00 CT automatically.
 
-### WC Diagnostic Script ✅ (Priority 2)
-**File:** `wc_game_diagnostic.py` (new)
-J@rv1s's script adapted with correct `signals_log.csv` column names (`model`, `market`, `kalshi_cents`, `model_pct` — not the names J@rv1s assumed). Ran locally against 1,091 resolved WC/SOCCER signals.
-**Commit:** f2d5703
+7. Deferred items confirmed held -- threshold auto-apply, hardcoded
+   path grep, thin market fill reliability. All own-session items.
 
-### WC Backfill — June 23-24 ✅ (Priority 3)
-**File:** `signal_scorer.py` — 21 new RESOLVED_MARKETS entries
-7 games scored: Colombia/DR Congo, Switzerland/Canada, Bosnia/Qatar, Brazil/Scotland, Morocco/Haiti, Mexico/Czechia, South Africa/Korea.
-Scorer: **1,378 signals | Brier 0.1734 | Accuracy 35.8%**
-**Commit:** 4527d2e
+### Commits tonight
+- 3458bf8 GDPNow 2.5438% + WC Fix1 + WC Fix2
+- 19228be WC backfill Jun 25 4PM (ECU 2-1 GER, CIV 2-0 CUW)
+- 776b1f6 WC backfill Jun 25 7PM (JPN 1-1 SWE, NED 3-1 TUN)
 
 ---
 
-## WC Diagnostic Results — June 26 Review Brief
+## GDP -- NOT A CRISIS (reframe from last night's briefing)
 
-**1,091 resolved WC_GAME + SOCCER_GAME signals analyzed.**
+J@rv1s briefing had GDP flagged red. Actual live prices tonight:
 
-### Theory 1 — Draw Underweighting
-NOT CONFIRMED via data (notes column doesn't tag draws). Needs manual verification. Do not rule out — draw losses are real, just not measurable from current logging.
+- GDP >2.5% YES: trading at 49.5c (entry was 47c -- IN THE GREEN)
+- GDP >2.0% YES: trading at 68c (entry was 60c -- IN THE GREEN)
+- Fed 1x cut YES: 16c (entry 21c -- documented loss, hold)
+- BTC <50k NO: 33.5c (entry 43.5c -- thesis intact, BTC ~$66.5k)
 
-### Theory 2 — Lambda Compression ⚠️ KEY FINDING
-- YES signals where model_prob 0-35%: **7.9% WR on 354 signals**
-- YES signals where model_prob 36-45%: **0.0% WR on 26 signals**
-- YES signals where model_prob 66-80%: **100% WR on 73 signals**
-
-The model is generating YES signals on teams it gives 7-35% win probability. That is the dominant source of losses. This is not lambda compression — it's a signal generation bug. YES signals are being fired when edge is positive even though model_prob is very low, meaning Kalshi price is even lower (buying 10-20c YES on 92% underdogs).
-
-**Fix for Thursday:** Add minimum model probability gate for YES signals. Don't fire YES unless model_prob ≥ 45%. This alone eliminates 380 losing signals.
-
-### Theory 3 — Edge Threshold
-15-19c edge signals: 88% WR (100 signals) — inverted from expectation. Likely data artifact or scoring alignment issue. Flag for Thursday review.
-
-### Theory 4 — Retail Bias ✅ CONFIRMED
-- Fading underpriced teams (Kalshi <20c): **18.7% WR** — terrible
-- Fading fairly-priced teams (Kalshi 20-35c): **63.9% WR** — excellent
-
-Don't generate NO signals where faded team is already priced below 20c on Kalshi. Market has already done the work. One-line filter.
-
-### Bonus — Fading Strong Favorites
-13 signals at 60c+ Kalshi: 100% WR — but tiny sample (Panama/Croatia duplicates). Not meaningful yet.
-
-### Thursday Review Agenda (data-driven)
-1. Implement YES signal min probability gate (model_prob ≥ 45%)
-2. Implement NO signal Kalshi floor (don't fade teams already <20c)
-3. Investigate Theory 3 edge inversion — possible scoring artifact
-4. Verdict: continue calibration through knockouts, NO auto-trading approval
-5. Champions League September as primary deployment target
+Market has NOT capitulated on GDPNow dropping to 2.5%. Both GDP
+trades profitable right now. Hold both. Next GDPNow update Jul 1.
 
 ---
 
-## Calibration Report
+## 🚨 MLB -- RUS'S GUT INSTINCT -- READ CAREFULLY
 
-| Model | N | Accuracy | Brier | Status |
-|-------|---|----------|-------|--------|
-| GDP | 4 | 50.0% | 0.4566 | ⚠️ tiny sample |
-| JOBS | 81 | 58.0% | 0.1351 | ✅ |
-| SOCCER_GAME | 219 | 32.9% | 0.1415 | ✅ |
-| WC_GAME | 1074 | 34.6% | 0.1817 | ✅ (calibrated despite low WR) |
-| **OVERALL** | **1378** | **35.8%** | **0.1734** | ✅ |
+Rus has been saying all evening something feels off about the MLB
+picture. We dug three layers deep tonight and still haven't fully
+satisfied it. Here is everything we found, in order:
+
+### Layer 1 -- Signal inflation
+171 signal rows in the log looked like 171 games.
+Reality: 59 unique games. Mean 2.9 signals per game from
+multiple refresh runs hitting the same matchup. The entire
+threshold debate (15c vs 20c) was based on inflated N.
+
+### Layer 2 -- Sample thinness
+59 unique games resolved across a 26-day window.
+At 15 games/day the MLB plays ~390 games in that window.
+Our 59 unique games = 15% of actual games played.
+But WHY only 59? Two possibilities:
+  (a) Model correctly finding no edge on 330+ games
+  (b) Pipeline wasn't running cleanly the whole time
+
+### Layer 3 -- 98 dark games
+We cross-referenced actual MLB schedule (MLB Stats API)
+against our signal dates. Result:
+
+  355 games played May 27 - Jun 22
+   98 games (27.6%) -- pipeline NEVER SAW THEM
+  198 games (55.8%) -- scanned, no edge found
+   59 games (16.6%) -- edge found, signal generated
+
+The 98 dark games broke down as:
+  - 54 games: Jun 16-18, 21 (ticker bug window)
+  - 38 games: Jun 10-12 (CPI week gap -- cause UNKNOWN)
+  - 6 games:  May 28 (pipeline not yet stable)
+
+The Jun 10-12 gap is unexplained. Was it an OddsAPI quota
+issue? A pipeline error? We don't know. This matters because
+if the model was only cleanly operational for ~72% of its
+supposed tracking window, the 65.5% WR on 59 unique games
+is drawn from a dirty, bug-affected sample.
+
+### What Rus's gut may be sensing
+
+After three layers of peeling, here are the remaining threads
+that weren't fully resolved tonight:
+
+THREAD 1 -- OddsAPI quota burn rate
+Today's cron: quota used 281, remaining 219 (500 total).
+On high-volume days are we running out mid-scan and silently
+dropping games? If quota exhausts at game 12 of 15, those
+last 3 games get zero signal regardless of edge. This could
+explain why signal counts vary wildly by date (22 signals
+on Jun 6, only 3 on Jun 9 -- same 15-game slate size).
+
+THREAD 2 -- The CPI week gap (Jun 10-12)
+38 games with zero signals and no known bug to explain it.
+Not the ticker bug (that was Jun 16+). Not a known pipeline
+issue. What happened? Worth a specific investigation.
+
+THREAD 3 -- Post-fix baseline
+Jun 23 ticker fix = essentially a restart. We have ZERO
+clean resolved signals post-fix. The next 3-4 weeks of
+continuous clean data is the real baseline. Every threshold
+and edge quality conversation we've been having is built
+on pre-fix data with known contamination.
+
+### J@rv1s -- your assignment for the morning session
+
+Rus wants your fresh take. Specifically:
+
+1. Does the OddsAPI quota theory feel like the missing piece
+   to you? Can you check the cron logs for quota burn on
+   Jun 6 (22 signals) vs Jun 9 (3 signals) and see if quota
+   exhaustion explains the variance?
+
+2. The CPI week gap Jun 10-12 -- any other explanation?
+   Check pipeline logs for those specific dates.
+
+3. Is there anything else in the MLB data picture that Rus's
+   gut might be sensing that we haven't looked at yet?
+
+Rus's exact words: "still feeling something off, but I can't
+put my finger on it." Sleep on it and bring fresh eyes.
+
+### Current threshold decision
+HOLDING at 20c. Data too contaminated to make a confident
+call in either direction. Post-fix clean data is needed first.
+The 16-19c bucket had only 7 unique games -- not a sample.
 
 ---
 
-## Tomorrow — June 25
+## WC_GAME -- GROUP STAGE COMPLETE (after tonight's 10PM games)
 
-| Time CT | Event | Priority |
-|---------|-------|----------|
-| Morning | GDPNow update | 🔴 Watch Trade #12 — if drops below 3.0% thesis review |
-| Morning | Kalshi opens June unemployment markets | 🟡 JOBS signals resume |
-| 3 PM | ECU vs GER, CUW vs CIV | Score next session |
-| 6 PM | TUN vs NED, JPN vs SWE | Score next session |
-| 9 PM | TUR vs USA, PAR vs AUS | Score next session |
-| Evening | Jun 25 WC backfill | Standard |
+Group F final standings:
+  1. Netherlands (top) -- face Morocco Jun 29
+  2. Japan (runner-up) -- face Brazil Jun 29
+  3. Sweden (best 3rd place) -- likely through
+  4. Tunisia -- eliminated
 
-**Note on USA tonight:** TUR vs USA kicks off 9 PM CT June 25. Win probability: USA 50.6%, Turkey 25.5%, Draw 23.9%. Model will likely flag this. Don't force an entry — let gates decide.
+Group E final:
+  1. Germany (top) -- face Ivory Coast Jun 29 runner-up
+  2. Ivory Coast (runner-up) -- face Germany
+  Ecuador: best 3rd place candidate
+  Curaçao: eliminated
+
+Group D (10PM games still live at session end):
+  USA already confirmed Group D winners (dead rubber vs Turkey)
+  Turkey vs USA: Turkey led 2-1 at halftime -- calibration note
+  Paraguay vs AUS: 0-0 at half, AUS dominant -- add results AM
+
+### WC calibration note
+Model had USA at 50.6% win probability vs Turkey.
+Turkey led 2-1 at halftime. If Turkey wins final, that's
+a significant miss for the model on a moderate-confidence
+prediction. Good calibration data either way.
+
+### WC_GAME fixes now live
+Fix 1: YES gate model_prob >= 45% -- eliminates 380 losing
+        underdog signals (7.9% WR bucket now blocked)
+Fix 2: NO fade floor >= 20c Kalshi -- kills 18.7% WR bucket
+
+Jun 26 review agenda:
+  - Confirm both fixes operational in tonight's 9PM run
+  - Score all 6 Jun 25 games once 10PM results confirmed
+  - Official calibration verdict: group stage complete
+  - Champions League September as primary soccer target
+  - Dixon-Coles rho adjustment -- longer term discussion
 
 ---
 
-## Key Dates
+## OPEN POSITIONS -- STATUS AT SESSION END
 
-| Date | Event |
-|------|-------|
-| Jun 25 | GDPNow update — critical for Trade #12 |
-| Jun 25 | June unemployment markets open on Kalshi |
-| **Jun 26** | **WC group stage ends — model review session** |
-| Jul 1 | NFL build window opens |
-| Jul 2 | Jobs report 8:30 AM CT |
-| Jul 14 | CPI release |
-| Jul 30 | Q2 2026 GDP advance estimate |
-| Aug 2 | Vegas — Anthony (8rain) demo |
-| Sep 3 | NFL season opens |
-| Sep | Champions League — soccer primary target |
+### SEDE Portfolio (live prices 6:35 PM CST)
+| ID | Market           | Dir | Entry | Live  | P&L    |
+|----|------------------|-----|-------|-------|--------|
+| 1  | BTC <50k Jan '27 | NO  | 43.5c | 33.5c | +$10   |
+| 3  | GDP >2.5% Q2     | YES | 47c   | 49.5c | +$2.50 |
+
+Bankroll: $1,000 | Both positions healthy
+
+### paper_trades.json
+| #  | Market         | Dir | Entry | Live  | Status          |
+|----|----------------|-----|-------|-------|-----------------|
+| 8  | Fed 1x cut     | YES | 21c   | 16c   | Documented loss |
+| 12 | GDP >2.5% YES  | YES | 40c   | 49c   | +$9 profitable  |
+| 13 | GDP >2.0% YES  | YES | 60c   | 68c   | +$8 profitable  |
 
 ---
 
-*Generated by Archie (Claude Desktop) | Push from laptop → Oracle pulls at 02:00 CT*
-*Papa Ralph standard. If it's worth doing, it's worth doing right.*
+## SYSTEM HEALTH
+
+| Component           | Status                                        |
+|---------------------|-----------------------------------------------|
+| GDPNow              | ✅ Updated 2.5438% -- pipeline current        |
+| GDP trades          | ✅ Both profitable -- hold                    |
+| WC_GAME Fix 1+2     | ✅ Deployed and committed                     |
+| MLB ticker          | ✅ Confirmed working -- quiet slate today     |
+| WC backfill         | ✅ 4PM + 7PM done -- 10PM pending AM          |
+| JOBS markets        | ✅ Live on Kalshi -- 9PM runner tonight       |
+| Oracle cron         | ✅ Healthy -- 07:00 CT confirmed              |
+| signal_scorer       | ✅ 1380 signals Brier 0.1732                 |
+| GrokBot v8          | Running -- paper trading continues           |
+
+---
+
+## KEY DATES
+
+| Date   | Event                                              |
+|--------|----------------------------------------------------|
+| Jun 26 | WC_GAME group stage review -- J@rv1s morning       |
+| Jun 26 | Add TUR/USA + PAR/AUS results to scorer            |
+| Jul 1  | GDPNow next update                                 |
+| Jul 2  | Jobs report 8:30 AM CT -- JOBS model catalyst      |
+| Jul 14 | CPI release                                        |
+| Jul 30 | Q2 2026 GDP advance estimate                       |
+| Aug 2  | Vegas -- Anthony (8rain) demo -- 38 days           |
+| Sep 3  | NFL season opens                                   |
+| Sep    | Champions League -- primary soccer target          |
+
+---
+
+## PENDING FOR MORNING
+
+1. TUR vs USA final score -- add to scorer
+2. PAR vs AUS final score -- add to scorer
+3. Check 9PM cron output -- did JOBS signals fire?
+4. Verify GDPNow 2.5438% propagated cleanly in 9PM run
+5. Confirm WC fixes operational in 9PM signal output
+6. MLB gut feeling -- J@rv1s fresh eyes on OddsAPI quota
+   and CPI week gap before Rus returns
+
+---
+
+*Prepared by Archie | Evening session Jun 25 2026 | ~10:15 PM CST*
+*Rus signing off -- Mac wipe in progress (friend's Apple ID signing out)*
+*Papa Ralph standard. 38 days to Vegas. Let's get it right.*
