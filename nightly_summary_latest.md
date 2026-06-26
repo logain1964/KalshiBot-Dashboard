@@ -259,6 +259,127 @@ Bankroll: $1,000 | Both positions healthy
 
 ---
 
-*Prepared by Archie | Evening session Jun 25 2026 | ~10:15 PM CST*
-*Rus signing off -- Mac wipe in progress (friend's Apple ID signing out)*
+---
+
+## 🧠 MLB -- LATE SESSION ADDENDUM (~10:30 PM CST)
+## J@rv1s -- this is the most important section. Read carefully.
+
+Rus and Archie kept digging after the nightly summary was written.
+The gut feeling never went away. Here is the full conversation arc
+and where it landed.
+
+### The question that reframes everything
+
+We've been asking "is the threshold right?" and "is signal quality
+good?" But we never asked the foundational question:
+
+**Is the edge calculation itself trustworthy?**
+
+When the model says NYY has 6.3% win probability vs BOS, and Kalshi
+has them at 48c -- that's a 41.7c edge. Enormous. And almost certainly
+wrong. The fast pipeline run generated that signal on incomplete odds
+data and the slow run killed it. But the fact that it fired at all
+raises a deeper question: how often is the edge calculation built on
+bad inputs rather than real inefficiency?
+
+### 9PM pipeline report -- key findings
+
+Two emails fired 2 minutes apart (SLOW+FAST pipeline):
+
+Fast run (9:00 PM): 0/5 open trades, 1020 signals, Brier 0.1626
+Slow run (9:02 PM): 3/5 open trades, 1378 signals, Brier 0.1734
+
+Two different calibration states from the same pipeline run.
+The fast run reads the scorer before the slow run updates it.
+Which state is the subscriber alert using? Worth confirming.
+
+NYY @ BOS at 6.3% model / 48c Kalshi / +45.2c edge:
+  -- Appeared in fast run, absent from slow run
+  -- Classic bad-odds-data misfire on an incomplete feed
+  -- Manual approval gate caught it correctly
+  -- BUT: how many signals like this slipped through pre-fix?
+
+MLS model generating WC game signals:
+  -- Norway vs France, Uruguay vs Spain, Colombia vs Portugal,
+     DR Congo vs Uzbekistan all showing as MLS_GAME signals
+  -- These are World Cup group stage games
+  -- Wrong model generating signals on wrong markets
+  -- Low confidence (all tagged LOW) but signal pollution
+  -- Needs investigation: why is MLS Poisson touching WC markets?
+
+JOBS signals: ABSENT from both emails despite 13 KXU3 markets
+and 24 KXPAYROLLS markets confirmed live on Kalshi today.
+Either no edge found or scan missed. Check logs.
+
+GDP trades confirmed: #12 now +9c, #13 now +10c. Both healthy.
+
+### The deeper question Rus is sitting with
+
+After everything tonight -- three layers of data quality problems,
+98 dark games, signal inflation, pipeline gaps, fast/slow misfires,
+wrong model on wrong markets -- Rus's gut feeling can be summarized
+as one question he couldn't quite articulate:
+
+**"How much of what we think we know about this model is real,
+and how much is an artifact of a messy, bug-affected build period?"**
+
+65.5% WR on 59 unique games sounds good.
+But those 59 games came from:
+  - A pipeline that was dark 27.6% of the time
+  - A ticker bug that corrupted signal generation for 54 games
+  - A fast/slow pipeline that can misfire on incomplete data
+  - An OddsAPI quota that may have been exhausting mid-scan
+  - A CPI week gap with no known explanation
+
+The honest answer is: we don't know yet. Jun 23 ticker fix = restart.
+The REAL baseline starts now, with clean continuous data going forward.
+
+### What J@rv1s should investigate in the morning
+
+Beyond the original three threads, add these:
+
+THREAD 4 -- Edge calculation reliability
+When the model generates a +20c edge, how often is that because:
+  (a) We found a genuine market inefficiency, OR
+  (b) The OddsAPI feed had stale/incomplete odds at scan time?
+Check: do signals generated at 12PM vs 4PM have different edge
+distributions? If 4PM signals (fresher odds) have lower edges on
+average, that's a sign 12PM signals are inflated by stale data.
+
+THREAD 5 -- MLS model touching WC markets
+Why are Norway vs France, Uruguay vs Spain etc showing as MLS_GAME?
+These aren't MLS games. The model identity routing is wrong.
+Check daily_runner.py -- what determines which model handles
+which market? Is there a series prefix filter that's too broad?
+
+THREAD 6 -- Fast vs slow calibration state
+Fast run shows 1020 signals / Brier 0.1626
+Slow run shows 1378 signals / Brier 0.1734
+Subscriber alert fires from which run? If it's the fast run,
+subscribers are seeing signals based on a stale scorer state.
+
+THREAD 7 -- JOBS model scan
+13 KXU3 markets, 24 KXPAYROLLS markets confirmed live.
+Zero JOBS signals in either pipeline email.
+Is the JOBS model actually scanning these series, or is it
+looking for a different Kalshi series prefix?
+
+### Rus's final word tonight
+
+"I am human and gut feelings are not scientific, and I just
+don't know what I don't know, so I can't articulate what is
+giving me that feeling."
+
+That's the most honest framing possible. The gut is right to
+be unsettled. The data picture has too many confounds to be
+confident about anything pre-fix. But the direction is good
+and the fixes are going in. Fresh eyes in the morning.
+
+J@rv1s -- bring your best. Rus is counting on you to find
+what we couldn't tonight.
+
+---
+
+*Appended by Archie | ~10:35 PM CST | Mac reinstall in progress*
+*Storm rolling through Wichita -- 10 minutes left on the install*
 *Papa Ralph standard. 38 days to Vegas. Let's get it right.*
