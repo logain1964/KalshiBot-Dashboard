@@ -1,113 +1,130 @@
 # J@rv!s Morning Briefing
-# Prepared by Archie | Sunday June 28, 2026 -- Late Evening
-# Covers: Saturday June 27 + Sunday June 28 (two-day summary)
-# For: J@rv!s Web Session -- Monday June 29, 2026
+# Prepared by Archie | Monday June 29, 2026 -- Late Evening
+# For: J@rv!s Web Session -- Tuesday June 30, 2026
 
 ---
 
-## SYSTEM STATUS -- ALL GREEN
+## SYSTEM STATUS
 
 | Component | Status |
 |-----------|--------|
 | Oracle cron (02:00 CT) | ✅ Running clean |
-| SharpAPI | ✅ Live -- 17,280 calls/day |
-| MLB signal gate | ✅ Fixed commit 04759e8 -- first clean day Jun 28 |
-| mlb_gametime_fill.py | ✅ NEW -- Track A P1 deployed tonight |
-| WC calibration | ✅ Round of 32 begun -- Canada advanced |
-| CPI consensus | ✅ Updated tonight -- JUN 2.9→4.0% |
-| check_stops.py bat | ✅ Fixed -- explicit Python312 path all steps |
-| JOBS consensus | ✅ Current 130K/4.2% -- final Dow Jones survey due Mon Jun 29 |
-| GDPNow | ⚠️ 2.5438% -- at threshold. Trade #12 closed. Jul 1 update decisive. |
+| SharpAPI MLB | ✅ Operational -- 12PM + 4PM signals firing |
+| MLS/WC email identity bug | ✅ FIXED tonight -- ticker-based routing |
+| JOBS model KXPAYROLLS | ✅ FIXED tonight -- added to feed |
+| MLB suspension reason | ✅ FIXED tonight -- accurate text |
+| Subscriber digest | ✅ FIXED tonight -- shows tracked-only count |
+| WC calibration | ✅ R32 Games 1-3 backfilled |
+| NED vs MAR | ⏳ PENDING -- 9PM ET kickoff, backfill tomorrow AM |
+| JOBS consensus | ✅ 130K/4.2% -- ADP check Wednesday AM |
+| Oracle SSH key | ✅ FIXED -- sede_production.key permissions corrected |
 
 ---
 
-## TWO-DAY WORK LOG
+## TONIGHT'S WORK LOG (Jun 29, 2026)
 
-### Saturday June 27 (evening session)
+### Item 1 -- MLS/WC Identity Bug FIXED ✅
+Root cause found: `email_alerts.py` had its own copy of the label-text
+classifier (`detect_category`) that checked for "WC" in the signal label.
+WC R32 game labels ("France vs Sweden -- France wins") contain no "WC" text,
+so they fell through to "MLS GAME". Fix: detect_category now checks ticker
+prefix (KXWCGAME → WORLD CUP GAME, KXMLSGAME → MLS GAME) before any
+label-text fallback. All three call sites updated.
+**Commit 7bcfad7 -- laptop + Oracle synced (128fc9c)**
 
-- Fixed MLB signal gate: `mlb_model.py` was checking
-  `prob_source.startswith("OddsAPI")` -- after SharpAPI migration on Jun 26,
-  all signals were printed as FLAG but silently discarded before reaching
-  signals_log.csv. Root cause of zero MLB signals since Jun 23.
-  **Commit 04759e8 -- on both laptop and Oracle.**
+### Item 2 -- Oracle sede-pull ✅
+SSH key found at C:\Claude AI\sede_production.key -- permissions were
+too open (BUILTIN\Users + Authenticated Users had access). Fixed with
+icacls /inheritance:r + /remove. Oracle pulled all commits cleanly.
+**SSH fix: permanent -- key path and permissions now documented.**
 
-- JOBS consensus updated:
-  - NFP: 110K → 130K (Capital Economics June estimate)
-  - Unemployment: 4.3% → 4.2%
-  - CONSENSUS_LAST_UPDATED: 2026-06-27
+### Item 3 -- WC Backfill ✅ (partial -- NED/MAR pending)
+- Canada 1-0 South Africa (Jun 28) -- already done last session
+- Brazil 2-1 Japan (Jun 29) -- Martinelli 90+5 stoppage time winner
+- Paraguay def. Germany on penalties (Jun 29) -- MASSIVE upset, GER -300
+  Germany had Tah goal disallowed by VAR in ET. Lambda compression
+  confirmed again (model had GER 42.9% vs -300 actual favorite).
+- Netherlands vs Morocco -- 9PM ET kickoff, not yet played. Backfill Tue AM.
+Scorer: **1,297 signals | Brier 0.1774**
+**Commits 3e70f11, d29f401, cbf9ee8**
 
-- Oracle git config cleaned: merge.commit=no, pull.rebase=false.
-  No more nano editor on every git pull.
+### Item 4 -- JOBS Scan + Fix ✅
+Discovered KXPAYROLLS series was in market_scanner.py but silently
+dropped before reaching run_jobs_model(). Fixed directly on Oracle
+(python3 find/replace) -- KXPAYROLLS now included in jobs_markets feed.
+Critical fix with 3 days to July 2 jobs report.
+**Commit 8437496 (Oracle-originated, pushed to main)**
 
-### Sunday June 28 (full day + evening session)
+### Item 5 -- JOBS Consensus ✅
+No Dow Jones final survey number published yet for June. Current 130K/4.2%
+remains reasonable. ADP employment change drops Wednesday Jul 1 -- better
+real-time signal. Hold 130K, update after ADP if needed.
 
-**Morning verification:**
-- 7AM cron confirmed clean -- first real data run post-MLB-fix.
-- 10AM weekend refresh confirmed: `Kalshibot Refresh 10AM Weekend`
-  task ran successfully (Last Result: 0). MLB fired 13 games, SharpAPI(2bks)
-  on all entries. Fix confirmed end-to-end.
+### Item 6 -- MLB Signals Check + Fixes ✅
+MLB signals confirmed working:
+- PIT@PHI: YES 35.5c, edge 14.1c -- valid ticker, SharpAPI data
+- LAD@ATH: NO 39.5c, edge 9.6c -- valid ticker
+- 12PM + 4PM refreshes both fired cleanly
 
-**Evening session -- worked list items 1-7:**
+Three bugs fixed in same commit:
+1. MLB suspension reason: "0 resolved Brier signals" → accurate text
+   (n=73, Brier 0.2558, Gate 1 criteria, Jul 25 decision date)
+2. Subscriber digest "No signals today" → "No tradeable signals today"
+   + now shows tracked-only count from suspended models
+3. tracked_only_count wired through daily_runner → send_sede_no_signal_update
+   → format_sede_no_signal_update
+**Commit 4838464**
 
-1. JOBS consensus -- already current (130K/4.2%). No change.
-   Dow Jones final survey check needed Monday June 29.
-
-2. WC Backfill -- Canada 1-0 South Africa (Round of 32, Jun 28).
-   Eustaquio 90+2 stoppage time winner. Alphonso Davies off bench (75').
-   Canada advances to R16 vs Morocco/Netherlands on July 4 in Houston.
-   3 market entries added to signal_scorer.py.
-   Scorer now: 1,352 signals | Brier 0.1762
-   **Commit 3e70f11**
-
-3. GDP Trade #12 closed -- GDP>2.5% YES.
-   GDPNow at 2.5438% -- sitting exactly at threshold with downward PCE trend.
-   Exited at 42c (entry 40c). P&L: +$1.24. Result: WON.
-   Discretionary early exit before Jul 1 GDPNow update.
-   **Commit 1da24d2**
-
-4. CPI consensus updated:
-   JUN: 2.9% → 4.0% (May actual was 4.2% YoY -- Iran war energy shock)
-   JUL: 3.0% → 3.5% (post-peak trajectory estimate)
-   Std widened to 0.50 for geopolitical uncertainty.
-   CONSENSUS_LAST_UPDATED: 2026-06-28
-   **Commit 65df328**
-
-5. MLB Track A P1 built and deployed:
-   - `kalshi_price_at_gametime` column added to mlb_refresh.py log_signal()
-   - `mlb_gametime_fill.py` written -- fetches gametime prices from
-     market_cache.json and backfills column nightly for edge decay analysis
-   - `run_mlb_autoclose.bat` updated -- gametime fill now runs after autoclose
-   Edge decay measurement live. July 4 deadline met early.
-   **Commit e8558f1**
-
-6. check_stops.py bat fix:
-   All 3 bare `python` calls in run_kalshibot_refresh.bat standardized to
-   explicit `C:\Users\0V3RK1LL\AppData\Local\Programs\Python\Python312\python.exe`
-   path. Step 3 error eliminated. Path corrected to `tmp\check_stops.py`.
-   **Commit e11f898**
-
-7. Nightly summary written. Oracle will pull at 02:00 CT.
+### Oracle SSH Key -- Permanent Fix
+Key: C:\Claude AI\sede_production.key
+Fix: icacls /inheritance:r then /remove "BUILTIN\Administrators" and
+     "NT AUTHORITY\Authenticated Users"
+Working command:
+  ssh -i "C:\Claude AI\sede_production.key" ubuntu@163.192.200.127
 
 ---
 
 ## PAPER TRADE RECORD
 
-**Record: 7-5-0 | P&L: +$139.14 | Day 40**
+**Record: 7-5-0 | P&L: +$139.14 | Day 41**
 
-### Open Positions (3/5 slots)
+### Open Positions (2/5 slots)
 
-| # | Market | Dir | Entry | Live | Move | Status |
-|---|--------|-----|-------|------|------|--------|
-| #8 | Fed 1x cut 2026 | YES | 21c | 15c | -6c | Long-dated hold |
-| #13 | GDP >2.0% Q2 | YES | 60c | 92c | +32c | 🚀 Near resolution |
+| # | Market | Dir | Entry | Live | Status |
+|---|--------|-----|-------|------|--------|
+| #8 | Fed 1x cut 2026 | YES | 21c | 15c | Long-dated, hold |
+| #13 | GDP >2.0% YES | YES | 60c | 66c | +6c, 54bps buffer, hold |
 
-### Closed Tonight
+**3 slots open**
 
-| # | Market | Exit | P&L | Note |
-|---|--------|------|-----|------|
-| #12 | GDP >2.5% YES | 42c | +$1.24 | GDPNow at threshold -- discretionary exit |
+---
 
-### 2 slots open for new signals
+## WC R32 RESULTS SO FAR
+
+| Date | Match | Result | Notes |
+|------|-------|--------|-------|
+| Jun 28 | Canada vs South Africa | Canada 1-0 | Eustaquio 90+2 |
+| Jun 29 | Brazil vs Japan | Brazil 2-1 | Martinelli 90+5 |
+| Jun 29 | Germany vs Paraguay | PAR def GER (pens) | MASSIVE UPSET |
+| Jun 29 | Netherlands vs Morocco | ⏳ PENDING | 9PM ET kickoff |
+
+### Tomorrow's R32 Games (Jun 30)
+- Ivory Coast vs Norway (1PM ET, Dallas)
+- France vs Sweden (5PM ET, East Rutherford NJ)
+- Mexico vs Ecuador (9PM ET, Mexico City -- Azteca)
+
+---
+
+## COMMITS TONIGHT
+
+```
+cbf9ee8  WC backfill R32 Games 2-3: Brazil/Japan + Paraguay/Germany
+4838464  Fix MLB suspension reason + subscriber digest tracked-only count
+d29f401  WC backfill R32 Game 2: Brazil 2-1 Japan
+8437496  Fix JOBS: add KXPAYROLLS to jobs_markets feed (Oracle)
+128fc9c  Merge: Oracle data + laptop MLS/WC fix
+7bcfad7  Fix MLS/WC email identity bug: ticker-based detect_category
+```
 
 ---
 
@@ -115,86 +132,50 @@
 
 | Date | Event | Priority |
 |------|-------|---------|
-| Mon Jun 29 | Update JOBS consensus -- Dow Jones final survey | 🔴 Do first |
-| Wed Jul 1 | GDPNow update -- may affect Trade #13 | 🟡 Watch |
-| Wed Jul 1 | ADP employment change | 🟡 JOBS context |
-| Wed Jul 1 | USA vs Bosnia WC R32 (7 PM CST) | 🟡 WC model |
-| Thu Jul 2 | Jobs report 8:30 AM CT | 🔴 JOBS model live test |
-| Sat Jul 4 | WC R32 continues -- Canada vs Morocco/Netherlands | 🟡 WC model |
-| Sat Jul 4 | MLB Track A P1 deadline -- already done ✅ | ✅ Complete |
-| Mon Jul 14 | CPI release -- first signal with updated 4.0% consensus | 🔴 Watch |
-| Fri Jul 25 | MLB parallel track decision -- Track A vs Track B | 🔴 Architecture |
-| Sat Aug 2 | Vegas demo -- Anthony | 🔴 34 days |
+| Tue Jun 30 | NED/MAR backfill -- first thing | 🔴 |
+| Tue Jun 30 | WC R32: IVC/NOR, FRA/SWE, MEX/ECU | 🟡 Backfill |
+| Wed Jul 1 | **NFL build window opens** | 🔴 |
+| Wed Jul 1 | GDPNow next update | 🟡 |
+| Wed Jul 1 | ADP employment change -- update JOBS if needed | 🟡 |
+| Wed Jul 1 | USA vs Bosnia 7PM CST -- WC R32 | 🟡 |
+| Thu Jul 2 | **Jobs report 8:30AM CT** | 🔴 JOBS model live test |
+| Fri Jul 25 | MLB Track A decision | 🔴 |
+| Sat Aug 2 | Vegas -- Anthony demo | 🔴 34 days |
 
 ---
 
-## MODEL STATUS
+## PRIORITIES FOR J@rv!s TUESDAY AM
 
-| Model | Tier | Signals | Win Rate | Brier | Notes |
-|-------|------|---------|----------|-------|-------|
-| WC_GAME | Strong Node | 1,289 | 35.5% | 0.1762 | R32 began today |
-| SOCCER_GAME | Strong Node | -- | -- | -- | Folded into WC_GAME |
-| GDP | Acceptable | 63 | 55.6% | 0.1337 | Trade #12 closed |
-| JOBS | Acceptable | -- | -- | -- | Jul 2 report incoming |
-| CPI | Acceptable | -- | -- | -- | Consensus updated tonight |
-| FED | Weak Node | -- | -- | -- | Long-dated, monitoring |
-| BTC | Weak Node | -- | -- | -- | Monitoring only |
-| MLB_GAME | Pending | 73 | 53.4% | 0.2558 | BELOW RANDOM -- Track A clock started Jun 28 |
-
----
-
-## COMMITS TONIGHT (Jun 27-28)
-
-```
-e11f898  Fix check_stops.py bat path + standardize Python312 path all steps
-e8558f1  Track A P1: kalshi_price_at_gametime + mlb_gametime_fill.py deployed
-1da24d2  Close Trade #12: GDP>2.5% exit 42c +$1.24
-65df328  CPI consensus: JUN 2.9->4.0%, JUL 3.0->3.5%, std 0.50
-5327dad  Merge: Oracle data files + WC backfill Canada 1-0 RSA
-3e70f11  WC backfill R32 Game 1: Canada 1-0 South Africa, Brier 0.1762
-04759e8  Fix MLB signal gate: OddsAPI check blocking SharpAPI signals
-```
-
----
-
-## MONDAY PRIORITIES FOR J@rv!s
-
-1. **JOBS consensus -- final Dow Jones survey**
-   Check Wall Street NFP estimate for June jobs report (Jul 2).
-   Update NFP_CONSENSUS in jobs_model.py if moved from 130K.
-   This is the last update window before the report.
-
-2. **GDPNow Jul 1 watch**
-   Next update Wednesday. Trade #13 (GDP>2.0% at 92c) likely resolves
-   itself. No action needed unless GDPNow drops below 2.0% (extremely
-   unlikely -- currently 2.54%).
-
-3. **WC R32 results**
-   Multiple R32 games Monday/Tuesday. Check results and backfill
-   signal_scorer.py after each game. Keep Brier trending down.
-
-4. **MLB Track A monitoring**
-   mlb_gametime_fill.py will auto-run nightly. Check signals_log.csv
-   Tuesday to confirm kalshi_price_at_gametime column is populating.
-
-5. **2 open trade slots**
-   JOBS model may fire after Jul 2 report.
-   WC_GAME knockout signals possible if strong edge emerges.
+1. **NED/MAR result** -- check result, backfill signal_scorer.py
+2. **Jun 30 WC games** -- 3 games today, backfill as results come in
+3. **NFL build window opens Wednesday** -- pull NFL design doc from
+   session archive before Archie's evening session
+4. **ADP Wednesday** -- if ADP diverges from 130K consensus, flag for
+   Archie to update jobs_model.py before 8:30AM Thursday
+5. **USA vs Bosnia 7PM CST Wednesday** -- SEDE WC model should now
+   route correctly (email fix deployed tonight)
 
 ---
 
 ## NOTES FOR J@rv!s
 
-- Rus had a long day -- yard work + housework in the heat before evening session.
-  Cranked through all 7 list items cleanly. Good session.
-- MLB Brier at 0.2558 (below random 0.25). This is the number to watch.
-  Track A runs through Jul 25. If it doesn't improve meaningfully,
-  Track B (genuine Elo/FIP model) gets the green light.
-- Vegas demo 34 days out. Architecture is sound. Data is accumulating.
-  Papa Ralph Protocol in effect.
+- Germany out of the World Cup. -300 favorite eliminated by Paraguay
+  on penalties. Lambda compression bug in WC model now has two confirmed
+  data points (Germany 42.9% model vs heavy favorite in both cases).
+  Flag this for the June 26 review addendum when you get to it.
+- Oracle SSH: key is at C:\Claude AI\sede_production.key -- permissions
+  were the issue, now fixed. Document this path permanently.
+- MLB Track A: 8 signals logged today across 12PM and 4PM runs. Brier
+  still 0.2558. Edge values thin (6-14c). Clock running, Jul 25 is
+  the real test.
+- Subscriber digest will now say "X signals logged for calibration"
+  on MLB-only days instead of implying the pipeline did nothing.
+- Trade #13 (GDP>2.0% at 66c) essentially done -- July 30 BEA advance
+  estimate will close it. Don't touch it.
+- Vegas booked. 34 days. Papa Ralph Protocol.
 
 ---
 
-*Prepared by Archie | Late evening June 28, 2026*
-*7 items. All done. Go rest, Rus.*
+*Prepared by Archie | Late evening June 29, 2026*
+*7 items worked. Bugs found and fixed as discovered -- Papa Ralph standard.*
 *34 days to Vegas.*
