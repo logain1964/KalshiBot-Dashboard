@@ -256,12 +256,12 @@
     "edge_cents": 45.1,
     "thesis": "GDPNow tracking 3.7469% for Q2 2026 \u2014 124bps buffer above 2.5% threshold. Market pricing 40% chance of exceeding 2.5% when tracker sits at 3.75%. Systematic overpricing of downside risk post-tariff uncertainty.",
     "event_date": "2026-07-30",
-    "status": "OPEN",
-    "exit_price_cents": null,
-    "exit_date": null,
-    "pnl_dollars": null,
-    "result": null,
-    "close_note": null
+    "status": "CLOSED",
+    "exit_price_cents": 42,
+    "exit_date": "2026-06-28 20:30 CT",
+    "pnl_dollars": 1.24,
+    "result": "WON",
+    "close_note": "GDPNow at 2.5438% -- at threshold with downward PCE trend. Took +2c profit at 42c before Jul 1 update. Discretionary early exit."
   },
   {
     "id": 13,
