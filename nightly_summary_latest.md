@@ -8,9 +8,9 @@
 
 | Component | Status |
 |-----------|--------|
-| Oracle cron (02:00 CT) | ✅ Running clean |
+| Oracle cron (02:00 CT) | ⚠️ NEEDS VERIFICATION -- see MLS/WC below |
 | SharpAPI MLB | ✅ Operational -- 12PM + 4PM signals firing |
-| MLS/WC email identity bug | ✅ FIXED tonight -- ticker-based routing |
+| MLS/WC email identity bug | ⚠️ TWO-LAYER BUG -- layer 1 fixed but 9:02PM run still wrong, layer 2 (real root cause) fixed after. VERIFY 2AM run. |
 | JOBS model KXPAYROLLS | ✅ FIXED tonight -- added to feed |
 | MLB suspension reason | ✅ FIXED tonight -- accurate text |
 | Subscriber digest | ✅ FIXED tonight -- shows tracked-only count |
@@ -21,16 +21,58 @@
 
 ---
 
+## ⚠️ CRITICAL FOLLOW-UP -- MLS/WC BUG WAS TWO LAYERS DEEP
+
+The 9:02 PM email tonight (commit 7bcfad7 was already live) STILL showed
+WC R32 games under [MLS GAME]: USA vs Bosnia, France vs Sweden, Portugal
+vs Croatia, Mexico vs Ecuador, Netherlands vs Morocco. Rus caught this
+by forwarding the actual alert email -- good thing he checks the real
+output and doesn't just trust the commit log.
+
+ROOT CAUSE (the real one): models/soccer_game_model.py's flagged.append()
+calls in BOTH run_mls_game_model() and run_wc_game_model() never included
+a ticker -- only 5-element tuples (label, direction, edge, kalshi, model_prob).
+Every WC/MLS signal logged to signals_log.csv had market_ticker="" since
+the model was written. The 7bcfad7 fix (ticker-prefix routing in
+email_alerts.py) could never work because there was no ticker to check --
+it was checking an empty string every time and falling through to the
+broken label-text logic underneath.
+
+FIX: Both functions now pull mk_ticker = mk.get("ticker", "") from the
+per-outcome market dict and append it as the 6th tuple element.
+Verified live (manual model run): United Sta vs Bosnia now produces
+ticker 'KXWCGAME-26JUL01USABIH-USA' (6-element tuple) instead of
+empty string.
+**Commit c7b864e**
+
+THIS IS NOT YET VERIFIED IN PRODUCTION. The 9PM run had only layer 1.
+Tonight's 2AM cron is the first run with BOTH fixes live.
+
+**J@rv!s: FIRST THING TOMORROW -- check the next email/Telegram alert
+after 2AM. Confirm WC R32 games show under [WORLD CUP GAME] not
+[MLS GAME]. If still wrong, there is a third layer somewhere --
+do not assume fixed without checking actual alert output.**
+
+---
+
 ## TONIGHT'S WORK LOG (Jun 29, 2026)
 
-### Item 1 -- MLS/WC Identity Bug FIXED ✅
-Root cause found: `email_alerts.py` had its own copy of the label-text
+### Item 1 -- MLS/WC Identity Bug -- TWO LAYERS, BOTH NOW FIXED ⚠️→✅
+Layer 1 found first: `email_alerts.py` had its own copy of the label-text
 classifier (`detect_category`) that checked for "WC" in the signal label.
 WC R32 game labels ("France vs Sweden -- France wins") contain no "WC" text,
 so they fell through to "MLS GAME". Fix: detect_category now checks ticker
 prefix (KXWCGAME → WORLD CUP GAME, KXMLSGAME → MLS GAME) before any
 label-text fallback. All three call sites updated.
 **Commit 7bcfad7 -- laptop + Oracle synced (128fc9c)**
+
+Layer 2 found LATER tonight after Rus forwarded the actual 9:02PM alert
+email showing the bug still present. Real root cause: soccer_game_model.py
+never attached a ticker to WC/MLS signals at all -- flagged.append() tuples
+were 5 elements, market_ticker was always "" in signals_log.csv. Layer 1's
+ticker check had nothing to check. Fixed both run_mls_game_model() and
+run_wc_game_model() to pass mk.get("ticker") as 6th tuple element.
+**Commit c7b864e -- NOT YET VERIFIED IN A LIVE CRON RUN.**
 
 ### Item 2 -- Oracle sede-pull ✅
 SSH key found at C:\Claude AI\sede_production.key -- permissions were
@@ -118,6 +160,7 @@ Working command:
 ## COMMITS TONIGHT
 
 ```
+c7b864e  Fix REAL root cause of MLS/WC bug: soccer_game_model.py tuples missing ticker
 cbf9ee8  WC backfill R32 Games 2-3: Brazil/Japan + Paraguay/Germany
 4838464  Fix MLB suspension reason + subscriber digest tracked-only count
 d29f401  WC backfill R32 Game 2: Brazil 2-1 Japan
@@ -146,14 +189,18 @@ d29f401  WC backfill R32 Game 2: Brazil 2-1 Japan
 
 ## PRIORITIES FOR J@rv!s TUESDAY AM
 
-1. **NED/MAR result** -- check result, backfill signal_scorer.py
-2. **Jun 30 WC games** -- 3 games today, backfill as results come in
-3. **NFL build window opens Wednesday** -- pull NFL design doc from
+1. **VERIFY MLS/WC fix actually worked** -- check the first email/Telegram
+   alert after 2AM. Confirm WC R32 games (USA/Bosnia, France/Sweden, etc.)
+   show under [WORLD CUP GAME] not [MLS GAME]. This bug had two layers
+   tonight -- do not assume fixed without checking real alert output.
+2. **NED/MAR result** -- check result, backfill signal_scorer.py
+3. **Jun 30 WC games** -- 3 games today, backfill as results come in
+4. **NFL build window opens Wednesday** -- pull NFL design doc from
    session archive before Archie's evening session
-4. **ADP Wednesday** -- if ADP diverges from 130K consensus, flag for
+5. **ADP Wednesday** -- if ADP diverges from 130K consensus, flag for
    Archie to update jobs_model.py before 8:30AM Thursday
-5. **USA vs Bosnia 7PM CST Wednesday** -- SEDE WC model should now
-   route correctly (email fix deployed tonight)
+6. **USA vs Bosnia 7PM CST Wednesday** -- SEDE WC model should now
+   route correctly (both layers of fix deployed tonight, pending verification)
 
 ---
 
