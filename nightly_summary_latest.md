@@ -1,228 +1,152 @@
-# J@rv!s Morning Briefing
-# Prepared by Archie | Monday June 29, 2026 -- Late Evening
-# For: J@rv!s Web Session -- Tuesday June 30, 2026
+# SEDE Nightly Summary — 2026-06-30 (Evening Session, Opus 4.7 extra)
+
+**For:** J@rv!s (morning briefing)
+**From:** Archie (Claude Opus 4.7 extra, web interface, this session)
+**Session focus:** NFL model Papa Ralph → BIAS → FORGE audit, pre-MLB verdict
+**Rus decision cadence:** Sleep on drafts tonight → J@rv!s independent second pass in AM → Rus re-read after briefing → ratification decision
 
 ---
 
-## SYSTEM STATUS
+## TL;DR FOR J@RV!S
 
-| Component | Status |
-|-----------|--------|
-| Oracle cron (02:00 CT) | ⚠️ NEEDS VERIFICATION -- see MLS/WC below |
-| SharpAPI MLB | ✅ Operational -- 12PM + 4PM signals firing |
-| MLS/WC email identity bug | ⚠️ TWO-LAYER BUG -- layer 1 fixed but 9:02PM run still wrong, layer 2 (real root cause) fixed after. VERIFY 2AM run. |
-| JOBS model KXPAYROLLS | ✅ FIXED tonight -- added to feed |
-| MLB suspension reason | ✅ FIXED tonight -- accurate text |
-| Subscriber digest | ✅ FIXED tonight -- shows tracked-only count |
-| WC calibration | ✅ R32 Games 1-3 backfilled |
-| NED vs MAR | ⏳ PENDING -- 9PM ET kickoff, backfill tomorrow AM |
-| JOBS consensus | ✅ 130K/4.2% -- ADP check Wednesday AM |
-| Oracle SSH key | ✅ FIXED -- sede_production.key permissions corrected |
+Rus explicitly asked to run BIAS/FORGE/Papa Ralph on the NFL plan tonight, taking into account everything learned from WC, Soccer, and MLB. We switched to Opus 4.7 extra for the audit itself. Two documents were drafted:
 
----
+1. `C:\SEEKS\docs\NFL_model_design_v1.1_amendment.md` (amendment to v1.0)
+2. `C:\KalshiBot\model_integrity\integrity_nfl_game.md` (draft integrity check)
 
-## ⚠️ CRITICAL FOLLOW-UP -- MLS/WC BUG WAS TWO LAYERS DEEP
+Both are **DRAFT status** — not ratified. Rus wants your **independent second pass** before he re-reads and ratifies. Don't rubber-stamp. Challenge everything.
 
-The 9:02 PM email tonight (commit 7bcfad7 was already live) STILL showed
-WC R32 games under [MLS GAME]: USA vs Bosnia, France vs Sweden, Portugal
-vs Croatia, Mexico vs Ecuador, Netherlands vs Morocco. Rus caught this
-by forwarding the actual alert email -- good thing he checks the real
-output and doesn't just trust the commit log.
+**Key commitments made in the amendment (need your review):**
 
-ROOT CAUSE (the real one): models/soccer_game_model.py's flagged.append()
-calls in BOTH run_mls_game_model() and run_wc_game_model() never included
-a ticker -- only 5-element tuples (label, direction, edge, kalshi, model_prob).
-Every WC/MLS signal logged to signals_log.csv had market_ticker="" since
-the model was written. The 7bcfad7 fix (ticker-prefix routing in
-email_alerts.py) could never work because there was no ticker to check --
-it was checking an empty string every time and falling through to the
-broken label-text logic underneath.
-
-FIX: Both functions now pull mk_ticker = mk.get("ticker", "") from the
-per-outcome market dict and append it as the 6th tuple element.
-Verified live (manual model run): United Sta vs Bosnia now produces
-ticker 'KXWCGAME-26JUL01USABIH-USA' (6-element tuple) instead of
-empty string.
-**Commit c7b864e**
-
-THIS IS NOT YET VERIFIED IN PRODUCTION. The 9PM run had only layer 1.
-Tonight's 2AM cron is the first run with BOTH fixes live.
-
-**J@rv!s: FIRST THING TOMORROW -- check the next email/Telegram alert
-after 2AM. Confirm WC R32 games show under [WORLD CUP GAME] not
-[MLS GAME]. If still wrong, there is a third layer somewhere --
-do not assume fixed without checking actual alert output.**
+- **STRONG NODE target** for NFL_GAME, ratified regardless of MLB Track A/B verdict
+- **Sept 3 as sole hard deadline** — Aug 2 Vegas demo softened per Rus, Aug 15 preseason target softened
+- **Resequenced timeline:** Weeks 1-3 architecture-independent work only; architectural details ratified July 25 post-MLB verdict; signal logic build Weeks 4-6 after that
+- **10 BIAS findings** surfaced (assumptions 1, 2, 5 architectural; 3, 4, 6 operational; 7, 9 scope; 8, 10 calibrations)
+- **Preseason reframed** as pipeline smoke test only, real validation is regular-season Weeks 1-4
+- **Sunday T-90min inactives window** identified as build item (`nfl_inactives_check.py`)
+- **QB status tiered** (5 tiers), not binary confirmation
+- **Per-game cron scheduling** (Thu/Sun/Mon primary), not MLB-pattern daily 2AM CT
 
 ---
 
-## TONIGHT'S WORK LOG (Jun 29, 2026)
+## WHAT ARCHIE WANTS YOU TO CHALLENGE
 
-### Item 1 -- MLS/WC Identity Bug -- TWO LAYERS, BOTH NOW FIXED ⚠️→✅
-Layer 1 found first: `email_alerts.py` had its own copy of the label-text
-classifier (`detect_category`) that checked for "WC" in the signal label.
-WC R32 game labels ("France vs Sweden -- France wins") contain no "WC" text,
-so they fell through to "MLS GAME". Fix: detect_category now checks ticker
-prefix (KXWCGAME → WORLD CUP GAME, KXMLSGAME → MLS GAME) before any
-label-text fallback. All three call sites updated.
-**Commit 7bcfad7 -- laptop + Oracle synced (128fc9c)**
+Deliberately laying out where the audit is most exposed to being wrong, so you can hit these hard:
 
-Layer 2 found LATER tonight after Rus forwarded the actual 9:02PM alert
-email showing the bug still present. Real root cause: soccer_game_model.py
-never attached a ticker to WC/MLS signals at all -- flagged.append() tuples
-were 5 elements, market_ticker was always "" in signals_log.csv. Layer 1's
-ticker check had nothing to check. Fixed both run_mls_game_model() and
-run_wc_game_model() to pass mk.get("ticker") as 6th tuple element.
-**Commit c7b864e -- NOT YET VERIFIED IN A LIVE CRON RUN.**
+### 1. Is Strong Node target actually right for NFL?
+The commitment is that NFL builds as Strong Node regardless of MLB verdict. Reasoning: highest-volume Kalshi product ($3.8B), rebuild risk during live season is worse than pre-live rebuild, SEEKS needs genuine analytical nodes. Argument against: if MLB Track A dramatically validates (documented arbitrage works), NFL could ship faster as arbitrage-anchored and add analytical layers later. Archie recommended Strong Node primary. Rus concurred. Verify this holds under your independent read.
 
-### Item 2 -- Oracle sede-pull ✅
-SSH key found at C:\Claude AI\sede_production.key -- permissions were
-too open (BUILTIN\Users + Authenticated Users had access). Fixed with
-icacls /inheritance:r + /remove. Oracle pulled all commits cleanly.
-**SSH fix: permanent -- key path and permissions now documented.**
+### 2. Are the resequenced timeline slack assumptions realistic?
+Weeks 4-6 (July 22 – Aug 11) allocated for signal logic build against ratified architecture. That's 3 weeks for: Elo variant selection + implementation, tiered QB injury adjustment, weather adjustment logic, context_confidence formula rebuild from NFL-specific factors, backtest against 2024 data. Original v1.0 doc had 1 week for this and was flagged as optimistic. Is 3 weeks actually enough? What's the honest floor?
 
-### Item 3 -- WC Backfill ✅ (partial -- NED/MAR pending)
-- Canada 1-0 South Africa (Jun 28) -- already done last session
-- Brazil 2-1 Japan (Jun 29) -- Martinelli 90+5 stoppage time winner
-- Paraguay def. Germany on penalties (Jun 29) -- MASSIVE upset, GER -300
-  Germany had Tah goal disallowed by VAR in ET. Lambda compression
-  confirmed again (model had GER 42.9% vs -300 actual favorite).
-- Netherlands vs Morocco -- 9PM ET kickoff, not yet played. Backfill Tue AM.
-Scorer: **1,297 signals | Brier 0.1774**
-**Commits 3e70f11, d29f401, cbf9ee8**
+### 3. Is the SharpAPI escalation criteria placeholder defensible?
+Archie wrote: "escalate to Odds API Professional if 2-book consensus disagrees with Kalshi close by more than 6 cents on more than 20% of tracked games over 3+ weeks." Archie flagged this openly as placeholder numbers, not derived. Should this be left as tentative or removed entirely until Week 1 market research produces real thresholds?
 
-### Item 4 -- JOBS Scan + Fix ✅
-Discovered KXPAYROLLS series was in market_scanner.py but silently
-dropped before reaching run_jobs_model(). Fixed directly on Oracle
-(python3 find/replace) -- KXPAYROLLS now included in jobs_markets feed.
-Critical fix with 3 days to July 2 jobs report.
-**Commit 8437496 (Oracle-originated, pushed to main)**
+### 4. Is context_confidence rebuild from scratch actually necessary?
+Archie's BIAS finding #2 said inheriting from MLB pattern is risky because MLB is PENDING. But if MLB Track B wins on July 25, MLB moves toward Strong Node classification and its context_confidence pattern may be legitimately transferable. Is "rebuild from scratch for NFL" the right call, or should we conditional it on MLB verdict?
 
-### Item 5 -- JOBS Consensus ✅
-No Dow Jones final survey number published yet for June. Current 130K/4.2%
-remains reasonable. ADP employment change drops Wednesday Jul 1 -- better
-real-time signal. Hold 130K, update after ADP if needed.
+### 5. Injury data source selection is Week 1-3 task — is that the right cadence?
+Options listed: ESPN, Rotoworld, NFL.com, potentially SharpAPI. Nothing selected yet. Is this a "decide in Week 1 and commit" task or should it get a proper source comparison test (test all viable options against known-past-week injury data, pick winner based on accuracy/coverage/reliability)?
 
-### Item 6 -- MLB Signals Check + Fixes ✅
-MLB signals confirmed working:
-- PIT@PHI: YES 35.5c, edge 14.1c -- valid ticker, SharpAPI data
-- LAD@ATH: NO 39.5c, edge 9.6c -- valid ticker
-- 12PM + 4PM refreshes both fired cleanly
+### 6. Is anything meaningful missing from the BIAS pass?
+Ten assumptions surfaced. What else should have been on that list that wasn't? Specifically consider: divisional matchup dynamics, playoff-implication weeks, primetime game psychology, coaching change effects mid-season, injury-report gamesmanship (some teams overreport, some underreport).
 
-Three bugs fixed in same commit:
-1. MLB suspension reason: "0 resolved Brier signals" → accurate text
-   (n=73, Brier 0.2558, Gate 1 criteria, Jul 25 decision date)
-2. Subscriber digest "No signals today" → "No tradeable signals today"
-   + now shows tracked-only count from suspended models
-3. tracked_only_count wired through daily_runner → send_sede_no_signal_update
-   → format_sede_no_signal_update
-**Commit 4838464**
-
-### Oracle SSH Key -- Permanent Fix
-Key: C:\Claude AI\sede_production.key
-Fix: icacls /inheritance:r then /remove "BUILTIN\Administrators" and
-     "NT AUTHORITY\Authenticated Users"
-Working command:
-  ssh -i "C:\Claude AI\sede_production.key" ubuntu@163.192.200.127
+### 7. The Signal Contract deferral decision
+v1.0 doc deferred Signal Contract adoption. Amendment kept the deferral but acknowledged the rationale was weakly argued. Should NFL actually be built to Contract from day one? Cost is scope creep. Benefit is that the highest-volume model would be the first Contract-conforming one, potentially anchoring the cross-cutting rollout to a real production model instead of a theoretical target. Archie kept the deferral. Second opinion wanted.
 
 ---
 
-## PAPER TRADE RECORD
+## SESSION HISTORY (for context)
 
-**Record: 7-5-0 | P&L: +$139.14 | Day 41**
+**Rus's opening question:** Whether to switch models for this work. Archie recommended Opus for the NFL audit specifically, Sonnet for FORGE application-to-existing-frameworks. Rus switched to Opus 4.7 extra for this session.
 
-### Open Positions (2/5 slots)
+**Sequence discussion:** Archie initially proposed BIAS → FORGE → Papa Ralph. Rus asked for the unbiased hard-truth recommendation. Archie reversed to Papa Ralph → BIAS → FORGE, explaining that Papa Ralph is the framing question that determines whether the design is worth auditing at all, not a rubber-stamp check at the end. Rus agreed.
 
-| # | Market | Dir | Entry | Live | Status |
-|---|--------|-----|-------|------|--------|
-| #8 | Fed 1x cut 2026 | YES | 21c | 15c | Long-dated, hold |
-| #13 | GDP >2.0% YES | YES | 60c | 66c | +6c, 54bps buffer, hold |
+**Pre-audit honest flags:**
+- The June 12 NFL design doc predates the June 27 Foundation Doc v1.0.1, so temporal misalignment was baked in from the start
+- The doc's line "should the model's 'true probability' anchor be sportsbook-line-based BY DESIGN?" is the exact question that killed MLB_GAME — flagged but not resolved in v1.0
+- Running this audit pre-MLB verdict (July 25) means answers on the sportsbook-anchor question are tentative until then
 
-**3 slots open**
+**Vegas demo softening:** Rus confirmed Aug 2 was never a hard external date — he set it as a self-imposed forcing function. Archie called out the pattern (this was the second time in-session Rus removed a self-imposed pressure) and flagged that Papa Ralph discipline is easier with real deadlines than artificial ones. Rus confirmed no other dates need re-examining except NFL kickoff Sept 3.
 
----
+**Strong Node commitment:** With Vegas softened, Archie recommended committing to Strong Node primary architecture regardless of MLB verdict. Rus agreed. This is now the ratified position (pending your second pass).
 
-## WC R32 RESULTS SO FAR
-
-| Date | Match | Result | Notes |
-|------|-------|--------|-------|
-| Jun 28 | Canada vs South Africa | Canada 1-0 | Eustaquio 90+2 |
-| Jun 29 | Brazil vs Japan | Brazil 2-1 | Martinelli 90+5 |
-| Jun 29 | Germany vs Paraguay | PAR def GER (pens) | MASSIVE UPSET |
-| Jun 29 | Netherlands vs Morocco | ⏳ PENDING | 9PM ET kickoff |
-
-### Tomorrow's R32 Games (Jun 30)
-- Ivory Coast vs Norway (1PM ET, Dallas)
-- France vs Sweden (5PM ET, East Rutherford NJ)
-- Mexico vs Ecuador (9PM ET, Mexico City -- Azteca)
+**"Do not start writing NFL model code before July 25 based on this audit"** — Archie's explicit guidance. Weeks 1-3 architecture-independent work only. Rus did not push back.
 
 ---
 
-## COMMITS TONIGHT
+## CURRENT SEDE HEALTH (verified from paper_trades.json this session)
 
-```
-c7b864e  Fix REAL root cause of MLS/WC bug: soccer_game_model.py tuples missing ticker
-cbf9ee8  WC backfill R32 Games 2-3: Brazil/Japan + Paraguay/Germany
-4838464  Fix MLB suspension reason + subscriber digest tracked-only count
-d29f401  WC backfill R32 Game 2: Brazil 2-1 Japan
-8437496  Fix JOBS: add KXPAYROLLS to jobs_markets feed (Oracle)
-128fc9c  Merge: Oracle data + laptop MLS/WC fix
-7bcfad7  Fix MLS/WC email identity bug: ticker-based detect_category
-```
+**Record:** 8-5-5 (W-L-Early Exit), +$139.14
 
----
+Note: memory had this as 7-5-0 which was stale. Actual closed-trade count is 8W/5L/5EE. The +$139.14 total reconciles to memory value exactly, so accounting is intact — just the win/loss/EE tallies were off in memory.
 
-## KEY DATES THIS WEEK
+**Open positions (2):**
+- **Trade #8:** Fed cuts 1x 2026, YES @ 21c, 119 contracts, event 2026-12-31. Fed model classified as WEAK NODE per Foundation Doc v1.0.1.
+- **Trade #13:** GDP > 2.0% YES @ 60c, 41 contracts, event 2026-07-30. GDP model classified as ACCEPTABLE NODE.
 
-| Date | Event | Priority |
-|------|-------|---------|
-| Tue Jun 30 | NED/MAR backfill -- first thing | 🔴 |
-| Tue Jun 30 | WC R32: IVC/NOR, FRA/SWE, MEX/ECU | 🟡 Backfill |
-| Wed Jul 1 | **NFL build window opens** | 🔴 |
-| Wed Jul 1 | GDPNow next update | 🟡 |
-| Wed Jul 1 | ADP employment change -- update JOBS if needed | 🟡 |
-| Wed Jul 1 | USA vs Bosnia 7PM CST -- WC R32 | 🟡 |
-| Thu Jul 2 | **Jobs report 8:30AM CT** | 🔴 JOBS model live test |
-| Fri Jul 25 | MLB Track A decision | 🔴 |
-| Sat Aug 2 | Vegas -- Anthony demo | 🔴 34 days |
+**Positions memory listed as open but actually closed:**
+- #15 CAR Stanley Cup — CLOSED WON 2026-06-14, +$19.36 (Carolina won Cup 4-2 vs VGK)
+- #16 SAS NBA Championship — CLOSED LOST 2026-06-13, -$24.92 (NYK won 2026 NBA title)
+
+**Data quality flag for J@rv!s to look at:**
+Trades #23 and #24 (CPI June 10 trades) have close_note text reading "AUTO_STOP_LOSS: loss $XX.XX exceeded $15.00 limit at 92c" but pnl_dollars shows +$21.00 and +$35.10 respectively. The P&L values reconcile to the memory total correctly ($139.14), but the close_note text appears inverted (says "loss" when the accounting shows a gain). Not urgent but worth eyeballing — either the close_note was miswritten, or the auto_stop_loss logic mislabels stops as losses when they trigger on favorable moves. Low priority but flagging.
 
 ---
 
-## PRIORITIES FOR J@rv!s TUESDAY AM
+## STANDING MODEL STATUS (per Foundation Doc v1.0.1)
 
-1. **VERIFY MLS/WC fix actually worked** -- check the first email/Telegram
-   alert after 2AM. Confirm WC R32 games (USA/Bosnia, France/Sweden, etc.)
-   show under [WORLD CUP GAME] not [MLS GAME]. This bug had two layers
-   tonight -- do not assume fixed without checking real alert output.
-2. **NED/MAR result** -- check result, backfill signal_scorer.py
-3. **Jun 30 WC games** -- 3 games today, backfill as results come in
-4. **NFL build window opens Wednesday** -- pull NFL design doc from
-   session archive before Archie's evening session
-5. **ADP Wednesday** -- if ADP diverges from 130K consensus, flag for
-   Archie to update jobs_model.py before 8:30AM Thursday
-6. **USA vs Bosnia 7PM CST Wednesday** -- SEDE WC model should now
-   route correctly (both layers of fix deployed tonight, pending verification)
+- **WC_GAME:** STRONG NODE. Post-fix monitoring (YES gate ≥45%, NO fade floor). Brier 0.1773 as of last WC backfill. Continuing calibration through July 19 final.
+- **SOCCER_GAME (MLS):** STRONG NODE. Dixon-Coles Poisson.
+- **GDP:** ACCEPTABLE NODE with documented caveats. Trade #12 closed +$1.24 on Jun 28 after GDPNow dropped to 2.5438%.
+- **JOBS:** ACCEPTABLE NODE. n=81, 58.0% WR, Brier 0.135. GO-LIVE ELIGIBLE.
+- **CPI:** ACCEPTABLE NODE.
+- **FED:** WEAK NODE (review required). Open trade #8.
+- **BTC:** WEAK NODE pending implied vol comparison test.
+- **MLB_GAME:** PENDING. Track A monitoring, Brier 0.2558, decision date **July 25** (in 25 days).
 
 ---
 
-## NOTES FOR J@rv!s
+## KEY DATES (real deadlines only)
 
-- Germany out of the World Cup. -300 favorite eliminated by Paraguay
-  on penalties. Lambda compression bug in WC model now has two confirmed
-  data points (Germany 42.9% model vs heavy favorite in both cases).
-  Flag this for the June 26 review addendum when you get to it.
-- Oracle SSH: key is at C:\Claude AI\sede_production.key -- permissions
-  were the issue, now fixed. Document this path permanently.
-- MLB Track A: 8 signals logged today across 12PM and 4PM runs. Brier
-  still 0.2558. Edge values thin (6-14c). Clock running, Jul 25 is
-  the real test.
-- Subscriber digest will now say "X signals logged for calibration"
-  on MLB-only days instead of implying the pipeline did nothing.
-- Trade #13 (GDP>2.0% at 66c) essentially done -- July 30 BEA advance
-  estimate will close it. Don't touch it.
-- Vegas booked. 34 days. Papa Ralph Protocol.
+- **July 1 (tomorrow):** Rus re-read of NFL amendment + integrity check. Your morning briefing feeds into this.
+- **July 1:** NFL Weeks 1-3 architecture-independent build window opens.
+- **July 25:** MLB Track A/B verdict + Foundation Doc v1.1.0. Single architectural decision point.
+- **July 30:** GDP > 2.0% resolution (open trade #13 event date).
+- **August 2:** Vegas trip. Demo softened, informal show-and-tell only if ready.
+- **September 3:** NFL regular season kickoff — sole hard deadline for NFL_GAME production.
+- **December 31:** Fed rate cuts count resolution (open trade #8 event date).
 
 ---
 
-*Prepared by Archie | Late evening June 29, 2026*
-*7 items worked. Bugs found and fixed as discovered -- Papa Ralph standard.*
-*34 days to Vegas.*
+## WHAT ARCHIE DID NOT DO (for transparency)
+
+- Did not run a full SEDE health check at session start (session opened with the NFL audit discussion, health check was implicit via existing memory context)
+- Did not push amendment to git (drafts only, ratification pending)
+- Did not update `amendment_log.md` in `C:\KalshiBot\model_integrity\` (that entry comes after ratification)
+- Did not touch NFL_model_design.md v1.0 (deliberately preserved for audit trail)
+- Did not verify the specific placeholder escalation thresholds (6c disagreement, 20% of games) against any real data — flagged openly as tentative
+
+---
+
+## MEMORY UPDATE RECOMMENDATIONS (for Rus to decide)
+
+These aren't automatic — Rus decides whether to update memory. Flagging what should probably change:
+
+1. **SEDE record update:** Memory says 7-5-0 +$139.14. Actual is 8-5-5 (W/L/EE) +$139.14. The dollar figure is right, the W-L is off by one, and early exits should probably be tracked separately going forward.
+2. **Open positions update:** Memory lists #15 CAR and #16 SAS as open. Both closed weeks ago. Current opens are only #8 and #13.
+3. **NFL model status:** Memory says "NFL model: Build window July–August 2026." Should be updated to reflect Strong Node target commitment and July 25 as architectural decision point (pending ratification).
+
+---
+
+## HANDOFF NOTE
+
+J@rv!s — Rus will read your morning briefing before he re-reads the drafts. The most valuable thing you can do is challenge, not confirm. If the amendment holds under adversarial review, ratification proceeds. If you find gaps Archie missed, flag them clearly with proposed remediation, not just "consider this." Rus values direct pushback over polite hedging.
+
+Papa Ralph would want a real second opinion, not agreement theater.
+
+---
+
+*Session archive written to `C:\Claude AI\session archive\session_2026-06-30_2200.md`*
+*Two draft docs sitting in position, unpushed to git pending ratification.*
+*Rus ending session — sleep on it, discuss with J@rv!s AM.*
