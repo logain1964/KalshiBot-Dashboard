@@ -7,7 +7,7 @@
     "current_bankroll": 1000.0,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-06-30T21:02:08"
+    "last_updated": "2026-07-01T07:01:51"
   },
   "config": {
     "sizing": {
@@ -65,8 +65,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 26.5,
-      "last_checked": "2026-06-30 21:02 CT"
+      "current_price_cents": 30.5,
+      "last_checked": "2026-07-01 07:01 CT"
     },
     {
       "id": 3,
@@ -89,8 +89,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 37.5,
-      "last_checked": "2026-06-30 21:02 CT"
+      "current_price_cents": 39.5,
+      "last_checked": "2026-07-01 07:01 CT"
     }
   ],
   "closed_positions": [],
@@ -218,6 +218,17 @@
     },
     {
       "date": "2026-06-30",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-07-01",
       "bankroll": 1000.0,
       "total_pnl": 0,
       "open_positions": 2,
