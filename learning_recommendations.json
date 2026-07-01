@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-30T07:01:42.991644",
+  "generated_at": "2026-06-30T21:02:07.591054",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -183,10 +183,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 73,
-      "brier": 0.2558,
+      "n": 79,
+      "brier": 0.2553,
       "reason": [
-        "Below random: Brier=0.2558 (random=0.25) (n=73)"
+        "Below random: Brier=0.2553 (random=0.25) (n=79)"
       ]
     },
     {
