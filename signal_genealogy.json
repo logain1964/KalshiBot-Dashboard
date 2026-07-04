@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-04T02:00:39.538407",
-  "total_signals": 416,
+  "generated_at": "2026-07-04T07:00:29.797029",
+  "total_signals": 417,
   "signals_with_stats": 85,
   "min_resolved_required": 5,
   "signals": {
@@ -7490,6 +7490,24 @@
       "avg_model_pct": 71.7,
       "confidence": "INSUFFICIENT_DATA",
       "last_fired": "2026-07-03",
+      "has_stats": false
+    },
+    "Mexico vs England -- England wins|YES|SOCCER_GAME": {
+      "market": "Mexico vs England -- England wins",
+      "direction": "YES",
+      "model": "SOCCER_GAME",
+      "market_type": "WORLD_CUP_GAME",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 8.7,
+      "avg_kalshi_cents": 38.5,
+      "avg_model_pct": 47.2,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-07-04",
       "has_stats": false
     }
   }
