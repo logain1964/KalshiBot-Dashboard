@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-07-03T21:02:07.378772",
-  "total_resolved": 157,
+  "generated_at": "2026-07-04T07:01:45.972547",
+  "total_resolved": 159,
   "by_model": {
     "MLB_GAME": {
-      "n": 79,
-      "correct": 43,
-      "acc_pct": 54.4,
-      "avg_brier": 0.2553,
-      "avg_logloss": 0.7037,
-      "avg_edge": 12.8,
+      "n": 81,
+      "correct": 44,
+      "acc_pct": 54.3,
+      "avg_brier": 0.2572,
+      "avg_logloss": 0.7076,
+      "avg_edge": 12.7,
       "beats_random": false
     },
     "WC_GAME": {
