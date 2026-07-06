@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-06T02:00:35.714800",
+  "generated_at": "2026-07-06T07:00:30.018618",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -27,9 +27,9 @@
       "suggested_threshold": 9,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n_above": 31,
+      "n_above": 34,
       "n_below": 0,
-      "brier_above": 0.403297,
+      "brier_above": 0.398238,
       "brier_below": null,
       "reason": [
         "Need 26 more resolved signals"
