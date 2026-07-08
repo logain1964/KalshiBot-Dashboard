@@ -527,7 +527,7 @@
     "exit_date": "2026-06-09 06:00 CT",
     "pnl_dollars": 21.0,
     "result": "EARLY_EXIT",
-    "close_note": "AUTO_STOP_LOSS: loss $20.75 exceeded $15.00 limit at 92c"
+    "close_note": "AUTO_STOP_LOSS (BUG, fixed 2026-07-07): calculate_current_loss() had inverted NO-branch sign, misread favorable NO price rise (50c->92c) as a loss. Real P&L was a genuine gain; early exit at 92c likely cost a few dollars vs full resolution."
   },
   {
     "id": 24,
@@ -549,6 +549,6 @@
     "exit_date": "2026-06-09 06:00 CT",
     "pnl_dollars": 35.1,
     "result": "EARLY_EXIT",
-    "close_note": "AUTO_STOP_LOSS: loss $35.10 exceeded $15.00 limit at 92c"
+    "close_note": "AUTO_STOP_LOSS (BUG, fixed 2026-07-07): calculate_current_loss() had inverted NO-branch sign, misread favorable NO price rise (38c->92c) as a loss. Real P&L was a genuine gain; early exit at 92c likely cost a few dollars vs full resolution."
   }
 ]
