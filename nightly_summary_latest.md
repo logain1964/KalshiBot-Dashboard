@@ -1,187 +1,123 @@
-# SEDE Nightly Summary — 2026-07-06 (Evening Session)
-
-**For:** J@rv1s
-**From:** Archie (web interface, this session)
-**Session focus:** WC_GAME lambda "bug" was actually a display bug (fixed, verified), laptop duplicate cron found and disabled
+# KalshiBot Nightly Summary
+## For J@rv1s -- Tuesday July 7, 2026 (Evening Session)
+Prepared by Archie | Session ~7:00 PM - 10:00 PM CT
 
 ---
 
-## TL;DR FOR J@RV1S
+## TL;DR FOR TOMORROW MORNING
 
-The WC_GAME lambda compression fix you scoped tonight wasn't needed --
-the underlying probability math was never broken. The real bug was a
-universal display mislabeling that made most NO-signals across every
-model look far less confident than they actually were. Fixed the
-display, NOT the math. Also found and disabled a 2+ month duplicate
-cron job on Rus's laptop that explains most of this week's merge
-conflicts. Read the correction below carefully -- it affects how you
-should read every future report with NO-direction signals.
+Four real bugs found and fixed tonight, all committed and pushed to
+Oracle. One wrong conclusion of my own caught before it reached Rus as
+fact -- worth flagging so you don't repeat the same false step if this
+thread comes up. Tomorrow's 7AM CT run is the key verification moment:
+first real test of the cron timezone fix.
 
 ---
 
-## THE LAMBDA "BUG" WAS A DISPLAY BUG, NOT A MATH BUG
+## BUGS FIXED TONIGHT (4)
 
-Your briefing cited five "confirmed lambda compression" cases (France
-vs Paraguay 37.7%, USA vs Bosnia 53.3%, England vs Ghana 36.3%, Germany
-vs Paraguay 42.9%, France vs Morocco 55.6%). Diagnostic step (per your
-own instructions -- pull actual values before touching code) found every
-single one of these numbers was the COMPLEMENT of the model's real
-output, not the real output itself.
+1. **Cron timezone mislabeling.** Oracle runs `Etc/UTC`. The crontab line
+   meant to fire at 7AM CT (`0 7 * * *`) was actually landing at 2AM CT.
+   Confirmed via `timedatectl` + log timestamps. Email/Telegram were
+   both sending correctly at 2AM the whole time (`[OK] Sent` in logs) --
+   this was never a delivery failure, just a silent scheduling error.
+   Fixed: crontab now reads `0 12 * * *`. **Needs tomorrow's 7AM run to
+   fully verify end-to-end.**
 
-**Why:** every model's flagged.append() call for NO-direction signals
-stores (1-kalshi_yes, 1-model_prob) -- correct internally, since that's
-the probability of the side actually being bought. But the report/email/
-Telegram formatters printed that complement labeled just "Model: X%",
-which reads naturally as "the model's probability the named team wins"
-when for NO signals it's actually 1 minus that.
+2. **Hardcoded Windows path in trade_monitor.py** (`TRADES_FILE`).
+   Silently broke `check_all_trades()` on Oracle -- `os.path.exists()`
+   returned False every run, so `load_open_trades()` returned `[]`.
+   This is why tonight's 2AM report showed "0/5 open, $0.00 at risk"
+   despite paper_trades.json actually having 2 real open trades (#8, #13).
+   Fixed to branch on `SEDE_MACHINE=="oracle"`, matching the pattern
+   already used elsewhere in the codebase. Commit 148f5aa.
 
-Decoded correctly: France vs Paraguay was actually 62.3% (not 37.7%).
-USA vs Bosnia was actually 46.7% (not 53.3% -- this one is genuinely
-WORSE than you thought, a real underdog call on a team that won 2-0).
-England vs Ghana was 63.7% (not 36.3%). Germany vs Paraguay was 57.1%
-(not 42.9%). France vs Morocco was 44.4% (not 55.6%).
+3. **Same hardcoded-path bug in mlb_outcome_backfill.py** (`SIGNALS_LOG`).
+   Found via a full-codebase audit after bug #2. Was silently no-op'ing
+   `run_mlb_backfill()` on every single Oracle cron run. Fixed. Commit
+   a945a1b.
 
-**Confirmed via independent fresh computation from world_cup_model.py's
-own WC_TEAMS strength values and soccer_game_model.py's actual Poisson
-math** -- not just reading the log differently, actually recomputing
-from source and cross-checking against the logged values, which matched
-exactly once the flip was accounted for.
+4. **Inverted sign in auto_monitor.py's `calculate_current_loss()` NO
+   branch.** Computed `current_price - entry` for NO trades; should be
+   `entry - current_price`. This meant a NO price RISING (favorable --
+   market agreeing with the NO thesis) was misread as a LOSS. Root
+   cause of trades #23 and #24 both getting auto-stop-lossed on June 9
+   -- both were actually winning trades (CPI stayed under threshold,
+   NO price rose 50c->92c and 38c->92c) that got closed early because
+   the bug flagged the good move as bad. `pnl_dollars` for both was
+   always correct (+21.0, +35.1); only the close_note mischaracterized
+   what happened. Fixed formula, corrected both close_notes to explain
+   the real story. Commit 05c24ee.
 
-**What this means for your future reviews:** don't trust "Model: X%" on
-any NO-direction signal at face value going forward until you confirm
-the fix (below) is live in whatever report you're reading. If you're
-reviewing an OLDER report from before tonight, the NO-signal numbers in
-it are the flipped complement, not the model's real confidence.
-
-**Confirmed NOT affected:** the actual SEDE confidence scoring/tiering
-(HIGH/MEDIUM/LOW) was never wrong -- the certainty calculation is
-symmetric around 0.5, so this bug never caused a trade to be
-mis-prioritized. It was purely a human-readability problem, but a
-significant one that likely shaped how multiple past sessions (including
-yours tonight) read these alerts.
-
----
-
-## THE FIX -- AND A REAL MISTAKE CAUGHT MID-STREAM (worth reading)
-
-Fixed the display layer in three files: `daily_runner.py`
-(write_summary + compute_sede_confidence), `email_alerts.py` (fmt_signal),
-`telegram_alerts.py` (send_telegram_signal + the live digest loop). All
-now show the TRUE probability of the named outcome, explicitly labeled
-as such, regardless of direction.
-
-**First attempt at this fix (v1) was wrong and got caught before it went
-live.** v1 assumed every model flips for NO signals the same way. Testing
-against real GDP data showed `gdp_model.py` does NOT flip -- it stores
-raw kalshi_yes/model_prob directly regardless of direction, confirmed by
-reading its actual flagged.append() call. v1 was reverted (clean git
-revert) same night, before Oracle's next scheduled run could have sent
-out wrong GDP numbers. Audited every model file individually before
-reapplying -- btc, claims, cpi, fed, jobs, mlb, nba (both game and
-championship sections), nhl (both sections), soccer_game (MLS + WC_GAME),
-world_cup_model (winner) all confirmed flip. GDP is the ONE exception.
-v2 fix applied with an explicit `MODELS_THAT_DONT_FLIP` set, verified
-against real signals for both cases before committing.
-
-**Verified end-to-end with a real test send** -- actual email and
-Telegram message, clearly labeled as a test, using tonight's real 6
-flagged signals re-rendered through the fixed logic. Both delivered
-correctly on inspection.
-
-**Worth internalizing for your own future checks:** if a new model gets
-added later, check its actual flagged.append() call directly before
-assuming it follows the majority convention. Don't generalize from a
-sample of "most models do X" -- verify each one.
+Also fixed (not a functional bug, but wrong output): stale "Next
+release: June 5, 2026" date references in jobs_model.py -- corrected to
+Aug 7, 2026 (July jobs data). UNEMP_CONSENSUS (4.2%) confirmed correct
+and untouched -- it was Capital Economics' forecast, which beat Dow
+Jones' stale 4.3% when the actual June print landed at 4.2%.
 
 ---
 
-## LAPTOP DUPLICATE CRON -- FOUND AND DISABLED (explains this week's conflicts)
+## ONE MISTAKE OF MINE, CAUGHT BEFORE IT WENT ANYWHERE
 
-Found while chasing an unrelated false alarm (my own mistake -- checked
-whether the 7:45 AM cron fired by looking at my own un-pulled laptop
-directory instead of pulling first; it had fired correctly all along).
-That investigation led to discovering: **Rus's laptop has been running
-a full duplicate `daily_runner.py` pipeline at 7:00 AM and 9:00 PM CT
-every single day since April 30, 2026** -- parallel to Oracle's identical
-schedule, via Windows Task Scheduler tasks "Kalshibot Full AM" and
-"Kalshibot Full PM".
+While investigating #23/#24, I initially concluded the ledger's P&L
+signs were systematically wrong across all 13 closed NO trades, and
+"corrected" the total to -$151.62 (from the real +$139.14) using a
+branching, direction-aware P&L formula. This was backwards -- checked
+it against Trade #1's known-good WON outcome before reporting it as
+fact, found the SIMPLE non-branching formula (`(exit-entry)/100*contracts`,
+no direction check needed because entry/exit are always quoted in terms
+of the held side) was actually correct. Walked it back before Rus acted
+on it. Real total P&L is still +$139.14, confirmed correct.
 
-Confirmed via git commit author names (`logain1964` = laptop,
-`Archie-OracleCloud` = Oracle) showing both machines committing at the
-same labeled times every day going back at least to June 30 (likely
-April 30). This is almost certainly the actual root cause behind every
-merge conflict resolved this week, and very likely means Rus has been
-getting two emails and two Telegram digests daily for 2+ months.
-
-**Fixed:** both tasks disabled on the laptop, verified via
-Get-ScheduledTask. Oracle is now the sole source of truth. If merge
-conflicts recur, check whether something re-enabled these tasks before
-assuming a new cause.
+If this comes up again: the branching formula LOOKS more careful but is
+wrong for this codebase's price convention. Don't reintroduce it.
 
 ---
 
-## OTHER FINDING -- DORMANT BUG, NOT FIXED TONIGHT
+## STILL OPEN (unchanged from your briefing, not touched tonight)
 
-`nba_game_model.py` and `nhl_game_model.py` return dicts, not the
-5-tuple format every other model uses. They get merged directly into
-the same `all_flagged` list, which would likely crash write_summary()/
-compute_sede_confidence()'s tuple-unpacking if either model ever
-actually flags a signal. Apparently never triggered in practice --
-every report reviewed shows both models skipping with "No markets
-found." Logged to `docs/backlog.md` as medium priority: dormant but
-will cause a real crash the day it fires. Worth fixing proactively.
+- June 30 session archive still missing
+- Oracle cron code-staleness decision (git pull before each cron run?)
+- NFL Week 1 Signal Contract spec -- not started
+- nba_game_model.py / nhl_game_model.py dict-vs-tuple mismatch (dormant)
 
----
+## NEWLY OPEN (from tonight)
 
-## OPEN POSITIONS (unchanged)
-
-### SEDE Portfolio
-| ID | Market | Dir | Entry | Status |
-|---|---|---|---|---|
-| 1 | BTC<$50k Dec31 | NO | 43.5c | OPEN |
-
-Bankroll: $994.17
-
-### paper_trades.json
-| # | Description | Entry | Status |
-|---|---|---|---|
-| 8 | Fed 1x cut YES | 21c | Documented loss, HOLD |
-| 13 | GDP>2.0% YES | 60c | HELD -- calibration value reasoning |
-
-Record unchanged: 8W-5L-5EE, +$139.14.
+- 9 files with hardcoded C:\KalshiBot paths, unverified whether they run
+  on Oracle: auto_monitor.py, mlb_autoclose.py, mlb_gametime_fill.py,
+  mlb_refresh.py, oci_retry.py, paper_trades.py, polymarket_monitor.py,
+  post_seeds_bridge.py, claims_model_review.py. Note auto_monitor.py
+  turned out to be live (touched tonight for bug #4) -- bump priority
+  on auditing the rest.
+- jobs_model.py UNEMP_CONSENSUS/NFP_CONSENSUS need real forecaster
+  numbers ~Aug 5, ahead of the Aug 7 release.
 
 ---
 
-## STILL OPEN / CARRYING FORWARD
+## GDPNOW
 
-| Priority | Item |
-|----------|------|
-| 🟡 | nba/nhl_game_model dict-vs-tuple bug -- dormant, logged, not fixed. |
-| 🟡 | UNEMP_CONSENSUS still 4.2% vs Dow Jones 4.3% -- flagged repeatedly, still undecided. |
-| 🟡 | Trades #23/#24 close_note/pnl mismatch -- flagged repeatedly, still unfixed. |
-| 🔴 | June 30 session archive file still missing -- flagged repeatedly. |
+Updated today (July 7) to **1.4%**, up slightly from 1.1889%/1.2% on
+July 1. Not below the 1.0% flag threshold. Trade #13 (GDP >2.0% YES)
+still well under thesis threshold -- small bounce doesn't change the
+calibration-hold reasoning.
 
 ---
 
-## KEY DATES
+## COMMITS PUSHED TO ORACLE TONIGHT
 
-| Date | Event |
-|---|---|
-| Jul 7 | GDPNow next update |
-| Jul 9 | Morocco vs France QF (Boston) -- now correctly read as a real 44.4%/55.6%/26.8% three-way, not a "37.7%" underestimate |
-| Jul 10 | Spain/Portugal vs USA/Belgium QF (LA) |
-| Jul 11 | Norway vs England QF (Miami) |
-| Jul 14 | CPI release -- real first test of the 7:45 AM CT cron fix from July 2 |
-| Jul 19 | World Cup Final |
-| Jul 25 | MLB Track A/B verdict + NFL architecture parameters finalized |
-| Jul 30 | GDP advance estimate -- Trade #13 resolves |
-| Aug 2 | Vegas -- confirmed SOFT, self-imposed |
-| Sep 3 | NFL season opens -- sole hard deadline |
+```
+148f5aa  Fix hardcoded Windows path in TRADES_FILE
+a945a1b  Fix hardcoded Windows path in SIGNALS_LOG
+fd7dae8  Log hardcoded-path audit findings to backlog
+6e9a648  Fix stale Next release date in jobs_model.py
+09a9325  Log Aug 5 jobs_model.py consensus reminder
+05c24ee  Fix inverted sign in calculate_current_loss()
+[+1]     Correct close_note text for trades #23/#24
+```
+
+Plus crontab fix on Oracle (not a git commit): `0 7 * * *` -> `0 12 * * *`.
 
 ---
 
-*Session | Identity: Archie | Web interface*
-*Lambda "bug" was a display bug -- underlying model math was never broken.*
-*v1 of the display fix was wrong (GDP exception missed); caught and corrected same night before going live.*
-*Laptop's 2+ month duplicate cron job found and disabled -- likely explains months of duplicate alerts.*
+*Archie | Session end ~10:00 PM CT | July 7, 2026*
 *Papa Ralph standard. If it's worth doing it's worth doing right.*
