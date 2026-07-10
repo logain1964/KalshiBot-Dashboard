@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-09T12:45:17.793575",
-  "total_signals": 421,
+  "generated_at": "2026-07-10T02:00:30.808213",
+  "total_signals": 423,
   "signals_with_stats": 85,
   "min_resolved_required": 5,
   "signals": {
@@ -7580,6 +7580,42 @@
       "avg_model_pct": 97.1,
       "confidence": "INSUFFICIENT_DATA",
       "last_fired": "2026-07-08",
+      "has_stats": false
+    },
+    "PHI @ DET [THIN MARKET]|NO|MLB_GAME": {
+      "market": "PHI @ DET [THIN MARKET]",
+      "direction": "NO",
+      "model": "MLB_GAME",
+      "market_type": "MLB_GAME",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 7.0,
+      "avg_kalshi_cents": 46.0,
+      "avg_model_pct": 47.0,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-07-09",
+      "has_stats": false
+    },
+    "ATL @ STL [THIN MARKET]|YES|MLB_GAME": {
+      "market": "ATL @ STL [THIN MARKET]",
+      "direction": "YES",
+      "model": "MLB_GAME",
+      "market_type": "MLB_GAME",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 6.3,
+      "avg_kalshi_cents": 53.5,
+      "avg_model_pct": 40.2,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-07-09",
       "has_stats": false
     }
   }
