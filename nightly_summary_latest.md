@@ -1,123 +1,120 @@
 # KalshiBot Nightly Summary
-## For J@rv1s -- Tuesday July 7, 2026 (Evening Session)
-Prepared by Archie | Session ~7:00 PM - 10:00 PM CT
+## For J@rv1s -- Saturday July 11, 2026 (Archie session, afternoon/evening)
+Prepared by Archie | Opus 4.8
 
 ---
 
-## TL;DR FOR TOMORROW MORNING
+## TL;DR FOR J@RV1S
 
-Four real bugs found and fixed tonight, all committed and pushed to
-Oracle. One wrong conclusion of my own caught before it reached Rus as
-fact -- worth flagging so you don't repeat the same false step if this
-thread comes up. Tomorrow's 7AM CT run is the key verification moment:
-first real test of the cron timezone fix.
+Rus is back after a few days out sick. Picked up from your July 8 briefing.
+Two things resolved to decisions tonight, one real second bug found, and
+one FORGE handoff waiting for your independent pass. Details below.
 
----
-
-## BUGS FIXED TONIGHT (4)
-
-1. **Cron timezone mislabeling.** Oracle runs `Etc/UTC`. The crontab line
-   meant to fire at 7AM CT (`0 7 * * *`) was actually landing at 2AM CT.
-   Confirmed via `timedatectl` + log timestamps. Email/Telegram were
-   both sending correctly at 2AM the whole time (`[OK] Sent` in logs) --
-   this was never a delivery failure, just a silent scheduling error.
-   Fixed: crontab now reads `0 12 * * *`. **Needs tomorrow's 7AM run to
-   fully verify end-to-end.**
-
-2. **Hardcoded Windows path in trade_monitor.py** (`TRADES_FILE`).
-   Silently broke `check_all_trades()` on Oracle -- `os.path.exists()`
-   returned False every run, so `load_open_trades()` returned `[]`.
-   This is why tonight's 2AM report showed "0/5 open, $0.00 at risk"
-   despite paper_trades.json actually having 2 real open trades (#8, #13).
-   Fixed to branch on `SEDE_MACHINE=="oracle"`, matching the pattern
-   already used elsewhere in the codebase. Commit 148f5aa.
-
-3. **Same hardcoded-path bug in mlb_outcome_backfill.py** (`SIGNALS_LOG`).
-   Found via a full-codebase audit after bug #2. Was silently no-op'ing
-   `run_mlb_backfill()` on every single Oracle cron run. Fixed. Commit
-   a945a1b.
-
-4. **Inverted sign in auto_monitor.py's `calculate_current_loss()` NO
-   branch.** Computed `current_price - entry` for NO trades; should be
-   `entry - current_price`. This meant a NO price RISING (favorable --
-   market agreeing with the NO thesis) was misread as a LOSS. Root
-   cause of trades #23 and #24 both getting auto-stop-lossed on June 9
-   -- both were actually winning trades (CPI stayed under threshold,
-   NO price rose 50c->92c and 38c->92c) that got closed early because
-   the bug flagged the good move as bad. `pnl_dollars` for both was
-   always correct (+21.0, +35.1); only the close_note mischaracterized
-   what happened. Fixed formula, corrected both close_notes to explain
-   the real story. Commit 05c24ee.
-
-Also fixed (not a functional bug, but wrong output): stale "Next
-release: June 5, 2026" date references in jobs_model.py -- corrected to
-Aug 7, 2026 (July jobs data). UNEMP_CONSENSUS (4.2%) confirmed correct
-and untouched -- it was Capital Economics' forecast, which beat Dow
-Jones' stale 4.3% when the actual June print landed at 4.2%.
+**ACTION FOR YOU:** Read `FORGE_handoff_winrate_definition.md` (in the
+dashboard repo) and do a genuine adversarial pass on the win-rate
+definition. It is written to be attacked, not rubber-stamped. Then back
+to Rus for final ratification. Nothing is written to governance docs yet.
 
 ---
 
-## ONE MISTAKE OF MINE, CAUGHT BEFORE IT WENT ANYWHERE
+## 1. WIN-RATE SCHEMA BUG (#17-20) -- FIXED AT ROOT, COMMITTED
 
-While investigating #23/#24, I initially concluded the ledger's P&L
-signs were systematically wrong across all 13 closed NO trades, and
-"corrected" the total to -$151.62 (from the real +$139.14) using a
-branching, direction-aware P&L formula. This was backwards -- checked
-it against Trade #1's known-good WON outcome before reporting it as
-fact, found the SIMPLE non-branching formula (`(exit-entry)/100*contracts`,
-no direction check needed because entry/exit are always quoted in terms
-of the held side) was actually correct. Walked it back before Rus acted
-on it. Real total P&L is still +$139.14, confirmed correct.
+Your July 8 flag was correct and is now resolved in code, not just data.
 
-If this comes up again: the branching formula LOOKS more careful but is
-wrong for this codebase's price convention. Don't reintroduce it.
+- Root cause was in `mlb_autoclose.py` `auto_close()`: it wrote the
+  WON/LOST outcome directly into the `status` field instead of
+  `status=CLOSED` + `result=<outcome>`. That's why #17-20 were excluded
+  from every `status=="CLOSED"` filter.
+- IMPORTANT: this bug would have silently excluded future live MLB WINS
+  too, not just the four May 31 losses. It only looked loss-specific
+  because the first live batch happened to go 0-for-4.
+- Fixed the function so all future live MLB trades use correct schema.
+- Normalized #17-20 in the production ledger (C:\KalshiBot\data\
+  paper_trades.json) to standard schema.
+- Committed + pushed: commit 3f96d0c.
 
----
+Process note / self-correction: Archie first edited the WRONG copy of
+paper_trades.json (the C:\KalshiBot-Dashboard mirror, not the C:\KalshiBot
+production repo). Caught it via git history check before committing, then
+fixed the real file. Same numbers, no harm, but logging it honestly.
 
-## STILL OPEN (unchanged from your briefing, not touched tonight)
-
-- June 30 session archive still missing
-- Oracle cron code-staleness decision (git pull before each cron run?)
-- NFL Week 1 Signal Contract spec -- not started
-- nba_game_model.py / nhl_game_model.py dict-vs-tuple mismatch (dormant)
-
-## NEWLY OPEN (from tonight)
-
-- 9 files with hardcoded C:\KalshiBot paths, unverified whether they run
-  on Oracle: auto_monitor.py, mlb_autoclose.py, mlb_gametime_fill.py,
-  mlb_refresh.py, oci_retry.py, paper_trades.py, polymarket_monitor.py,
-  post_seeds_bridge.py, claims_model_review.py. Note auto_monitor.py
-  turned out to be live (touched tonight for bug #4) -- bump priority
-  on auditing the rest.
-- jobs_model.py UNEMP_CONSENSUS/NFP_CONSENSUS need real forecaster
-  numbers ~Aug 5, ahead of the Aug 7 release.
+**True win rate with #17-20 included: 45.5% (22 closed, 10 wins) by the
+pnl>0 method.** Below Gate 1's 55%. See item 3 -- the definition itself
+is now in question.
 
 ---
 
-## GDPNOW
+## 2. TRADE #13 DECISION -- HOLD TO RESOLUTION (Rus ratified)
 
-Updated today (July 7) to **1.4%**, up slightly from 1.1889%/1.2% on
-July 1. Not below the 1.0% flag threshold. Trade #13 (GDP >2.0% YES)
-still well under thesis threshold -- small bounce doesn't change the
-calibration-hold reasoning.
+GDP >2.0% YES @ 60c. GDPNow at 1.3% as of July 8 (down from 1.4% Jul 1).
+Thesis has decayed hard; this is very likely a loss by the Jul 30 event.
+Rus decided to hold to resolution regardless -- "data is data, good or
+bad." Same principle as #16. Clean data point over a protected record.
 
 ---
 
-## COMMITS PUSHED TO ORACLE TONIGHT
+## 3. WIN-RATE DEFINITION -- FORGE PASS RUN, AWAITING YOUR REVIEW
+
+While fixing #1, found a SECOND, deeper issue: the two reporting scripts
+define "win" differently and disagree.
+- trade_monitor.py: win = pnl_dollars>0 -> 45.5% (10/22)
+- validation_dashboard.py: win = result=="WON" -> 36.4% (8/22)
+- Gap = 5 EARLY_EXIT trades, incl. #23/#24 which made money via the
+  stop-loss bug you and Rus fixed last session.
+
+Ran full Bias/FORGE/Papa Ralph in Opus. Key findings:
+- Papa Ralph gate reframed it: Gate 1 needs >=75 closed trades, we have
+  22. This is NOT a live go-live blocker. Zero time pressure.
+- "win rate" is undefined in the Foundation Document (appears once, line
+  398, in passing). Real definitional gap.
+- Recommendation (Rus PROVISIONALLY accepted, pending your pass):
+  resolution-only win rate = WON/(WON+LOST) = 47.1% (8/17), with
+  EARLY_EXIT as a separate third category. Home: Foundation Document.
+
+Rus's instruction: write it up for your independent pass FIRST, do NOT
+edit the Foundation Document, do NOT treat his acceptance as final until
+you review and he confirms. Handoff doc is
+`FORGE_handoff_winrate_definition.md`. It includes the dissenting
+pure-pnl case and four specific attacks on the recommendation. Please
+actually try to break it.
+
+---
+
+## STILL OPEN (carried, not touched tonight)
+
+- MLB Foundation Document verdict -- due July 25 (structural: genuine
+  model vs disguised arbitrage). NOT moved tonight.
+- NFL Signal Contract spec -- not started, hard deadline Sept 3.
+- on_signal_resolved() stub -- hard prereq before subscriber onboarding.
+- 9-file hardcoded-path audit -- still outstanding.
+- June 30 session archive -- still missing.
+
+Rus was out sick several days, so the refocus-to-deadline-work push from
+your July 8 briefing is still the right call for the next working session.
+
+---
+
+## OPEN POSITIONS (verified against ledger tonight)
+
+Only TWO open, not five (my earlier memory was stale):
+- #8  Fed cuts 1x 2026 YES @ 21c -- market ~19-21%, edge roughly flat
+- #13 GDP >2.0% YES @ 60c -- GDPNow 1.3%, holding to resolution (see #2)
+
+Closed since last briefing: #12 WON +1.24, #15 WON +19.36, #16 LOST -24.92.
+
+---
+
+## COMMITS PUSHED TONIGHT
 
 ```
-148f5aa  Fix hardcoded Windows path in TRADES_FILE
-a945a1b  Fix hardcoded Windows path in SIGNALS_LOG
-fd7dae8  Log hardcoded-path audit findings to backlog
-6e9a648  Fix stale Next release date in jobs_model.py
-09a9325  Log Aug 5 jobs_model.py consensus reminder
-05c24ee  Fix inverted sign in calculate_current_loss()
-[+1]     Correct close_note text for trades #23/#24
+3f96d0c  Fix schema bug excluding live MLB trades from win-rate calcs
 ```
 
-Plus crontab fix on Oracle (not a git commit): `0 7 * * *` -> `0 12 * * *`.
+Plus one un-committed governance handoff doc (dashboard repo, not the
+code repo): FORGE_handoff_winrate_definition.md.
 
 ---
 
-*Archie | Session end ~10:00 PM CT | July 7, 2026*
+*Archie | Opus 4.8 | Session ~4:00 PM CT | July 11, 2026*
 *Papa Ralph standard. If it's worth doing it's worth doing right.*
+*Nothing ratified to governance docs. Win-rate definition awaits J@rv1s pass.*
