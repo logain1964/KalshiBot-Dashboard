@@ -118,3 +118,81 @@ code repo): FORGE_handoff_winrate_definition.md.
 *Archie | Opus 4.8 | Session ~4:00 PM CT | July 11, 2026*
 *Papa Ralph standard. If it's worth doing it's worth doing right.*
 *Nothing ratified to governance docs. Win-rate definition awaits J@rv1s pass.*
+
+
+---
+---
+
+# APPENDED: FULL FORGE HANDOFF (folded in from standalone doc)
+## The dashboard repo .gitignore whitelists only specific files, so the
+## standalone FORGE_handoff_winrate_definition.md would not sync to Oracle.
+## Full content folded in here so J@rv1s gets it in the normal morning pull.
+## (The standalone .md still exists locally on Archie's machine for reference.)
+
+---
+
+## What this is
+
+An independent-review request, not a decision. Rus ran a Bias/FORGE/Papa
+Ralph pass with Archie tonight on a definitional gap: "win rate" is used
+as a Gate 1 / go-live hard criterion but has never been defined in the
+Foundation Document. Two production scripts compute it two different ways
+and disagree. Rus has PROVISIONALLY accepted a proposed definition,
+pending your independent pass. Nothing has been written to the Foundation
+Document or the scripts. Rus wants your review BEFORE any edit and BEFORE
+he ratifies. Your job: try to break the recommendation.
+
+## The gap (verified against files tonight)
+
+- go_live_protocol.md lists "Overall win rate > 55%" as a HARD go-live
+  criterion, paired separately with "Overall Brier score < 0.20."
+- SEDE_Foundation_Document_v1.0.1.md mentions "win rate" once (line 398,
+  in passing) and never defines it.
+- trade_monitor.py: win = pnl_dollars>0 -> 45.5% (10/22)
+- validation_dashboard.py: win = result=="WON" -> 36.4% (8/22)
+- Gap = 5 EARLY_EXIT trades: #5 -17.64, #7 -24.96, #11 -8.76 (lost early),
+  #23 +21.00, #24 +35.10 (MADE money via the auto-stop-loss sign bug
+  fixed in 05c24ee last session).
+
+## Papa Ralph reframing (important)
+
+Gate 1 also requires >=75 closed trades. Current count is 22. SEDE is NOT
+near go-live; this is NOT a live blocker. Reporting-accuracy question.
+Zero time pressure. Do not inherit false urgency from the "below 55%"
+framing.
+
+## Recommendation (Rus provisionally accepted, pending your pass)
+
+Resolution-only win rate = WON/(WON+LOST) = 47.1% (8/17). EARLY_EXIT is a
+THIRD category, its own line, its own P&L, never folded into win or loss.
+Both scripts rewritten to agree. P&L stays separate. Home: Foundation Doc.
+Rationale: go_live_protocol pairs win rate WITH Brier as separate criteria;
+if win rate also measured calibration it would be redundant with Brier.
+
+## Steelman -- test it, do NOT rubber-stamp
+
+1. Pure-pnl view: "a win is money in the bank." #23/#24 made real money.
+   Use 45.5% and stop overthinking -- but then dismiss the Brier
+   redundancy concern explicitly.
+2. 47.1% excludes 5 of 22 closed trades (23%) from the denominator. Is a
+   win rate that ignores ~a quarter of closed trades more honest, or just
+   relabeling? A criterion over a filtered subset could itself be
+   cherry-picking. Push hard.
+3. EARLY_EXIT lumps discretionary-cut-losses (#5/#7/#11) with
+   bug-caused-early-profits (#23/#24). Should those share a category?
+4. Convenience-bias check on Archie: Archie admitted a pull toward the
+   higher number and picked the middle (47.1%) partly to look unbiased.
+   Verify 47.1% is actually right, not chosen to appear neutral.
+
+## Requested output from J@rv1s
+
+1. Does resolution-only survive the steelman? Clear position.
+2. If yes: exact Foundation Document wording to propose (so Rus ratifies
+   wording, not just concept).
+3. If no: counter-proposal.
+4. Confirm the >=75-trades reframing (not a live blocker) is correct.
+
+Then back to Rus for final sign-off before any file is touched.
+
+---
+*Nothing ratified. Nothing written to governance docs. Awaiting your pass.*
