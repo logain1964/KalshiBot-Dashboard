@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-12T12:45:18.198725",
+  "generated_at": "2026-07-12T22:27:00.222997",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -25,14 +25,14 @@
       "model": "GDP",
       "current_threshold": 8,
       "suggested_threshold": 9,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
+      "action": "RAISE",
+      "confidence": "MEDIUM",
       "n_above": 64,
       "n_below": 0,
       "brier_above": 0.375604,
       "brier_below": null,
       "reason": [
-        "Need 26 more resolved signals"
+        "Above-threshold signals underperforming: Brier=0.3756 (n=64)"
       ]
     },
     {
@@ -140,27 +140,27 @@
     {
       "model": "GDP",
       "current_weight": 0.6,
-      "suggested_weight": 0.6,
-      "delta": 0.0,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n": 4,
-      "brier": 0.4499,
+      "suggested_weight": 0.55,
+      "delta": -0.05,
+      "action": "LOWER",
+      "confidence": "MEDIUM",
+      "n": 39,
+      "brier": 0.3842,
       "reason": [
-        "Need 16 more resolved signals (have 4)"
+        "Below random: Brier=0.3842 (random=0.25) (n=39)"
       ]
     },
     {
       "model": "JOBS",
       "current_weight": 0.87,
-      "suggested_weight": 0.87,
-      "delta": 0.0,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n": 6,
-      "brier": 0.121,
+      "suggested_weight": 0.89,
+      "delta": 0.02,
+      "action": "RAISE",
+      "confidence": "MEDIUM",
+      "n": 36,
+      "brier": 0.1272,
       "reason": [
-        "Need 14 more resolved signals (have 6)"
+        "Good calibration: Brier=0.1272 (n=36)"
       ]
     },
     {
@@ -183,10 +183,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 83,
-      "brier": 0.2624,
+      "n": 103,
+      "brier": 0.2611,
       "reason": [
-        "Below random: Brier=0.2624 (random=0.25) (n=83)"
+        "Below random: Brier=0.2611 (random=0.25) (n=103)"
       ]
     },
     {
@@ -286,11 +286,11 @@
       "suggested_weight": 0.62,
       "delta": 0.02,
       "action": "RAISE",
-      "confidence": "LOW",
-      "n": 23,
-      "brier": 0.1429,
+      "confidence": "MEDIUM",
+      "n": 527,
+      "brier": 0.1782,
       "reason": [
-        "Good calibration: Brier=0.1429 (n=23)"
+        "Good calibration: Brier=0.1782 (n=527)"
       ]
     },
     {
