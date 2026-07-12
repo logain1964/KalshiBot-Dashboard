@@ -1,0 +1,298 @@
+{
+  "meta": {
+    "created": "2026-06-18",
+    "version": "1.0",
+    "description": "SEDE autonomous portfolio -- subscriber-facing track record. SEPARATE from paper_trades.json (Rus validation record). Never write to paper_trades.json from portfolio_manager_sede.py.",
+    "starting_bankroll": 1000.0,
+    "current_bankroll": 994.17,
+    "currency": "USD",
+    "status": "paper",
+    "last_updated": "2026-07-06T21:02:04"
+  },
+  "config": {
+    "sizing": {
+      "MEDIUM": 15.0,
+      "HIGH": 25.0,
+      "HIGH_LARGE": 30.0,
+      "HIGH_LARGE_EDGE_THRESHOLD_CENTS": 25
+    },
+    "entry_criteria": {
+      "min_edge_cents": 20,
+      "min_model_confidence_pct": 60,
+      "required_sede_rating": "HIGH",
+      "max_concurrent_positions": 8
+    },
+    "risk": {
+      "hard_drawdown_stop_dollars": 200.0,
+      "hard_drawdown_stop_pct": 20.0,
+      "max_single_trade_dollars": 30.0
+    }
+  },
+  "performance": {
+    "total_trades": 2,
+    "open_trades": 1,
+    "closed_trades": 1,
+    "wins": 0,
+    "losses": 0,
+    "early_exits": 1,
+    "win_rate_pct": 0.0,
+    "total_pnl": -5.83,
+    "running_bankroll": 994.17,
+    "peak_bankroll": 1000.0,
+    "max_drawdown_dollars": 5.83,
+    "avg_edge_cents": 20.29534505481626,
+    "avg_brier_score": null
+  },
+  "open_positions": [
+    {
+      "id": 1,
+      "entered_at": "2026-06-20 21:02 CT",
+      "market_ticker": "KXBTCMINY-27JAN01-50000.00",
+      "description": "BTC<$50k Dec31",
+      "direction": "NO",
+      "entry_price_cents": 43.50000000000001,
+      "contracts": 57,
+      "size_dollars": 25.0,
+      "max_loss_dollars": 25.0,
+      "max_profit_dollars": 24.8,
+      "model_probability_pct": 63.742690949539075,
+      "edge_cents": 20.242690949539067,
+      "sede_rating": "HIGH",
+      "status": "OPEN",
+      "result": null,
+      "exit_price_cents": null,
+      "exit_date": null,
+      "pnl_dollars": null,
+      "brier_score": null,
+      "close_note": null,
+      "current_price_cents": 51.5,
+      "last_checked": "2026-07-06 21:02 CT"
+    }
+  ],
+  "closed_positions": [
+    {
+      "id": 3,
+      "entered_at": "2026-06-23 02:00 CT",
+      "market_ticker": "KXGDP-26JUL30-T2.5",
+      "description": "GDP > 2.5%",
+      "direction": "YES",
+      "entry_price_cents": 47.0,
+      "contracts": 53,
+      "size_dollars": 25.0,
+      "max_loss_dollars": 25.0,
+      "max_profit_dollars": 28.09,
+      "model_probability_pct": 67.29534505481625,
+      "edge_cents": 20.29534505481626,
+      "sede_rating": "HIGH",
+      "status": "CLOSED",
+      "result": "EARLY_EXIT",
+      "exit_price_cents": 36.0,
+      "exit_date": "2026-07-01 21:45 CT",
+      "pnl_dollars": -5.83,
+      "brier_score": null,
+      "close_note": "DISCRETIONARY EXIT: GDPNow dropped to 1.2% on Jul 1 (from 2.5% Jun 25) -- 130bps below the 2.5% threshold, outside GDPNow's own ~0.77pp average error band. Entry thesis (67.3% model probability) invalidated. Live Kalshi price 36% at exit. Sibling trade #12 in paper_trades.json set precedent for cutting this exact market on a milder threshold-level signal (GDPNow AT 2.5%, not 130bps below it). Decision made jointly with Rus, Archie flagged this as the right call over holding for 'calibration' since sede_portfolio.json is the subscriber-facing demo track, not the calibration ledger -- that's paper_trades.json. System gap identified: portfolio_manager_sede.py has no thesis-decay exit trigger, only resolution/97c/3c auto-close. Spec to follow.",
+      "current_price_cents": 36.0,
+      "last_checked": "2026-07-01 21:45 CT"
+    }
+  ],
+  "daily_snapshots": [
+    {
+      "date": "2026-06-19",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 0,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-20",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 0,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-21",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 1,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-22",
+      "bankroll": 1000.0,
+      "total_pnl": 0.0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-23",
+      "bankroll": 1000.0,
+      "total_pnl": 0.0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-24",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-25",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-26",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-27",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-28",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-29",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-06-30",
+      "bankroll": 1000.0,
+      "total_pnl": 0,
+      "open_positions": 2,
+      "closed_positions": 0,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-07-01",
+      "bankroll": 994.17,
+      "total_pnl": -5.83,
+      "open_positions": 1,
+      "closed_positions": 1,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-07-02",
+      "bankroll": 994.17,
+      "total_pnl": -5.83,
+      "open_positions": 1,
+      "closed_positions": 1,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": null,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-07-03",
+      "bankroll": 994.17,
+      "total_pnl": -5.83,
+      "open_positions": 1,
+      "closed_positions": 1,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": 0.0,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-07-04",
+      "bankroll": 994.17,
+      "total_pnl": -5.83,
+      "open_positions": 1,
+      "closed_positions": 1,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": 0.0,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-07-05",
+      "bankroll": 994.17,
+      "total_pnl": -5.83,
+      "open_positions": 1,
+      "closed_positions": 1,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": 0.0,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-07-06",
+      "bankroll": 994.17,
+      "total_pnl": -5.83,
+      "open_positions": 1,
+      "closed_positions": 1,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": 0.0,
+      "avg_brier": null
+    }
+  ]
+}

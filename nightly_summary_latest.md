@@ -1,220 +1,198 @@
-# SEDE Nightly Session Summary
-## For J@rv1s Morning Intelligence Pull
-
-**Last updated:** 2026-06-16 | **Session end:** ~9:30 PM CT
-**Prepared by:** Archie (Claude Desktop)
+# KalshiBot Nightly Summary
+## For J@rv1s -- Saturday July 11, 2026 (Archie session, afternoon/evening)
+Prepared by Archie | Opus 4.8
 
 ---
 
-## WHAT WE DID TONIGHT
+## TL;DR FOR J@RV1S
 
-Seven items worked in priority order. Four completed fully, three verified/confirmed.
+Rus is back after a few days out sick. Picked up from your July 8 briefing.
+Two things resolved to decisions tonight, one real second bug found, and
+one FORGE handoff waiting for your independent pass. Details below.
 
----
-
-## 1. GDPNOW UPDATED — 3.2906% → 2.8%
-
-Confirmed live from atlantafed.org June 16 at ~8PM CT.
-FRED CSV (pipeline's auto-source) was lagging at 3.2906% — the page showed 2.8%.
-
-**Changes:**
-- `LAST_KNOWN_GOOD_GDPNOW` updated to 2.8000 in gdpnow_updater.py
-- Manual log entry appended to logs/gdpnow_history.txt
-- Tomorrow's 7AM run will use 2.8%
-
-**Open position impact at 2.8%:**
-- Trade #12 (GDP >2.5% YES @40c): model prob ~59.9%, edge ~+20c. HOLD — 30bps buffer above threshold.
-- Trade #13 (GDP >2.0% YES @60c): model prob ~74.8%, edge ~+15c. HOLD — 80bps buffer, comfortable.
-
-Next GDPNow update: June 17 (tomorrow) — two days in a row due to FOMC-related data releases.
-
-**NOTE for J@rv1s:** GDPNow updater's `get_current_estimate()` regex looks for `gdpnow = X`
-in gdp_model.py — that var doesn't exist (model takes it as a parameter). Function is dead code,
-not causing issues, but the "Current estimate: None%" output is expected, not a bug.
+**ACTION FOR YOU:** Read `FORGE_handoff_winrate_definition.md` (in the
+dashboard repo) and do a genuine adversarial pass on the win-rate
+definition. It is written to be attacked, not rubber-stamped. Then back
+to Rus for final ratification. Nothing is written to governance docs yet.
 
 ---
 
-## 2. P1 THREE-LAYER CACHE FIX — COMPLETE (commit bf67927)
+## 1. WIN-RATE SCHEMA BUG (#17-20) -- FIXED AT ROOT, COMMITTED
 
-All three layers built and deployed. Thursday 7AM alert is verification checkpoint.
+Your July 8 flag was correct and is now resolved in code, not just data.
 
-**price_fetcher.py:**
-- Added `expected_expiration_time` to `get_series_markets()` output dict
-- Required for Layer 2 to populate on fresh cache writes
+- Root cause was in `mlb_autoclose.py` `auto_close()`: it wrote the
+  WON/LOST outcome directly into the `status` field instead of
+  `status=CLOSED` + `result=<outcome>`. That's why #17-20 were excluded
+  from every `status=="CLOSED"` filter.
+- IMPORTANT: this bug would have silently excluded future live MLB WINS
+  too, not just the four May 31 losses. It only looked loss-specific
+  because the first live batch happened to go 0-for-4.
+- Fixed the function so all future live MLB trades use correct schema.
+- Normalized #17-20 in the production ledger (C:\KalshiBot\data\
+  paper_trades.json) to standard schema.
+- Committed + pushed: commit 3f96d0c.
 
-**market_scanner.py `load_cache()`:**
-- Layer 1 (existing): Status filter — preserved
-- Layer 2 (NEW): `expected_expiration_time` >24h in the past → exclude
-- Layer 3 (NEW): YES price >95c or <5c → price sanity exclude
-- TTL (NEW): Cache >12h old → log WARNING (actual rescan via data_freshness.py heal)
-- Logging now shows which layers caught which exclusions: `L1-status:N, L2-expiry:N, L3-price:N`
+Process note / self-correction: Archie first edited the WRONG copy of
+paper_trades.json (the C:\KalshiBot-Dashboard mirror, not the C:\KalshiBot
+production repo). Caught it via git history check before committing, then
+fixed the real file. Same numbers, no harm, but logging it honestly.
 
-**Known limitation:** existing cache entries written before tonight don't have
-`expected_expiration_time` populated, so Layer 2 won't catch them until cache refreshes.
-Layer 3 (price sanity) will catch most of those on first pass.
-
-**Verification:** CAR and COL should NOT appear in Thursday's NHL Champ section.
-If they do → flag immediately, cache hasn't refreshed with new fields yet.
-
----
-
-## 3. ORACLE SSH — NOT CONNECTING
-
-Oracle SSH returning exit code 1 in ~5 seconds (fast fail, not timeout).
-Two attempts, same result. Commits bf67927 and ad9dac9 are on GitHub.
-Oracle needs a `git pull origin main --no-edit` manually when SSH is accessible.
+**True win rate with #17-20 included: 45.5% (22 closed, 10 wins) by the
+pnl>0 method.** Below Gate 1's 55%. See item 3 -- the definition itself
+is now in question.
 
 ---
 
-## 4. SOCCER_GAME RENAME — COMPLETE (commit ad9dac9)
+## 2. TRADE #13 DECISION -- HOLD TO RESOLUTION (Rus ratified)
 
-WC_GAME → SOCCER_GAME across all user-facing labels in daily_runner.py:
-- `MODELS_SUSPENDED_FROM_TRADING` dict key renamed
-- `get_model_name()` return value updated
-- `log_signals()` model_name updated
-- Progress counter output updated
-- Comment blocks updated
-- MODELS EVALUATED display updated
-
-Internal variable names (`flagged_wc_game`, `wc_game_markets`) unchanged — Python variables only.
-Function name `run_wc_game_model` unchanged — internal to soccer_game_model.py.
-
-**Aug 15 text:** Already correct from a previous session — "Checkpoint/review date".
-J@rv1s's flag was stale. No change needed.
+GDP >2.0% YES @ 60c. GDPNow at 1.3% as of July 8 (down from 1.4% Jul 1).
+Thesis has decayed hard; this is very likely a loss by the Jul 30 event.
+Rus decided to hold to resolution regardless -- "data is data, good or
+bad." Same principle as #16. Clean data point over a protected record.
 
 ---
 
-## 5. LAMBDA SOURCE CHECK — KEY FINDING
+## 3. WIN-RATE DEFINITION -- FORGE PASS RUN, AWAITING YOUR REVIEW
 
-**MLS model:** Uses ESPN gfpg/gapg (goals for/against per game) via live standings fetch.
-NOT FIFA rankings. Correct source. No swap needed.
+While fixing #1, found a SECOND, deeper issue: the two reporting scripts
+define "win" differently and disagree.
+- trade_monitor.py: win = pnl_dollars>0 -> 45.5% (10/22)
+- validation_dashboard.py: win = result=="WON" -> 36.4% (8/22)
+- Gap = 5 EARLY_EXIT trades, incl. #23/#24 which made money via the
+  stop-loss bug you and Rus fixed last session.
 
-**WC model:** Uses `WC_TEAMS` dict — FIFA Elo-based strength values, pre-tournament,
-not updated mid-tournament. This is the Phase 1 improvement opportunity — updating
-strength values after each round. Phase 1 scope is much simpler than anticipated.
+Ran full Bias/FORGE/Papa Ralph in Opus. Key findings:
+- Papa Ralph gate reframed it: Gate 1 needs >=75 closed trades, we have
+  22. This is NOT a live go-live blocker. Zero time pressure.
+- "win rate" is undefined in the Foundation Document (appears once, line
+  398, in passing). Real definitional gap.
+- Recommendation (Rus PROVISIONALLY accepted, pending your pass):
+  resolution-only win rate = WON/(WON+LOST) = 47.1% (8/17), with
+  EARLY_EXIT as a separate third category. Home: Foundation Document.
 
-**Dixon-Coles:** Already present in BOTH MLS and WC models (DC_RHO=-0.15, DC_LAMBDA_GATE=2.8).
-Phase 1 "add Dixon-Coles" task is already done. Phase 1 is essentially just the rename + Elo refresh.
-
----
-
-## 6. SOCCER_GAME ACCURACY BREAKDOWN
-
-**Data:** 1,909 total signals logged. 387 resolved (across 7 unique games). 115 draw signals in log — NONE have resolved outcomes yet (draw resolution not being scored).
-
-**Overall on resolved outright-winner signals:**
-- 387 signals, 135 wins, 252 losses — **WR: 34.9%** | Avg Brier: 0.189
-- YES direction: 177 signals, 62 wins — **35.0%**
-- NO direction: 210 signals, 73 wins — **34.8%**
-
-**Per-game breakdown (outright signals only):**
-
-| Game | Signals | WR | Notes |
-|------|---------|----|-------|
-| Haiti vs Scotland | 46 | 96% | Model nailed it — heavy favorite won |
-| United Sta vs Australia | 44 | 100% | USA win, model correct |
-| Mexico vs South Africa | 46 | 61% | Solid performance |
-| Australia vs Turkiye | 42 | 45% | Near random |
-| Brazil vs Morocco | 84 | 0% | All signals wrong — Brazil favored, Morocco won? |
-| Canada vs Bosnia | 69 | 0% | All signals wrong — upset? |
-| Qatar vs Switzerland | 56 | 0% | All signals wrong — Switzerland won |
-
-**Root cause analysis:** Three games went 0% — the model had signals pointing one direction
-and the actual outcome went the other way entirely (likely upsets the model didn't anticipate).
-The 34.9% WR is below random (33.3% for 3-outcome markets) — this is NOT just draw losses
-dragging the number down. The outright-winner signals themselves are underperforming.
-
-**Implications for FORGE:**
-- DO NOT fast-track knockout stage. J@rv1s's warning was correct.
-- Need to understand why Brazil-Morocco, Canada-Bosnia, Qatar-Switzerland all went 0%.
-  Were these upsets? Were the signals all pointing at the favorite?
-- Draw signals (115 in log) cannot be evaluated yet — no resolved outcomes.
-- Gate 1 (30 resolved unique games, ≥55% WR) is far off. Currently 7 unique games at 34.9%.
+Rus's instruction: write it up for your independent pass FIRST, do NOT
+edit the Foundation Document, do NOT treat his acceptance as final until
+you review and he confirms. Handoff doc is
+`FORGE_handoff_winrate_definition.md`. It includes the dissenting
+pure-pnl case and four specific attacks on the recommendation. Please
+actually try to break it.
 
 ---
 
-## 7. CLAIMS JUNE 18 HOLIDAY TEST — CONFIRMED WORKING
+## STILL OPEN (carried, not touched tonight)
 
-June 18 release (early due to Juneteenth June 19):
-- FRED week-ending date = Saturday June 20
-- `date(2026, 6, 20)` IS in HOLIDAY_WEEKS dict with label "Juneteenth (Jun 19, 2026)"
-- Logic confirmed: `fred_week_ending in HOLIDAY_WEEKS → return []` with 🚫 HOLIDAY WEEK flag
-- Fix is working. Claims will correctly produce no signals Wednesday morning.
+- MLB Foundation Document verdict -- due July 25 (structural: genuine
+  model vs disguised arbitrage). NOT moved tonight.
+- NFL Signal Contract spec -- not started, hard deadline Sept 3.
+- on_signal_resolved() stub -- hard prereq before subscriber onboarding.
+- 9-file hardcoded-path audit -- still outstanding.
+- June 30 session archive -- still missing.
 
----
-
-## OPEN POSITIONS
-
-| # | Description | Entry | Live Est. | Notes |
-|---|-------------|-------|-----------|-------|
-| 8 | Fed 1x cut YES | 21c | ~19-20c | FOMC dot plot TOMORROW 1PM CT |
-| 12 | GDP >2.5% YES | 40c | ~46c | GDPNow 2.8%, edge ~+20c, HOLD |
-| 13 | GDP >2.0% YES | 60c | ~72c | GDPNow 2.8%, edge ~+15c, HOLD |
-
-Trades #15 (CAR Cup YES) and #16 (SAS Champ YES) — both CLOSED and confirmed in paper_trades.json.
-
-**FOMC WATCH:** Warsh dot plot drops tomorrow 1PM CT. If dot plot shows 0 cuts or a hike projected,
-Trade #8 could drop to 5-10c. Hold per validation protocol — do not exit early on a paper trade.
+Rus was out sick several days, so the refocus-to-deadline-work push from
+your July 8 briefing is still the right call for the next working session.
 
 ---
 
-## VALIDATION STATUS
+## OPEN POSITIONS (verified against ledger tonight)
 
-| Criteria | Current | Target |
-|----------|---------|--------|
-| Closed trades | ~20 | 75 |
-| Win rate | ~53% | >55% |
-| Open slots | 3/8 | — |
+Only TWO open, not five (my earlier memory was stale):
+- #8  Fed cuts 1x 2026 YES @ 21c -- market ~19-21%, edge roughly flat
+- #13 GDP >2.0% YES @ 60c -- GDPNow 1.3%, holding to resolution (see #2)
 
----
-
-## GIT COMMITS TONIGHT
-
-- **bf67927** — P1 three-layer cache fix + GDPNow 2.8% update (price_fetcher, market_scanner, gdpnow_updater)
-- **ad9dac9** — SOCCER_GAME rename (daily_runner)
-
-Both pushed to GitHub. Oracle needs manual `git pull origin main --no-edit`.
+Closed since last briefing: #12 WON +1.24, #15 WON +19.36, #16 LOST -24.92.
 
 ---
 
-## SYSTEM STATUS
+## COMMITS PUSHED TONIGHT
 
-| Component | Status |
-|-----------|--------|
-| GDPNow | ✅ Updated to 2.8% — pipeline correct for tomorrow |
-| P1 Stale Filter | ✅ Three layers deployed — Thursday alert is verification |
-| SOCCER_GAME rename | ✅ Complete — user-facing labels updated |
-| Oracle Cloud | ⚠️ SSH not connecting — needs manual git pull |
-| Claims Fix 1 holiday test | ✅ Confirmed — June 20 in HOLIDAY_WEEKS, logic verified |
-| Claims | SUSPENDED — clock running, holiday test tomorrow |
-| MLB_GAME YES | Experimental — ~1 week post-fix validation |
-| SOCCER_GAME | CALIBRATION ONLY — 34.9% WR, 7 unique games, far from Gate 1 |
-| JOBS | ✅ Validated, go-live eligible, waiting for full suite |
-| sede_portfolio.json | NOT BUILT — next major build item (dedicated session) |
+```
+3f96d0c  Fix schema bug excluding live MLB trades from win-rate calcs
+```
+
+Plus one un-committed governance handoff doc (dashboard repo, not the
+code repo): FORGE_handoff_winrate_definition.md.
 
 ---
 
-## PENDING (next sessions)
-
-**IMMEDIATE:**
-1. Oracle SSH diagnostic — why is it failing? Check if IP changed or key issue.
-2. Watch FOMC 1PM CT tomorrow — Trade #8 reaction to dot plot.
-3. GDPNow June 17 update — check atlantafed.org tomorrow evening.
-
-**NEXT BUILD SESSION:**
-4. SOCCER_GAME accuracy investigation — why did Brazil-Morocco, Canada-Bosnia, Qatar-Switzerland
-   all go 0%? Were these upsets? Were all signals pointing at the wrong team? Root cause needed.
-5. sede_portfolio.json — dedicated session, next major build item.
-6. WC Elo strength update — Phase 1 for soccer: update WC_TEAMS strengths post group-stage round 1.
-
-**ONGOING:**
-- Claims reinstatement clock running — need 4+ clean non-holiday weeks >55%.
-- MLB YES direction validation — watch ~1 week of post-fix signals.
-- FOMC: watch Trade #8 reaction tomorrow.
-
----
-
-*Session | Model: Sonnet 4.6 | Identity: Archie*
-*Seven items, four built, three verified. P1 complete. Soccer rename done.*
-*SOCCER_GAME 34.9% WR — do not rush knockout stage. J@rv1s was right to flag it.*
+*Archie | Opus 4.8 | Session ~4:00 PM CT | July 11, 2026*
 *Papa Ralph standard. If it's worth doing it's worth doing right.*
+*Nothing ratified to governance docs. Win-rate definition awaits J@rv1s pass.*
+
+
+---
+---
+
+# APPENDED: FULL FORGE HANDOFF (folded in from standalone doc)
+## The dashboard repo .gitignore whitelists only specific files, so the
+## standalone FORGE_handoff_winrate_definition.md would not sync to Oracle.
+## Full content folded in here so J@rv1s gets it in the normal morning pull.
+## (The standalone .md still exists locally on Archie's machine for reference.)
+
+---
+
+## What this is
+
+An independent-review request, not a decision. Rus ran a Bias/FORGE/Papa
+Ralph pass with Archie tonight on a definitional gap: "win rate" is used
+as a Gate 1 / go-live hard criterion but has never been defined in the
+Foundation Document. Two production scripts compute it two different ways
+and disagree. Rus has PROVISIONALLY accepted a proposed definition,
+pending your independent pass. Nothing has been written to the Foundation
+Document or the scripts. Rus wants your review BEFORE any edit and BEFORE
+he ratifies. Your job: try to break the recommendation.
+
+## The gap (verified against files tonight)
+
+- go_live_protocol.md lists "Overall win rate > 55%" as a HARD go-live
+  criterion, paired separately with "Overall Brier score < 0.20."
+- SEDE_Foundation_Document_v1.0.1.md mentions "win rate" once (line 398,
+  in passing) and never defines it.
+- trade_monitor.py: win = pnl_dollars>0 -> 45.5% (10/22)
+- validation_dashboard.py: win = result=="WON" -> 36.4% (8/22)
+- Gap = 5 EARLY_EXIT trades: #5 -17.64, #7 -24.96, #11 -8.76 (lost early),
+  #23 +21.00, #24 +35.10 (MADE money via the auto-stop-loss sign bug
+  fixed in 05c24ee last session).
+
+## Papa Ralph reframing (important)
+
+Gate 1 also requires >=75 closed trades. Current count is 22. SEDE is NOT
+near go-live; this is NOT a live blocker. Reporting-accuracy question.
+Zero time pressure. Do not inherit false urgency from the "below 55%"
+framing.
+
+## Recommendation (Rus provisionally accepted, pending your pass)
+
+Resolution-only win rate = WON/(WON+LOST) = 47.1% (8/17). EARLY_EXIT is a
+THIRD category, its own line, its own P&L, never folded into win or loss.
+Both scripts rewritten to agree. P&L stays separate. Home: Foundation Doc.
+Rationale: go_live_protocol pairs win rate WITH Brier as separate criteria;
+if win rate also measured calibration it would be redundant with Brier.
+
+## Steelman -- test it, do NOT rubber-stamp
+
+1. Pure-pnl view: "a win is money in the bank." #23/#24 made real money.
+   Use 45.5% and stop overthinking -- but then dismiss the Brier
+   redundancy concern explicitly.
+2. 47.1% excludes 5 of 22 closed trades (23%) from the denominator. Is a
+   win rate that ignores ~a quarter of closed trades more honest, or just
+   relabeling? A criterion over a filtered subset could itself be
+   cherry-picking. Push hard.
+3. EARLY_EXIT lumps discretionary-cut-losses (#5/#7/#11) with
+   bug-caused-early-profits (#23/#24). Should those share a category?
+4. Convenience-bias check on Archie: Archie admitted a pull toward the
+   higher number and picked the middle (47.1%) partly to look unbiased.
+   Verify 47.1% is actually right, not chosen to appear neutral.
+
+## Requested output from J@rv1s
+
+1. Does resolution-only survive the steelman? Clear position.
+2. If yes: exact Foundation Document wording to propose (so Rus ratifies
+   wording, not just concept).
+3. If no: counter-proposal.
+4. Confirm the >=75-trades reframing (not a live blocker) is correct.
+
+Then back to Rus for final sign-off before any file is touched.
+
+---
+*Nothing ratified. Nothing written to governance docs. Awaiting your pass.*
