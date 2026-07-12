@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-11T12:45:18.638352",
+  "generated_at": "2026-07-12T02:00:32.849760",
   "total_resolved": 161,
   "by_model": {
     "MLB_GAME": {
@@ -35,7 +35,7 @@
       "acc_pct": 50.0,
       "avg_brier": 0.4499,
       "avg_logloss": 1.1823,
-      "avg_edge": -26.8,
+      "avg_edge": -26.2,
       "beats_random": false
     },
     "JOBS": {

@@ -107,7 +107,8 @@
     "exit_date": "2026-05-10 13:26 CT",
     "pnl_dollars": -17.64,
     "result": "EARLY_EXIT",
-    "close_note": "the model still shows edge on the underlying"
+    "close_note": "the model still shows edge on the underlying",
+    "exit_subtype": "DISCRETIONARY_EXIT"
   },
   {
     "id": 6,
@@ -151,7 +152,8 @@
     "exit_date": "2026-05-11 22:03 CT",
     "pnl_dollars": -24.96,
     "result": "EARLY_EXIT",
-    "close_note": "Cavaliers led 3-1, Pistons 4-1 market essentially dead. Closed for data integrity."
+    "close_note": "Cavaliers led 3-1, Pistons 4-1 market essentially dead. Closed for data integrity.",
+    "exit_subtype": "DISCRETIONARY_EXIT"
   },
   {
     "id": 8,
@@ -239,7 +241,8 @@
     "exit_date": "2026-05-12 18:54 CT",
     "pnl_dollars": -8.76,
     "result": "EARLY_EXIT",
-    "close_note": "\"Position oversized \u2014 73 contracts at 70c exceeds $25 max loss limit. Closing to maintain data integrity. Thesis valid, execution price and sizing were wrong."
+    "close_note": "\"Position oversized \u2014 73 contracts at 70c exceeds $25 max loss limit. Closing to maintain data integrity. Thesis valid, execution price and sizing were wrong.",
+    "exit_subtype": "DISCRETIONARY_EXIT"
   },
   {
     "id": 12,
@@ -369,12 +372,12 @@
     "live_trade": true,
     "thesis": "OddsAPI 4-book consensus 67.6% PHI. SP: Andrew Painter ERA 3.09 vs Yamamoto ERA 5.40, +9.2% SP adj. Kalshi mispriced at 32c vs sharp consensus. First live $1 model test. Edge confirmed by real books.",
     "event_date": "2026-05-31",
-    "status": "LOST",
-    "exit_price_cents": null,
-    "exit_date": null,
+    "status": "CLOSED",
+    "exit_price_cents": 0,
+    "exit_date": "2026-05-31 23:30 CT",
     "pnl_dollars": -1.0,
-    "result": null,
-    "close_note": null,
+    "result": "LOST",
+    "close_note": "[AUTO-CLOSED MLB] PHI 1-9 LAD FINAL -- PHI lost, our YES loses",
     "exit_price": 0,
     "notes": "[AUTO-CLOSED MLB] PHI 1-9 LAD FINAL -- PHI lost, our YES loses",
     "closed_at": "2026-05-31 23:30 CT"
@@ -397,12 +400,12 @@
     "live_trade": true,
     "thesis": "OddsAPI 4-book consensus HOU 63.5%. SP: Misiorowski ERA 6.17 vs Imai ERA 1.83, -17.4% SP adj crushing MIL. HOU strong home team. Kalshi mispriced MIL NO at 32c. First live $1 model test.",
     "event_date": "2026-05-31",
-    "status": "LOST",
-    "exit_price_cents": null,
-    "exit_date": null,
+    "status": "CLOSED",
+    "exit_price_cents": 0,
+    "exit_date": "2026-05-31 23:30 CT",
     "pnl_dollars": -1.0,
-    "result": null,
-    "close_note": null,
+    "result": "LOST",
+    "close_note": "[AUTO-CLOSED MLB] MIL 2-0 HOU FINAL -- MIL won, our NO loses",
     "exit_price": 0,
     "notes": "[AUTO-CLOSED MLB] MIL 2-0 HOU FINAL -- MIL won, our NO loses",
     "closed_at": "2026-05-31 23:30 CT"
@@ -425,12 +428,12 @@
     "live_trade": true,
     "thesis": "OddsAPI 4-book consensus ATH 62.0%. SP: Will Warren ERA 5.73 vs Jacob Lopez ERA 3.55, -8.7% SP adj. ATH home, pitching advantage. Kalshi mispriced NYY NO at 39c. First live $1 model test.",
     "event_date": "2026-05-31",
-    "status": "LOST",
-    "exit_price_cents": null,
-    "exit_date": null,
+    "status": "CLOSED",
+    "exit_price_cents": 0,
+    "exit_date": "2026-05-31 23:30 CT",
     "pnl_dollars": -1.0,
-    "result": null,
-    "close_note": null,
+    "result": "LOST",
+    "close_note": "[AUTO-CLOSED MLB] NYY 13-8 ATH FINAL -- NYY won, our NO loses",
     "exit_price": 0,
     "notes": "[AUTO-CLOSED MLB] NYY 13-8 ATH FINAL -- NYY won, our NO loses",
     "closed_at": "2026-05-31 23:30 CT"
@@ -453,12 +456,12 @@
     "live_trade": true,
     "thesis": "OddsAPI 4-book consensus DET 54.8%. SP: Keider Montero ERA 3.90 vs Sean Burke ERA 4.09, +0.8% SP adj. Weakest edge of the 4 but books agree. CHW worst team in baseball. First live $1 model test.",
     "event_date": "2026-05-31",
-    "status": "LOST",
-    "exit_price_cents": null,
-    "exit_date": null,
+    "status": "CLOSED",
+    "exit_price_cents": 0,
+    "exit_date": "2026-05-31 23:30 CT",
     "pnl_dollars": -1.0,
-    "result": null,
-    "close_note": null,
+    "result": "LOST",
+    "close_note": "[AUTO-CLOSED MLB] DET 1-2 CHW FINAL -- DET lost, our YES loses",
     "exit_price": 0,
     "notes": "[AUTO-CLOSED MLB] DET 1-2 CHW FINAL -- DET lost, our YES loses",
     "closed_at": "2026-05-31 23:30 CT"
@@ -527,7 +530,8 @@
     "exit_date": "2026-06-09 06:00 CT",
     "pnl_dollars": 21.0,
     "result": "EARLY_EXIT",
-    "close_note": "AUTO_STOP_LOSS (BUG, fixed 2026-07-07): calculate_current_loss() had inverted NO-branch sign, misread favorable NO price rise (50c->92c) as a loss. Real P&L was a genuine gain; early exit at 92c likely cost a few dollars vs full resolution."
+    "close_note": "AUTO_STOP_LOSS (BUG, fixed 2026-07-07): calculate_current_loss() had inverted NO-branch sign, misread favorable NO price rise (50c->92c) as a loss. Real P&L was a genuine gain; early exit at 92c likely cost a few dollars vs full resolution.",
+    "exit_subtype": "BUG_INDUCED_EXIT"
   },
   {
     "id": 24,
@@ -549,6 +553,7 @@
     "exit_date": "2026-06-09 06:00 CT",
     "pnl_dollars": 35.1,
     "result": "EARLY_EXIT",
-    "close_note": "AUTO_STOP_LOSS (BUG, fixed 2026-07-07): calculate_current_loss() had inverted NO-branch sign, misread favorable NO price rise (38c->92c) as a loss. Real P&L was a genuine gain; early exit at 92c likely cost a few dollars vs full resolution."
+    "close_note": "AUTO_STOP_LOSS (BUG, fixed 2026-07-07): calculate_current_loss() had inverted NO-branch sign, misread favorable NO price rise (38c->92c) as a loss. Real P&L was a genuine gain; early exit at 92c likely cost a few dollars vs full resolution.",
+    "exit_subtype": "BUG_INDUCED_EXIT"
   }
 ]
