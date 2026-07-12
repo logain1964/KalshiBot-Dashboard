@@ -1,198 +1,169 @@
-# KalshiBot Nightly Summary
-## For J@rv1s -- Saturday July 11, 2026 (Archie session, afternoon/evening)
-Prepared by Archie | Opus 4.8
+# KalshiBot Nightly Summary — COMBINED (July 11 + July 12 sessions)
+## For J@rv1s | Prepared by Archie (Opus 4.8)
+## Covers two dense sessions deliberately deferred into one combined write.
 
 ---
 
 ## TL;DR FOR J@RV1S
 
-Rus is back after a few days out sick. Picked up from your July 8 briefing.
-Two things resolved to decisions tonight, one real second bug found, and
-one FORGE handoff waiting for your independent pass. Details below.
+Two big sessions. Session 1 (Jul 11): ratified + deployed the win-rate
+definition (your hybrid), discovered MLB Track A/B was never actually
+built, and built the frozen Track B model core. Session 2 (Jul 12): built
+the full prospective Track B pipeline, then Rus's instinct about weekend
+cron windows uncovered THREE real pipeline bugs (all found, all fixed,
+none flipped any conclusion), fixed the cron, and repaired a silently-broken
+Dashboard sync (60 unpushed commits).
 
-**ACTION FOR YOU:** Read `FORGE_handoff_winrate_definition.md` (in the
-dashboard repo) and do a genuine adversarial pass on the win-rate
-definition. It is written to be attacked, not rubber-stamped. Then back
-to Rus for final ratification. Nothing is written to governance docs yet.
+**Your three independent passes this weekend all landed** — win-rate
+dissent, date-bug Claim-2 pressure-test, dedup n-reconciliation. Thank you;
+they materially changed outcomes. Nothing below needs a pass unless flagged.
 
----
-
-## 1. WIN-RATE SCHEMA BUG (#17-20) -- FIXED AT ROOT, COMMITTED
-
-Your July 8 flag was correct and is now resolved in code, not just data.
-
-- Root cause was in `mlb_autoclose.py` `auto_close()`: it wrote the
-  WON/LOST outcome directly into the `status` field instead of
-  `status=CLOSED` + `result=<outcome>`. That's why #17-20 were excluded
-  from every `status=="CLOSED"` filter.
-- IMPORTANT: this bug would have silently excluded future live MLB WINS
-  too, not just the four May 31 losses. It only looked loss-specific
-  because the first live batch happened to go 0-for-4.
-- Fixed the function so all future live MLB trades use correct schema.
-- Normalized #17-20 in the production ledger (C:\KalshiBot\data\
-  paper_trades.json) to standard schema.
-- Committed + pushed: commit 3f96d0c.
-
-Process note / self-correction: Archie first edited the WRONG copy of
-paper_trades.json (the C:\KalshiBot-Dashboard mirror, not the C:\KalshiBot
-production repo). Caught it via git history check before committing, then
-fixed the real file. Same numbers, no harm, but logging it honestly.
-
-**True win rate with #17-20 included: 45.5% (22 closed, 10 wins) by the
-pnl>0 method.** Below Gate 1's 55%. See item 3 -- the definition itself
-is now in question.
+**Standing rules ratified (apply from now, cross-instance):**
+1. "DEPLOYED" = verified producing output, not merely committed.
+2. Every nightly summary carries a DEADLINE WATCH block (below).
 
 ---
 
-## 2. TRADE #13 DECISION -- HOLD TO RESOLUTION (Rus ratified)
+## DEADLINE WATCH (standing block — honest status each item)
 
-GDP >2.0% YES @ 60c. GDPNow at 1.3% as of July 8 (down from 1.4% Jul 1).
-Thesis has decayed hard; this is very likely a loss by the Jul 30 event.
-Rus decided to hold to resolution regardless -- "data is data, good or
-bad." Same principle as #16. Clean data point over a protected record.
-
----
-
-## 3. WIN-RATE DEFINITION -- FORGE PASS RUN, AWAITING YOUR REVIEW
-
-While fixing #1, found a SECOND, deeper issue: the two reporting scripts
-define "win" differently and disagree.
-- trade_monitor.py: win = pnl_dollars>0 -> 45.5% (10/22)
-- validation_dashboard.py: win = result=="WON" -> 36.4% (8/22)
-- Gap = 5 EARLY_EXIT trades, incl. #23/#24 which made money via the
-  stop-loss bug you and Rus fixed last session.
-
-Ran full Bias/FORGE/Papa Ralph in Opus. Key findings:
-- Papa Ralph gate reframed it: Gate 1 needs >=75 closed trades, we have
-  22. This is NOT a live go-live blocker. Zero time pressure.
-- "win rate" is undefined in the Foundation Document (appears once, line
-  398, in passing). Real definitional gap.
-- Recommendation (Rus PROVISIONALLY accepted, pending your pass):
-  resolution-only win rate = WON/(WON+LOST) = 47.1% (8/17), with
-  EARLY_EXIT as a separate third category. Home: Foundation Document.
-
-Rus's instruction: write it up for your independent pass FIRST, do NOT
-edit the Foundation Document, do NOT treat his acceptance as final until
-you review and he confirms. Handoff doc is
-`FORGE_handoff_winrate_definition.md`. It includes the dissenting
-pure-pnl case and four specific attacks on the recommendation. Please
-actually try to break it.
+| Item | Hard date | Status |
+|------|-----------|--------|
+| MLB verdict | ~~Jul 25~~ SLIPPED | Deliberate: prospective Track B now accumulating. Re-eval when n sufficient. Documented. |
+| NFL Signal Contract spec | Sep 3 | NOT STARTED. Highest forward priority. Bake in day-one signal capture (your lesson). |
+| Track B first real capture | next game day | Code deployed + verified on Oracle; first WRITE happens when scheduled games hit the 7am/11:15am cron. Not yet demonstrated. |
 
 ---
 
-## STILL OPEN (carried, not touched tonight)
+## SESSION 1 — Friday... er, Saturday July 11
 
-- MLB Foundation Document verdict -- due July 25 (structural: genuine
-  model vs disguised arbitrage). NOT moved tonight.
-- NFL Signal Contract spec -- not started, hard deadline Sept 3.
-- on_signal_resolved() stub -- hard prereq before subscriber onboarding.
-- 9-file hardcoded-path audit -- still outstanding.
-- June 30 session archive -- still missing.
+### 1. Win-rate definition — RATIFIED + DEPLOYED (your hybrid won)
+Archie proposed resolution-only; you dissented and broke the redundancy
+argument (Brier already excludes EARLY_EXIT — brier_score:null). Rus
+ratified YOUR hybrid:
+- GATE = pnl>0 across ALL closed trades (45.5%, 10/22)
+- COMPANION = resolution-only WON/(WON+LOST) (47.1%), never gates
+- EARLY_EXIT split -> DISCRETIONARY_EXIT / BUG_INDUCED_EXIT
+Foundation Doc bumped to v1.1.0 (Part 11), amendment logged, code
+(validation_dashboard.py) + data (paper_trades.json subtypes) updated.
+DEPLOYED to Oracle and verified. Also corrected: per-model Gate 1 = 30
+resolved; portfolio go-live = 75 closed (Archie had wrongly said Gate 1=75).
 
-Rus was out sick several days, so the refocus-to-deadline-work push from
-your July 8 briefing is still the right call for the next working session.
+### 2. Win-rate schema root-cause fix
+mlb_autoclose.py wrote outcome into `status` instead of status=CLOSED +
+result. Fixed at root; #17-20 normalized. Would have silently excluded
+future live MLB WINS too, not just the 4 losses.
+
+### 3. MLB Track A/B readiness — THE DISCOVERY
+Found the Foundation Doc Part 6 two-track test CANNOT run as written:
+- Track A (edge decay): ZERO data. kalshi_price_at_gametime column never
+  existed; all 188 MLB signals empty. Unrecoverable historically.
+- Track B (independent model): NEVER BUILT. No Elo/FIP/park anywhere.
+Your reframe (correct): this is a PROCESS failure — measurement infra was
+designed AFTER MLB went live. The real lesson is for NFL: day-one capture.
+
+### 4. Track B method decision
+Rus's gut: only a clean PROSPECTIVE test will satisfy him — no retro
+reconstruction. So: build prospective Track B, July 25 verdict SLIPS
+(documented). Model core built + FROZEN (pre-registered spec, off-the-shelf
+constants, git-timestamp freeze). Committed 11ad04f.
 
 ---
 
-## OPEN POSITIONS (verified against ledger tonight)
+## SESSION 2 — Sunday July 12
 
-Only TWO open, not five (my earlier memory was stale):
-- #8  Fed cuts 1x 2026 YES @ 21c -- market ~19-21%, edge roughly flat
-- #13 GDP >2.0% YES @ 60c -- GDPNow 1.3%, holding to resolution (see #2)
+### 5. Track B full pipeline — BUILT + DEPLOYED + VERIFIED
+- track_b_logger.py: logs P(model) vs P(sharpapi) for EVERY scheduled game
+  (Option A, unbiased sample), blind to outcome, own CSV (data/track_b_log.csv).
+- Wired into models/mlb_model.py run_game_model (used by BOTH daily_runner
+  and mlb_refresh, so all runs log). Isolated in try/except — BR outage
+  can't touch signals.
+- track_b_backfill.py: scores logged games after they finish (past-only,
+  writes only actual_outcome, never predictions).
+- Verified on Oracle: real run showed "[Track B] tables ready (1429 games,
+  744 pitchers) -- logging ON", logged 0 (all games final -- correct,
+  blind-to-outcome preserved).
+- First live divergences seen in testing: ARI@LAD model 0.556 vs sharp
+  0.794 (-0.238), TOR@SDP 0.521 vs 0.707 (-0.186). Machinery produces
+  real divergence, not market-parroting.
 
-Closed since last briefing: #12 WON +1.24, #15 WON +19.36, #16 LOST -24.92.
+### 6. THREE pipeline bugs found (Rus's weekend-cron instinct uncovered them)
+**Bug A — UTC/CST date-boundary.** mlb_model.py used date.today() (UTC on
+Oracle), so the evening run fetched TOMORROW's games while stamping CST
+run_date. Claim 2 (does this corrupt the 52.9%/0.2563 Brier?) — YOU pushed
+the confidence-distribution check: exposed signals DO skew 2x more confident
+(0.366 vs 0.166), so a mis-score would carry outsized weight. But
+game-by-game check of all 9 exposed / 6 splits: **0 actually mis-scored**
+(all scored against correct run_date). Claim 2 CLOSED. Numbers clean, model
+genuinely mediocre. Fixed (CST-aware helpers) — forward-looking.
+
+**Bug B — backfill cutoff.** Same date.today() in the "past games only"
+cutoff would let the evening run try to score TODAY's in-progress games.
+Fixed CST + boundary-tested.
+
+**Bug C — dedup undercount.** brier_dashboard.py deduped by market NAME
+alone, collapsing the same matchup on different dates (LAD@ARI Jun 1/3/4 =
+1 game). Undercounted. Fixed to (run_date, market): **n 83 -> 103**.
+Accuracy/Brier essentially unchanged -> still BELOW RANDOM, still fails
+Gate 1 on CALIBRATION not sample size. n=103 is now AUTHORITATIVE; retire
+n=85. Both corrections disclosed in track_b_prereg_spec_v1.md.
+
+Three bugs, none flipped the "MLB genuinely mediocre" read — itself evidence
+the verdict conclusion is robust to noise, not an artifact of it.
+
+### 7. Cron fixed — weekend coverage gap CLOSED
+Oracle cron was 7am/7:45am/9pm CST (memory note "7am confirmed" was right
+for summer CDT; the 7:45 was cruft). Only the 9pm run hit the MLB window,
+too late for weekend day games. Added 11:15am CDT run (15 16 UTC) inside
+the window; removed the 7:45 stray. Backup saved on Oracle.
+
+### 8. Dashboard sync — SILENTLY BROKEN, repaired
+The daily_runner's push to KalshiBot-Dashboard had been failing for **60
+commits** — J@rv1s's morning data was stale and nobody knew. Surfaced by
+ABV on a push-fail message. Resolved (Oracle owns data), pushed, verified
+paper_trades.json intact (24 trades, #8 + #13 open). Sync now works going
+forward.
+
+### 9. Track B idempotency-with-upgrade
+Multi-run schedule meant a 7am fallback-pitcher log would block the 11:15am
+confirmed-pitcher upgrade. Fixed: re-log now UPGRADES in place when more SPs
+confirmed; scored rows FROZEN; confirmed rows LOCKED. All 4 cases tested.
+Deployed + verified on Oracle. (First demonstrated upgrade = tomorrow's
+cron cycle.)
 
 ---
 
-## COMMITS PUSHED TONIGHT
+## OPEN POSITIONS (verified vs ledger)
+- #8 Fed rate-cut count >=1 (KXRATECUTCOUNT) YES @21c — long-dated (Dec 31)
+- #13 GDP >2.0% (KXGDP-26JUL30) YES @60c — HOLDING to resolution. GDPNow
+  1.3% as of Jul 8 (next update Jul 16). Thesis decayed, likely loss.
+  "Data is data." Only 2 open; 22 closed.
 
+## COMMITS (both sessions)
 ```
-3f96d0c  Fix schema bug excluding live MLB trades from win-rate calcs
+Code repo (C:\KalshiBot):
+3f96d0c  win-rate schema root fix
+ea95ddd  Foundation Doc v1.1.0 win-rate definition
+11ad04f  Track B pre-registered model core (frozen)
+9fb9eec  Track B logger wired into pipeline
+255cc04  Track B outcome backfill
+3025f6b  UTC/CST date-boundary fix
+39796e7  dedup fix (n 83->103) + disclosures
+3e81dce  Track B idempotency-with-upgrade
+Dashboard: 60-commit backlog repaired + pushed (3f4474b)
+Oracle: all commits pulled + verified live.
 ```
 
-Plus one un-committed governance handoff doc (dashboard repo, not the
-code repo): FORGE_handoff_winrate_definition.md.
+## STILL OPEN / NEXT SESSION
+- NFL Signal Contract spec — NOT STARTED, Sep 3, day-one capture requirement
+- on_signal_resolved() stub — prereq before subscriber onboarding
+- 9-file hardcoded-path audit
+- June 30 session archive still missing
+- Track B: watch tomorrow's cron for first real WRITE + first upgrade demo
+- Telegram Markdown HTTP 400 (benign, self-recovers to plain text) — low pri
 
 ---
 
-*Archie | Opus 4.8 | Session ~4:00 PM CT | July 11, 2026*
-*Papa Ralph standard. If it's worth doing it's worth doing right.*
-*Nothing ratified to governance docs. Win-rate definition awaits J@rv1s pass.*
-
-
----
----
-
-# APPENDED: FULL FORGE HANDOFF (folded in from standalone doc)
-## The dashboard repo .gitignore whitelists only specific files, so the
-## standalone FORGE_handoff_winrate_definition.md would not sync to Oracle.
-## Full content folded in here so J@rv1s gets it in the normal morning pull.
-## (The standalone .md still exists locally on Archie's machine for reference.)
-
----
-
-## What this is
-
-An independent-review request, not a decision. Rus ran a Bias/FORGE/Papa
-Ralph pass with Archie tonight on a definitional gap: "win rate" is used
-as a Gate 1 / go-live hard criterion but has never been defined in the
-Foundation Document. Two production scripts compute it two different ways
-and disagree. Rus has PROVISIONALLY accepted a proposed definition,
-pending your independent pass. Nothing has been written to the Foundation
-Document or the scripts. Rus wants your review BEFORE any edit and BEFORE
-he ratifies. Your job: try to break the recommendation.
-
-## The gap (verified against files tonight)
-
-- go_live_protocol.md lists "Overall win rate > 55%" as a HARD go-live
-  criterion, paired separately with "Overall Brier score < 0.20."
-- SEDE_Foundation_Document_v1.0.1.md mentions "win rate" once (line 398,
-  in passing) and never defines it.
-- trade_monitor.py: win = pnl_dollars>0 -> 45.5% (10/22)
-- validation_dashboard.py: win = result=="WON" -> 36.4% (8/22)
-- Gap = 5 EARLY_EXIT trades: #5 -17.64, #7 -24.96, #11 -8.76 (lost early),
-  #23 +21.00, #24 +35.10 (MADE money via the auto-stop-loss sign bug
-  fixed in 05c24ee last session).
-
-## Papa Ralph reframing (important)
-
-Gate 1 also requires >=75 closed trades. Current count is 22. SEDE is NOT
-near go-live; this is NOT a live blocker. Reporting-accuracy question.
-Zero time pressure. Do not inherit false urgency from the "below 55%"
-framing.
-
-## Recommendation (Rus provisionally accepted, pending your pass)
-
-Resolution-only win rate = WON/(WON+LOST) = 47.1% (8/17). EARLY_EXIT is a
-THIRD category, its own line, its own P&L, never folded into win or loss.
-Both scripts rewritten to agree. P&L stays separate. Home: Foundation Doc.
-Rationale: go_live_protocol pairs win rate WITH Brier as separate criteria;
-if win rate also measured calibration it would be redundant with Brier.
-
-## Steelman -- test it, do NOT rubber-stamp
-
-1. Pure-pnl view: "a win is money in the bank." #23/#24 made real money.
-   Use 45.5% and stop overthinking -- but then dismiss the Brier
-   redundancy concern explicitly.
-2. 47.1% excludes 5 of 22 closed trades (23%) from the denominator. Is a
-   win rate that ignores ~a quarter of closed trades more honest, or just
-   relabeling? A criterion over a filtered subset could itself be
-   cherry-picking. Push hard.
-3. EARLY_EXIT lumps discretionary-cut-losses (#5/#7/#11) with
-   bug-caused-early-profits (#23/#24). Should those share a category?
-4. Convenience-bias check on Archie: Archie admitted a pull toward the
-   higher number and picked the middle (47.1%) partly to look unbiased.
-   Verify 47.1% is actually right, not chosen to appear neutral.
-
-## Requested output from J@rv1s
-
-1. Does resolution-only survive the steelman? Clear position.
-2. If yes: exact Foundation Document wording to propose (so Rus ratifies
-   wording, not just concept).
-3. If no: counter-proposal.
-4. Confirm the >=75-trades reframing (not a live blocker) is correct.
-
-Then back to Rus for final sign-off before any file is touched.
-
----
-*Nothing ratified. Nothing written to governance docs. Awaiting your pass.*
+*Archie | Opus 4.8 | Combined summary, sessions Jul 11 + Jul 12*
+*Three bugs found and fixed, none flipped a conclusion. Dashboard sync*
+*repaired. Track B live. Your three passes shaped every major call.*
+*Papa Ralph standard. If it's worth doing, it's worth doing right.*
