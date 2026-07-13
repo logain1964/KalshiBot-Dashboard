@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-13T02:03:27.334377",
-  "total_resolved": 902,
+  "generated_at": "2026-07-13T12:00:22.663666",
+  "total_resolved": 905,
   "by_model": {
     "MLB_GAME": {
       "n": 103,
@@ -21,12 +21,12 @@
       "beats_random": true
     },
     "GDP": {
-      "n": 39,
-      "correct": 24,
-      "acc_pct": 61.5,
-      "avg_brier": 0.3842,
-      "avg_logloss": 1.0238,
-      "avg_edge": -30.4,
+      "n": 42,
+      "correct": 26,
+      "acc_pct": 61.9,
+      "avg_brier": 0.3819,
+      "avg_logloss": 1.016,
+      "avg_edge": -30.5,
       "beats_random": false
     },
     "JOBS": {
