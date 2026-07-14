@@ -1,4 +1,4 @@
-# J@rv1s → Archie: Monday July 13 Evening Handoff
+# J@rv1s → Archie: Monday July 14 Evening Handoff
 ## STATUS: Deep pass on tonight's MLB Track A finding. One cheap diagnostic
 ## requested BEFORE any classification rewrite. Elo predictions logged for
 ## fast evaluation once your extended test lands. Nothing ratified, nothing
@@ -170,5 +170,39 @@ instance):
 Nothing built. Nothing ratified. For Rus's call.
 
 ---
+
+J@rv1s → Archie: NFL Spec — Two New Feasibility Questions (Q4, Q5)
+Monday July 14, 2026 (late session)
+STATUS: Two additions surfaced from a broader architecture conversation with Rus tonight (MLOps/quant-finance pattern matching). Same treatment as Q1-Q3 — feasibility questions for you to test against real data, not decisions. Nothing built, nothing ratified.
+CONTEXT (so you're not starting cold)
+Rus and I spent part of tonight's session on a longer-term architecture idea — a shared "check engine" / inspection layer sitting between any model's output and eventual SEEKS integration. In working through it, we looked at what existing fields have already solved pieces of this problem: MLOps champion/challenger patterns, shadow deployment, and quant-finance backtesting methodology (specifically purged/embargoed cross-validation) and forecasting-calibration research (superforecasting/Good Judgment Project work).
+Two of those map directly onto open pieces of the NFL spec and are worth testing before the spec locks, same as Q1-Q3. Framing them the same way: feasibility questions for you to check against real data, not conclusions already reached.
+Q4 — REFRAME THE ELO CONFIDENCE TIERS AS AN EXPLICIT EMBARGO PERIOD
+The pattern: in quant-finance backtesting (purged/embargoed cross-validation), when a model's inputs include information that summarizes a full prior period, an explicit "embargo" is required before trusting predictions in the new period — because the carried-over prior already encodes outcomes that haven't happened yet relative to the new test window.
+Why this applies directly to what you already found: the Elo carry-constant (0.33 or 0.50, carrying forward last season's FINAL rating) is structurally an information-leakage source relative to the new season — last season's final rating already encodes that whole season's results. The tiered confidence structure you proposed (Wk 1-5 low, Wk 6-10 moderate, Wk 11+ high) is functionally an embargo period, just derived empirically rather than from the existing methodology.
+Feasibility question: does treating this explicitly as an embargo-period problem (rather than a pure empirical convergence curve) change or sharpen where the boundary should sit? Specifically:
+
+Does the purged-CV literature have a standard method for computing embargo length from a carry constant + season length, that could be compared against your empirical ~Week 6 finding as a cross-check?
+Would explicit embargo framing suggest testing carry values BELOW 0.33 (less leakage, shorter earned embargo) as part of the same sweep you're already doing for the 1999-extension test?
+
+This doesn't replace the empirical test already in progress (Week 6 crossing point, carry=0.50, 1999 extension) — it's a second lens to cross-check the same number against, not a different number to produce.
+Q5 — PROBABILITY-BUCKET CALIBRATION, NOT JUST AGGREGATE BRIER
+The pattern: superforecasting/forecasting-tournament methodology separates calibration (are stated probabilities honest) from resolution (how often you're right when confident), and checks calibration by BINNING predictions into probability ranges (e.g., all "~70% confident" signals) and testing whether reality matches the bucket (did the predicted side win ~70% of the time within that bucket specifically) — rather than relying on one aggregate Brier score across all signals.
+Why this applies directly to a risk already surfaced this week: the MLB date-boundary Claim-2 investigation found that exposed signals skewed 2x more confident than clean ones (0.366 vs 0.166) — a subgroup-level miscalibration that an aggregate Brier score alone would not have surfaced without the specific confidence-distribution check we ran. A model can be well-calibrated on average while being badly miscalibrated within specific confidence bands or specific subgroups (e.g., systematically overconfident specifically on Questionable-tagged players) — and an aggregate score would hide exactly that.
+Feasibility question: can probability-bucket calibration logging be built into Track B's day-one logging requirement (Section 2/3 of the spec) at reasonable cost? Specifically:
+
+Is there a natural, clean bucket scheme given NFL's game count (fewer data points per season than MLB — buckets may need to be coarser, or accumulate across multiple seasons before being meaningful)?
+Does this interact with the Section 4 Questionable/Doubtful handling — i.e., would bucketing by injury-designation subgroup (in addition to by confidence level) be worth logging from day one, given that's a plausible source of hidden miscalibration specific to NFL?
+
+WHAT THIS IS NOT
+Not a request to redesign the spec tonight. Not a claim that either of these changes the Elo Week-6 estimate or requires new infrastructure beyond what's already planned. These are two lenses borrowed from established fields that map onto problems already in front of us — worth testing for fit before the spec locks, same treatment as Q1-Q3.
+REQUESTED FROM ARCHIE
+
+Q4: sanity-check whether embargo-period framing changes or confirms the ~Week 6 empirical finding, using whatever cross-check is cheap given the 1999-extension work already planned.
+Q5: assess whether probability-bucket + subgroup calibration logging is a reasonable day-one addition to Section 2/3, or adds meaningful build cost that should wait for a later revision.
+Flag anything in either of these that doesn't fit NFL's actual data shape (sample size, season length, etc.) — these are patterns borrowed from other fields, not guaranteed to transfer cleanly.
+
+Nothing built. Nothing ratified. For Rus's call once you've had a look.
+J@rv1s | Papa Ralph standard. If it's worth doing it's worth doing right.
 
 *J@rv1s | Papa Ralph standard. If it's worth doing it's worth doing right.*
