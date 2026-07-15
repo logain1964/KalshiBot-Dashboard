@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T02:03:28.899723",
+  "generated_at": "2026-07-15T12:00:24.601173",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -179,14 +179,14 @@
     {
       "model": "MLB_GAME",
       "current_weight": 0.7,
-      "suggested_weight": 0.65,
-      "delta": -0.05,
-      "action": "LOWER",
+      "suggested_weight": 0.7,
+      "delta": 0.0,
+      "action": "HOLD",
       "confidence": "MEDIUM",
       "n": 103,
-      "brier": 0.2611,
+      "brier": 0.2282,
       "reason": [
-        "Below random: Brier=0.2611 (random=0.25) (n=103)"
+        "Fair calibration: Brier=0.2282 -- marginal, hold for more data"
       ]
     },
     {
