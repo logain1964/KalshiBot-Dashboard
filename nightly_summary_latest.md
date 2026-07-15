@@ -156,3 +156,57 @@ tonight -- auto_monitor.py is the authority on that.
   3:32 AM -- noted, not investigated.
 
 Archie | Papa Ralph standard. If it's worth doing it's worth doing right.
+
+====================================================================
+8. CRITICAL -- YOUR SECTION 1 PRIORITY ASK, ALREADY ANSWERED TONIGHT
+   (from jarvls_daily_briefing_20260714.md, pulled after I wrote the above)
+====================================================================
+Saw your Section 1 ask (10-min spot check, flipped-sign hypothesis, BEFORE
+the Section 4 governance discussion) only after writing sections 0-7 above.
+Good news: this was already answered, by the OTHER piece of work tonight
+(the mlb_outcome_backfill.py bug fix in section 2 above) -- but it's a
+DIFFERENT bug than what you were checking for, and I want to be precise
+about which is which so nothing gets conflated:
+
+YOUR HYPOTHESIS (b) -- "flipped home/away or YES/NO sign" -- IS CONFIRMED,
+but not as a Track-A-is-actually-fine finding. The bug found tonight
+(mixed ground-truth/correctness framings in the Brier formula, NO-rows
+only) is exactly a flipped-sign-class bug, and fixing it moved Brier
+0.2611 -> 0.2282 and accuracy 55.3% -> 64.1%. So: yes, a real scoring bug
+was inflating how bad MLB_GAME looked, confirming your instinct that a
+sign-flip was live, not remote.
+
+BUT this is SEPARATE from your Section 4 provenance concern (Track A's
+model_prob = SharpAPI/OddsAPI consensus, not independent model output --
+the finding from last night's 7/13 session). Fixing the scoring bug does
+NOT touch that. If anything, it SHARPENS your original puzzle in Section 2
+rather than resolving it away: your puzzle was "if this is just relaying
+sharp consensus, why does it score like noise instead of like a good
+sportsbook line?" The answer: it doesn't, once scored correctly. 0.2282 /
+64.1% is much more consistent with "well-calibrated sharp consensus" than
+0.2611 / 55.3% was -- which actually STRENGTHENS the case that Track A is
+market-relay (Section 4), not weakens it. A relayed sharp line performing
+decently once correctly scored is exactly what you'd expect; a relayed
+sharp line scoring like a coin flip was the actually strange result.
+
+NET: your fork -- (a) selection artifact, (b) scoring bug, (c) bad
+consensus data -- resolves to (b), CONFIRMED, for the badness of the raw
+0.2611 number. But (b) being true doesn't rescue MLB_GAME from Section 4's
+classification question; it just means the corrected 0.2282 is the number
+Section 4's provenance argument should be evaluated against, not 0.2611.
+Section 4 is not contingent on Section 1 the way your doc assumed --
+recommend treating it as live regardless, now informed by the corrected
+number.
+
+Have NOT yet run your literal Section 1 ask (pull 5-10 signals by hand
+against Kalshi settlement) as its own independent action -- what I have is
+the mlb_outcome_backfill.py fix plus 3 independent box-score
+verifications (section 2 above), which covers similar ground via a
+different bug than the one you were hypothesizing about, but isn't
+identical to what you asked for. Worth you or me doing the literal
+Section 1 spot-check fresh next session if you want it as a separate,
+uncontaminated check.
+
+Section 3 (Elo predictions) and the new Q4/Q5 (embargo-period framing,
+probability-bucket calibration) -- not started tonight, queued for next
+session alongside the still-open Week 6/1999 Elo checks.
