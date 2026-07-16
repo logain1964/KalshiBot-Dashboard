@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-07-15T21:00:34"
+    "last_updated": "2026-07-16T07:00:31"
   },
   "config": {
     "sizing": {
@@ -65,8 +65,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 49.5,
-      "last_checked": "2026-07-15 21:00 CT"
+      "current_price_cents": 51.5,
+      "last_checked": "2026-07-16 07:00 CT"
     }
   ],
   "closed_positions": [
