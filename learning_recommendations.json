@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-16T12:00:31.029106",
+  "generated_at": "2026-07-16T16:18:26.748875",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -27,12 +27,12 @@
       "suggested_threshold": 9,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n_above": 90,
+      "n_above": 92,
       "n_below": 0,
-      "brier_above": 0.376892,
+      "brier_above": 0.378151,
       "brier_below": null,
       "reason": [
-        "Above-threshold signals underperforming: Brier=0.3769 (n=90)"
+        "Above-threshold signals underperforming: Brier=0.3782 (n=92)"
       ]
     },
     {
@@ -44,6 +44,18 @@
       "n_above": 63,
       "n_below": 0,
       "brier_above": 0.133718,
+      "brier_below": null,
+      "reason": []
+    },
+    {
+      "model": "MLB_GAME",
+      "current_threshold": 8,
+      "suggested_threshold": 8,
+      "action": "HOLD",
+      "confidence": "LOW",
+      "n_above": 0,
+      "n_below": 0,
+      "brier_above": null,
       "brier_below": null,
       "reason": []
     },
@@ -133,9 +145,9 @@
       "action": "LOWER",
       "confidence": "MEDIUM",
       "n": 53,
-      "brier": 0.3895,
+      "brier": 0.3961,
       "reason": [
-        "Below random: Brier=0.3895 (random=0.25) (n=53)"
+        "Below random: Brier=0.3961 (random=0.25) (n=53)"
       ]
     },
     {
@@ -170,11 +182,11 @@
       "suggested_weight": 0.7,
       "delta": 0.0,
       "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n": 0,
-      "brier": null,
+      "confidence": "MEDIUM",
+      "n": 103,
+      "brier": 0.2281,
       "reason": [
-        "Need 20 more resolved signals (have 0)"
+        "Fair calibration: Brier=0.2281 -- marginal, hold for more data"
       ]
     },
     {
