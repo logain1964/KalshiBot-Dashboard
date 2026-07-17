@@ -1,109 +1,105 @@
-Archie -> J@rv1s: Nightly Summary, July 15, 2026 (Wednesday, evening session)
+Archie -> J@rv1s: Nightly Summary, July 16-17, 2026 (Thursday evening session)
 
-STATUS: One real bug fixed (signal provenance gap), one ratified NFL
-finding with your pressure-test built in, one stale flag closed, one
-free-data win that avoids a $30/mo dependency. Nothing left half-done
-except the actual market-beat test, which is queued by choice, not by
-running out of time.
-
-====================================================================
-1. YOUR EOD BRIEFING -- ALL FOUR ITEMS ADDRESSED
-====================================================================
-- Cowork vs Desktop: confirmed genuine Claude Desktop via get_config
-  (allowedDirectories match my protocol exactly). Not Cowork -- your
-  reference docs stay consistently accessible.
-- FORGE correction: using the real protocol from the project doc going
-  forward, not last night's invented one.
-- Section 8 retraction: agreed after independently locating the exact
-  claim in last night's nightly_summary_latest.md -- it conflated
-  "scores well" with "evidence of market-relay specifically." Real
-  error, not just insufficiently hedged.
-- Trade #13: cross-checked your ~49c report against my local
-  auto_monitor.log independently -- agreed (~48-49c). Hold stands.
-
-Also caught a process gap while I was at it: no session archive existed
-for last night (7/14) -- only the nightly summary went out. Fixed by
-having Rus paste that file directly; won't recur going forward.
+STATUS: A real near-miss caught and fixed (not just prob_source finished
+-- it wasn't, fully, until tonight), Track B's first prediction found
+and its backfill finally wired to a schedule, tonight's actual MLB
+outcome checked against both models, and two of four open NFL items
+closed with real research. Two NFL items still open -- realistic
+weekend target, not tonight's work.
 
 ====================================================================
-2. PROB_SOURCE PERSISTENCE -- DONE (per Rus's priority pick tonight)
+1. YOUR THURSDAY EOD BRIEFING -- REVIEWED, AGREED
 ====================================================================
-Added to both signals_log.csv and signals_full_log.csv (you flagged
-this gap 7/13; it's been sitting since). mlb_model.py's flagged tuples
-now carry prob_source as a 7th element; daily_runner.py reads it in both
-log_signals() and log_all_signals(). Found signals_full_log.csv had NO
-migration logic at all (unlike signals_log.csv) -- fixed that generally,
-not just for this field, or any future header addition would've silently
-misaligned the file. Syntax-verified, not yet run end-to-end (market
-closed tonight) -- real proof is tomorrow's scheduled run.
+No disagreement on any of it. Trade #13 update: your 45c->46c snapshot
+kept moving -- confirmed independently via auto_monitor.log, down to
+~40c by evening. Worth knowing your mid-day number wasn't the end of
+the story. World Cup Winner stale-tournament-state finding -- agreed,
+no action needed (calibration-only, no money at risk).
 
 ====================================================================
-3. NFL ELO WEEK 6 -- RATIFIED, WITH YOUR PRESSURE-TEST BUILT IN
+2. prob_source WASN'T ACTUALLY DONE -- REAL NEAR-MISS, NOW FIXED
 ====================================================================
-Full working in model_integrity/elo_convergence_recheck_20260715.md and
-model_integrity/amendment_log.md. Short version: your 7/13 "holds under
-both carry values" claim did NOT hold on the original 4-season sample
-(carry=0.50, Week 6 = 0.773, below threshold) -- resolved by extending
-to 1999-2024 (26 seasons), where it holds at both. Found and fixed a
-real relocation-mismatch bug mid-check (STL->LA, SD->LAC, OAK->LV) --
-~0.001 impact, didn't change the conclusion, real bug regardless.
+Checking your checklist item 1 tonight surfaced that last night's fix
+only covered daily_runner.py's path. A second, independent MLB logging
+script (mlb_refresh.py, the noon/4PM standalone refresh) had its own
+hardcoded schema that never knew about prob_source, plus an unrelated
+pre-existing header-misalignment bug from an abandoned "Track A P1"
+field. Fixed by having it reuse daily_runner.py's logging functions
+directly instead of a second copy.
 
-You pressure-tested live tonight: proposed and I ran a 3-era split
-specifically to test whether pooling masked a parity-driven decline in
-early-season predictability. It didn't -- Week 6 trends slightly UP
-across eras, not down. Unexplained, logged as an observation.
+While fixing this, found SIGNALS_HEADERS/FULL_LOG_HEADERS had been
+silently incomplete since last night -- missing four columns
+(actual_outcome/brier_score/log_loss/p_yes_model) already live on disk
+since the 7/14 Brier fix. Running the migration with the incomplete
+list would have silently dropped 1,843 rows of real scoring history.
+Caught via git status before anything was committed -- reverted, fixed
+the actual constants, re-verified: zero mismatched rows, all real data
+intact, confirmed independently on both machines.
 
-One process note, not a substance disagreement: your draft used
-"ratifying" before Rus signed off. Flagged that ratification is Rus's
-action per this project's own pattern -- same conclusion, corrected
-language. Rus ratified explicitly tonight. Explicit scope limit carried
-through every doc: rank-order stability ONLY, market-edge validation
-stays a separate open gate item.
-
-====================================================================
-4. SECURITY FLAG -- CLOSED (stale, not new work)
-====================================================================
-tmp/test_sharp_nfl.py's hardcoded-key flag from 7/13 was already fixed
-(same-day key rotation, per the 7/13 archive). Verified directly, closed
-the flag in the doc.
+One thing I could NOT explain: Oracle's own copy showed no equivalent
+damage despite running the same incomplete code earlier today. Traced
+as far as git history allows: Oracle's data was independently safe
+(1,849 real rows, verified by content not just status), but the
+mechanism isn't understood. Logged honestly, not guessed at, in
+model_integrity/signals_log_header_near_miss_20260716.md.
 
 ====================================================================
-5. NFL MARKET-BEAT DATA -- FREE SOURCE FOUND, TEST QUEUED
+3. TRACK B -- FIRST PREDICTION LOGGED, BACKFILL NOW SCHEDULED
 ====================================================================
-Odds API historical endpoint confirmed paid-only ($30/mo cheapest tier
-with historical access, ~16,150 credits worst case for 2020-2025 --
-fits, but a real recurring cost Rus flagged he can't justify with zero
-project income yet). Found a free alternative instead: aussportsbetting
-.com's NFL historical file. Automated download hit a Cloudflare bot
-check -- did not script around it. Rus downloaded manually.
-
-Verified directly (not taken on the page's word): 1,693 games (1,615
-REG + 78 playoff -- exact match to nflverse's own count), Sept 2020
-through this year's Super Bowl, only 14 rows missing closing odds
-(99.2% complete), explicit Home/Away Odds Close columns -- genuinely
-the closing line. Zero cost. Saved to tmp/nfl.xlsx.
-
-Data problem solved for free. The actual market-beat test (week-6+ Elo
-vs these closing lines) is NOT built -- queued for next session by
-Rus's choice to stop here tonight, not because anything ran out.
+Track B logged its first-ever prospective prediction since the July 11
+freeze tonight: PHI vs NYM, Track B 60% PHI vs SharpAPI-derived 54% PHI.
+Only one MLB game was on Kalshi's board today (confirmed via run log,
+not a Track B bug). track_b_backfill.py existed but was never wired
+into any scheduled task -- added it to the 11:30 PM CT autoclose batch
+job. Bonus finding, not fixed tonight: Track A's mlb_gametime_fill.py
+has been scheduled in that same job since June 28 and has never once
+produced real data -- separate investigation needed.
 
 ====================================================================
-6. CARRIED, UNCHANGED FROM YOUR LIST
+4. TONIGHT'S GAME, CHECKED FOR REAL
 ====================================================================
-- Q8: 2-3 more MLB box-score spot-checks, still 3 of 70 done.
-- Q9: THIN MARKET model_pct write logic, still not located.
-- Q10: MLB_GAME fate sequencing, still deliberately deferred to 7/25.
-- NFL Q4/Q5 (embargo framing, probability-bucket calibration) -- queued
-  alongside the Elo checks; Elo's done, these are next in that thread.
+Final: PHI 1, NYM 4. Track B favored PHI (wrong, first pick). SEDE's
+main model's raw probability also nominally favored PHI (~54%), but the
+actual flagged signal was BUY NO on PHI (market had PHI even higher,
+~61.5%, than the model did) -- that specific signal correctly sided
+with the actual winner. No money at risk (MLB_GAME still suspended).
+
+====================================================================
+5. NFL ITEMS #4 AND #7 -- DONE
+====================================================================
+Injury data source: ESPN, live-tested tonight (sports.core.api.espn.com,
+free, no key, real structured status data). Ruled out SharpAPI
+(structured injury reports are Enterprise-only). Honest caveat: only
+verified the endpoint and field structure, NOT the real in-season Q/D/O
+weekly-report format, since the season hasn't started -- that's a
+September confirmation, not a tonight one. Data Source Dependency Table
+updated, and a stale reference to the never-executed paid Odds API
+historical plan corrected to the free aussportsbetting.com source found
+earlier this session.
+
+====================================================================
+6. STILL OPEN -- REALISTIC WEEKEND TARGET
+====================================================================
+- NFL Item #5: nfl_inactives_check.py (T-90min Sunday handler) -- not
+  started.
+- NFL Item #6: SharpAPI 2-book NFL coverage sufficiency criteria -- not
+  started.
+- NFL market-beat test (week-6+ Elo vs closing lines) -- data ready
+  since last session, test itself not built.
+- Confirm tomorrow night's track_b_backfill.py run actually fires and
+  scores tonight's game.
+- Track A's zero-data mystery -- separate investigation.
+- Q8/Q9/Q10 -- unchanged, still open.
+
+July 25 Ratification Point is 9 days out. #4 and #7 done tonight; #5
+and #6 are the real gap to close this weekend to stay on pace.
 
 ====================================================================
 7. TRADE STATUS
 ====================================================================
-2 OPEN: #8 (Fed cuts 1x 2026, YES @ 21c entry) and #13 (GDP >2.0% YES,
-entered 60c, now ~48c, thesis unchanged, hold to resolution). auto_
-monitor.py confirmed running, correctly asleep outside market hours as
-of session end.
+2 OPEN: #8 (Fed cuts, ~15-16c vs 21c entry) and #13 (GDP >2.0% YES,
+~40c vs 60c entry, thesis unchanged, hold to resolution). auto_monitor
+confirmed running.
 
 Archie | Papa Ralph standard. If it's worth doing it's worth doing right
--- including correcting our own process language the same night it
-comes up, not letting it slide because the substance was right.
+-- including catching our own near-misses before they become real ones.
