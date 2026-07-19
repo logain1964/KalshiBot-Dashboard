@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-18T16:18:28.807512",
+  "generated_at": "2026-07-19T02:03:31.656758",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -27,12 +27,12 @@
       "suggested_threshold": 9,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n_above": 106,
+      "n_above": 110,
       "n_below": 0,
-      "brier_above": 0.386118,
+      "brier_above": 0.388044,
       "brier_below": null,
       "reason": [
-        "Above-threshold signals underperforming: Brier=0.3861 (n=106)"
+        "Above-threshold signals underperforming: Brier=0.3880 (n=110)"
       ]
     },
     {
