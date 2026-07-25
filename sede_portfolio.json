@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-07-24T11:18:28"
+    "last_updated": "2026-07-24T21:03:35"
   },
   "config": {
     "sizing": {
@@ -65,8 +65,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 55.50000000000001,
-      "last_checked": "2026-07-24 11:18 CT"
+      "current_price_cents": 56.5,
+      "last_checked": "2026-07-24 21:03 CT"
     }
   ],
   "closed_positions": [
@@ -483,6 +483,17 @@
     },
     {
       "date": "2026-07-24",
+      "bankroll": 994.17,
+      "total_pnl": -5.83,
+      "open_positions": 1,
+      "closed_positions": 1,
+      "wins": 0,
+      "losses": 0,
+      "win_rate_pct": 0.0,
+      "avg_brier": null
+    },
+    {
+      "date": "2026-07-25",
       "bankroll": 994.17,
       "total_pnl": -5.83,
       "open_positions": 1,
