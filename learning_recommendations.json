@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-26T07:01:42.244183",
+  "generated_at": "2026-07-26T21:04:54.538941",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -27,12 +27,12 @@
       "suggested_threshold": 9,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n_above": 161,
+      "n_above": 165,
       "n_below": 0,
-      "brier_above": 0.395159,
+      "brier_above": 0.395577,
       "brier_below": null,
       "reason": [
-        "Above-threshold signals underperforming: Brier=0.3952 (n=161)"
+        "Above-threshold signals underperforming: Brier=0.3956 (n=165)"
       ]
     },
     {
@@ -204,14 +204,14 @@
     {
       "model": "MLS_GAME",
       "current_weight": 0.65,
-      "suggested_weight": 0.65,
-      "delta": 0.0,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n": 14,
-      "brier": 0.3169,
+      "suggested_weight": 0.6,
+      "delta": -0.05,
+      "action": "LOWER",
+      "confidence": "MEDIUM",
+      "n": 30,
+      "brier": 0.2865,
       "reason": [
-        "Need 6 more resolved signals (have 14)"
+        "Below random: Brier=0.2865 (random=0.25) (n=30)"
       ]
     },
     {
