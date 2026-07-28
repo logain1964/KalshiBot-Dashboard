@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-28T02:03:42.184235",
+  "generated_at": "2026-07-28T12:00:36.172015",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -27,12 +27,12 @@
       "suggested_threshold": 9,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n_above": 167,
+      "n_above": 169,
       "n_below": 0,
-      "brier_above": 0.39532,
+      "brier_above": 0.39507,
       "brier_below": null,
       "reason": [
-        "Above-threshold signals underperforming: Brier=0.3953 (n=167)"
+        "Above-threshold signals underperforming: Brier=0.3951 (n=169)"
       ]
     },
     {
@@ -156,10 +156,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 88,
-      "brier": 0.4039,
+      "n": 90,
+      "brier": 0.4033,
       "reason": [
-        "Below random: Brier=0.4039 (random=0.25) (n=88)"
+        "Below random: Brier=0.4033 (random=0.25) (n=90)"
       ]
     },
     {
