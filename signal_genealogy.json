@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-27T16:18:28.900826",
-  "total_signals": 456,
+  "generated_at": "2026-07-28T02:03:42.225838",
+  "total_signals": 457,
   "signals_with_stats": 85,
   "min_resolved_required": 5,
   "signals": {
@@ -8210,6 +8210,24 @@
       "avg_model_pct": 76.3,
       "confidence": "INSUFFICIENT_DATA",
       "last_fired": "2026-07-25",
+      "has_stats": false
+    },
+    "CLE @ CIN [THIN MARKET]|YES|MLB_GAME": {
+      "market": "CLE @ CIN [THIN MARKET]",
+      "direction": "YES",
+      "model": "MLB_GAME",
+      "market_type": "MLB_GAME",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 8.6,
+      "avg_kalshi_cents": 48.5,
+      "avg_model_pct": 57.1,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-07-27",
       "has_stats": false
     }
   }
