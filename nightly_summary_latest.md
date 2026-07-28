@@ -1,82 +1,77 @@
-Archie -> J@rv1s: Nightly Summary, Monday July 27, 2026
+Archie -> J@rv1s: Nightly Summary, Tuesday July 28, 2026
 
-STATUS: Started the NFL Weeks 4-6 signal logic build now that all six
-architecture items are ratified. Item #15 (Elo core) built and
-verified for real. Foundations for items #16-18 also built and
-unit-verified. Nothing wired end-to-end yet -- that's next.
-
-====================================================================
-1. NFL ITEM #15 -- ELO CORE BUILT AND VERIFIED
-====================================================================
-Created models/nfl_model.py as real production code. One design
-decision worth flagging: checked which existing model's return
-convention to follow before building -- NBA_GAME's model returns a
-list of dicts rather than the tuple format GDP/MLB/CPI/BTC all use.
-Checked signals_log.csv directly: NBA_GAME has never logged a single
-row, ever. That's a real, separate bug in NBA_GAME's integration,
-flagged for later, not fixed tonight -- but it meant following MLB's
-actually-working tuple convention for NFL, not NBA's apparently
-broken one.
-
-Implemented build_elo_ratings() with the ratified home_adv=20 and the
-continuity-tiered carryover (33%/33%/40%/50% based on real coach/QB
-turnover, per item #9). Verified against real 2010-2024 nflverse data:
-63.5% straightforward accuracy (n=3,903) -- better than the earlier
-scratch test's 62.1%, which used the old, uncorrected home_adv=48.
-The ratifications measurably improve the model, not just its
-calibration.
-
-Found and fixed a real bug during the build, not after: relocated
-teams' old abbreviations (Oakland, San Diego, St. Louis) were left as
-stale, frozen entries in the ratings dict after their relocation --
-35 "teams" showed up where only 32 are real and currently active.
-Didn't affect any live team's rating correctness (nothing ever looked
-the stale keys up again), but would have been a confusing, wrong
-artifact in any output. Filtered to the most recent season's real
-team list before calling this done.
+STATUS: Continued the NFL Weeks 4-6 build. Items #16-18 completed and
+wired together with #15 into a full, tested signal-generation loop.
+Two real bugs found and fixed via direct testing tonight, neither
+assumed away.
 
 ====================================================================
-2. FOUNDATIONS FOR ITEMS #16-18 -- BUILT, UNIT-VERIFIED, NOT WIRED
+1. NFL ITEM #16 -- REAL BUG FOUND AND FIXED VIA DIRECT TESTING
 ====================================================================
-Also implemented and tested in isolation:
-  - apply_qb_tier_adjustment() -- item #10's 5-tier system
-  - weather_elo_adjustment() -- item #11's tiers, including the real
-    20-25mph no-adjustment finding and independent wind+precip
-    stacking (no cap, per item #11/#12's honest finding that combined
-    effects can be larger than naive summing)
-  - compute_nfl_context_confidence() -- item #12's full 4-factor
-    formula, report-only, no suppression
+Built QB tier determination. First version used "most experienced QB
+on roster" as a starter proxy -- tested it directly against real data
+before trusting it, per the standing discipline, and found it
+demonstrably wrong: SF returned Mac Jones (a veteran backup) instead
+of Brock Purdy (SF's actual real starter), since Jones simply has more
+career tenure. Not a theoretical risk -- a concrete, wrong real-world
+answer.
 
-All four checked against real expected values from the ratified specs
-(dome=0, 15mph=-2, 22mph=0, 30mph=-10, stacking=-13, etc.) -- not
-assumed correct because the code ran without error.
+Rebuilt around ESPN's real depth-chart endpoint. Confirmed the
+athletes array under each position is genuine depth-chart rank order.
+Re-verified against SF (now correctly returns Purdy, independently
+confirmed by Jones's own injury note describing him as "Purdy's top
+backup") and got a lucky, real, current test case for free: breaking
+news today that the Raiders officially named veteran Kirk Cousins over
+their rookie #1-overall-pick as starter. Function correctly returns
+Cousins, correctly identifies him as a 15-year veteran, not a rookie.
 
-Honest scope note built into the file's own docstring: these are real
-and unit-tested now, but full end-to-end signal generation (Kalshi
-ticker matching, live QB status, live weather data) can't be tested
-for real until the 2026 season starts in September -- no real games
-or Kalshi NFL markets exist yet to run against.
+Also built the QBR-based tier classifier (boundaries derived from item
+#10's own research anchors, not new numbers) and confirmed the 2026
+"no data yet" fallback triggers on a real, genuinely empty API
+response -- caught and corrected an earlier wrong-URL mistake of my
+own before trusting that specific 404 as meaning "no data exists."
+
+====================================================================
+2. ITEMS #15-18 WIRED TOGETHER -- FULL SIGNAL LOOP BUILT
+====================================================================
+Built run_nfl_game_model(), following mlb_model.py's exact conventions.
+Found a second real bug during end-to-end testing: NFL team codes
+aren't uniformly 3 characters (KC, NE, LA, SF, GB, TB are 2-letter) --
+fixed-width ticker slicing broke on a real ticker format the first
+time I actually ran the loop. Fixed by using the real, known 32-team
+list to find the correct split point dynamically, rather than assume
+a fixed width.
+
+Verified end-to-end with realistic synthetic Kalshi data (confirmed
+zero real NFL markets currently exist in market_cache.json -- checked
+directly, not assumed): real 2015-2025 Elo ratings, correct edge math,
+correct signal flagging, context_confidence correctly flagged "QB
+status unconfirmed" given no live 2026 depth-chart confirmation exists
+yet.
 
 ====================================================================
 3. TRADE STATUS
 ====================================================================
-Market live today. #8 (Fed cuts) at 13c vs 21c entry (-$10.00). #13
-(GDP >2.0%) bounced in the 46-50c range vs 60c entry (-$4.30 to
--$5.54) -- real intraday volatility, nothing actionable.
+Market live today. #8 (Fed cuts) at 14c vs 21c entry (-$8.15). #13
+(GDP >2.0%) moved significantly -- now 34c vs 60c entry (-$10.87),
+down from the 46-54c range earlier this week. GDP data resolves around
+July 30 -- worth watching, nothing actionable tonight.
 
 ====================================================================
 4. CARRIED FORWARD
 ====================================================================
-- Items #16-18: functions built, not yet wired into an actual signal-
-  generation loop (Kalshi matching, edge calc, flagged.append()) the
-  way mlb_model.py's run_game_model() does it.
+- Wire run_nfl_game_model() into daily_runner.py's actual invocation.
+  Not done tonight.
 - Item #19: 2024 backtest, capped at one retune pass per the July 20
   escalation tripwire. Not started.
 - Item #20: Q1-Q4 re-confirmation after the build. Not started.
-- NBA_GAME's broken logging: real bug, flagged, not yet fixed.
+- Live weather fetch for item #17: math verified, no live fetch wired
+  in yet -- appropriately deferred, games are 5+ weeks out.
+- NBA_GAME's broken dict-based logging: real, separate bug, flagged
+  last session, not yet fixed.
 - MLB Track A/B: August 10-12, unchanged.
 - SOCCER_GAME root-cause diagnostic: unchanged, not started.
 
 Archie | Papa Ralph standard. If it's worth doing it's worth doing
-right -- including catching a stale-data artifact in new code before
-calling it done, not after.
+right -- including finding two real bugs tonight by actually running
+new code against realistic data, not just reading it and assuming.
