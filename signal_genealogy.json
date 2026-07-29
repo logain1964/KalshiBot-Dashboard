@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-28T16:18:40.687024",
-  "total_signals": 457,
+  "generated_at": "2026-07-29T02:03:40.026014",
+  "total_signals": 458,
   "signals_with_stats": 85,
   "min_resolved_required": 5,
   "signals": {
@@ -8228,6 +8228,24 @@
       "avg_model_pct": 57.1,
       "confidence": "INSUFFICIENT_DATA",
       "last_fired": "2026-07-27",
+      "has_stats": false
+    },
+    "MIA vs CLB -- MIA wins|YES|MLS_GAME": {
+      "market": "MIA vs CLB -- MIA wins",
+      "direction": "YES",
+      "model": "MLS_GAME",
+      "market_type": "MLS_GAME",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 10.1,
+      "avg_kalshi_cents": 57.5,
+      "avg_model_pct": 67.6,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-07-28",
       "has_stats": false
     }
   }
