@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-29T02:03:39.982683",
-  "total_resolved": 983,
+  "generated_at": "2026-07-29T12:00:22.648363",
+  "total_resolved": 986,
   "by_model": {
     "MLS_GAME": {
       "n": 30,
@@ -30,12 +30,12 @@
       "beats_random": true
     },
     "GDP": {
-      "n": 90,
-      "correct": 56,
-      "acc_pct": 62.2,
-      "avg_brier": 0.4033,
-      "avg_logloss": 1.0438,
-      "avg_edge": -25.4,
+      "n": 93,
+      "correct": 58,
+      "acc_pct": 62.4,
+      "avg_brier": 0.3985,
+      "avg_logloss": 1.0324,
+      "avg_edge": -24.8,
       "beats_random": false
     },
     "JOBS": {
