@@ -170,12 +170,13 @@
     "edge_cents": 27.0,
     "thesis": "only way to get Fed model data in the validation window, and it could auto-close early if it hits 90c+ after a June cut. Worth it for model type diversity",
     "event_date": "2026-12-31",
-    "status": "OPEN",
-    "exit_price_cents": null,
-    "exit_date": null,
-    "pnl_dollars": null,
-    "result": null,
-    "close_note": null
+    "status": "CLOSED",
+    "exit_price_cents": 8,
+    "exit_date": "2026-07-29 16:48 CT",
+    "pnl_dollars": -15.47,
+    "result": "EARLY_EXIT",
+    "close_note": "AUTO_STOP_LOSS: loss $15.23 exceeded $15.00 limit at 8c",
+    "exit_subtype": "DISCRETIONARY_EXIT"
   },
   {
     "id": 9,
