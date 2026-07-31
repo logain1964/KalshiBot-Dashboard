@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-07-30T07:02:00"
+    "last_updated": "2026-07-30T21:05:07"
   },
   "config": {
     "sizing": {
@@ -29,8 +29,8 @@
     }
   },
   "performance": {
-    "total_trades": 2,
-    "open_trades": 1,
+    "total_trades": 5,
+    "open_trades": 4,
     "closed_trades": 1,
     "wins": 0,
     "losses": 0,
@@ -66,7 +66,73 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 55.50000000000001,
-      "last_checked": "2026-07-30 07:02 CT"
+      "last_checked": "2026-07-30 21:05 CT"
+    },
+    {
+      "id": 3,
+      "entered_at": "2026-07-30 21:05 CT",
+      "market_ticker": "KXGDP-26OCT30-T1.5",
+      "description": "GDP > 1.5%",
+      "direction": "YES",
+      "entry_price_cents": 70.5,
+      "contracts": 42,
+      "size_dollars": 30.0,
+      "max_loss_dollars": 30.0,
+      "max_profit_dollars": 12.39,
+      "model_probability_pct": 99.80026055583402,
+      "edge_cents": 29.30026055583401,
+      "sede_rating": "HIGH",
+      "status": "OPEN",
+      "result": null,
+      "exit_price_cents": null,
+      "exit_date": null,
+      "pnl_dollars": null,
+      "brier_score": null,
+      "close_note": null
+    },
+    {
+      "id": 4,
+      "entered_at": "2026-07-30 21:05 CT",
+      "market_ticker": "KXGDP-27JAN28-T1.5",
+      "description": "GDP > 1.5%",
+      "direction": "YES",
+      "entry_price_cents": 74.5,
+      "contracts": 40,
+      "size_dollars": 30.0,
+      "max_loss_dollars": 30.0,
+      "max_profit_dollars": 10.2,
+      "model_probability_pct": 99.80026055583402,
+      "edge_cents": 25.300260555834008,
+      "sede_rating": "HIGH",
+      "status": "OPEN",
+      "result": null,
+      "exit_price_cents": null,
+      "exit_date": null,
+      "pnl_dollars": null,
+      "brier_score": null,
+      "close_note": null
+    },
+    {
+      "id": 5,
+      "entered_at": "2026-07-30 21:05 CT",
+      "market_ticker": "KXGDP-26OCT30-T2.5",
+      "description": "GDP > 2.5%",
+      "direction": "YES",
+      "entry_price_cents": 57.99999999999999,
+      "contracts": 51,
+      "size_dollars": 30.0,
+      "max_loss_dollars": 30.0,
+      "max_profit_dollars": 21.42,
+      "model_probability_pct": 97.9584959301255,
+      "edge_cents": 39.958495930125494,
+      "sede_rating": "HIGH",
+      "status": "OPEN",
+      "result": null,
+      "exit_price_cents": null,
+      "exit_date": null,
+      "pnl_dollars": null,
+      "brier_score": null,
+      "close_note": null
     }
   ],
   "closed_positions": [

@@ -282,12 +282,12 @@
     "edge_cents": 32.7,
     "thesis": "Belt-and-suspenders on same GDPNow thesis \u2014 174bps buffer above 2.0% threshold. Higher confidence, lower ceiling. Adds second GDP data point at different threshold for model calibration.",
     "event_date": "2026-07-30",
-    "status": "OPEN",
-    "exit_price_cents": null,
-    "exit_date": null,
-    "pnl_dollars": null,
-    "result": null,
-    "close_note": null
+    "status": "CLOSED",
+    "exit_price_cents": 0,
+    "exit_date": "2026-07-30 19:19 CT",
+    "pnl_dollars": -24.6,
+    "result": "LOST",
+    "close_note": "Market finalized 2026-07-30, result=no. Real GDP (BEA Advance Estimate) came in at 1.5%, below the 2.0% threshold. Confirmed via direct Kalshi API query -- trade record had been silently stale (still showing OPEN) because no mechanism in the pipeline checks for market finalization, only price for stop-loss purposes. Full max loss realized, YES contracts expired worthless."
   },
   {
     "id": 14,
