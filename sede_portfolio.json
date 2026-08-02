@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-08-01T21:03:40"
+    "last_updated": "2026-08-02T07:00:32"
   },
   "config": {
     "sizing": {
@@ -65,22 +65,22 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 51.5,
-      "last_checked": "2026-08-01 21:03 CT"
+      "current_price_cents": 52.5,
+      "last_checked": "2026-08-02 07:00 CT"
     },
     {
       "id": 3,
-      "entered_at": "2026-07-30 11:18 CT",
+      "entered_at": "2026-07-30 21:05 CT",
       "market_ticker": "KXGDP-26OCT30-T1.5",
       "description": "GDP > 1.5%",
       "direction": "YES",
-      "entry_price_cents": 63.0,
-      "contracts": 47,
+      "entry_price_cents": 70.5,
+      "contracts": 42,
       "size_dollars": 30.0,
       "max_loss_dollars": 30.0,
-      "max_profit_dollars": 17.39,
+      "max_profit_dollars": 12.39,
       "model_probability_pct": 99.80026055583402,
-      "edge_cents": 36.80026055583401,
+      "edge_cents": 29.30026055583401,
       "sede_rating": "HIGH",
       "status": "OPEN",
       "result": null,
@@ -89,22 +89,22 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 76.5,
-      "last_checked": "2026-08-01 21:03 CT"
+      "current_price_cents": 76.0,
+      "last_checked": "2026-08-02 07:00 CT"
     },
     {
       "id": 4,
-      "entered_at": "2026-07-30 11:18 CT",
+      "entered_at": "2026-07-30 21:05 CT",
       "market_ticker": "KXGDP-27JAN28-T1.5",
       "description": "GDP > 1.5%",
       "direction": "YES",
-      "entry_price_cents": 72.5,
-      "contracts": 41,
+      "entry_price_cents": 74.5,
+      "contracts": 40,
       "size_dollars": 30.0,
       "max_loss_dollars": 30.0,
-      "max_profit_dollars": 11.28,
+      "max_profit_dollars": 10.2,
       "model_probability_pct": 99.80026055583402,
-      "edge_cents": 27.30026055583401,
+      "edge_cents": 25.300260555834008,
       "sede_rating": "HIGH",
       "status": "OPEN",
       "result": null,
@@ -114,21 +114,21 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 74.5,
-      "last_checked": "2026-08-01 21:03 CT"
+      "last_checked": "2026-08-02 07:00 CT"
     },
     {
       "id": 5,
-      "entered_at": "2026-07-31 07:00 CT",
+      "entered_at": "2026-07-30 21:05 CT",
       "market_ticker": "KXGDP-26OCT30-T2.5",
       "description": "GDP > 2.5%",
       "direction": "YES",
-      "entry_price_cents": 36.5,
-      "contracts": 82,
+      "entry_price_cents": 57.99999999999999,
+      "contracts": 51,
       "size_dollars": 30.0,
       "max_loss_dollars": 30.0,
-      "max_profit_dollars": 52.07,
+      "max_profit_dollars": 21.42,
       "model_probability_pct": 97.9584959301255,
-      "edge_cents": 61.45849593012549,
+      "edge_cents": 39.958495930125494,
       "sede_rating": "HIGH",
       "status": "OPEN",
       "result": null,
@@ -137,12 +137,12 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 55.0,
-      "last_checked": "2026-08-01 21:03 CT"
+      "current_price_cents": 48.5,
+      "last_checked": "2026-08-02 07:00 CT"
     },
     {
       "id": 6,
-      "entered_at": "2026-07-31 21:03 CT",
+      "entered_at": "2026-07-31 21:05 CT",
       "market_ticker": "KXGDP-27JAN28-T1.0",
       "description": "GDP > 1.0%",
       "direction": "YES",
@@ -162,11 +162,11 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 78.0,
-      "last_checked": "2026-08-01 21:03 CT"
+      "last_checked": "2026-08-02 07:00 CT"
     },
     {
       "id": 7,
-      "entered_at": "2026-07-31 21:03 CT",
+      "entered_at": "2026-07-31 21:05 CT",
       "market_ticker": "KXGDP-27APR29-T2.0",
       "description": "GDP > 2.0%",
       "direction": "YES",
@@ -186,11 +186,11 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 51.0,
-      "last_checked": "2026-08-01 21:03 CT"
+      "last_checked": "2026-08-02 07:00 CT"
     },
     {
       "id": 8,
-      "entered_at": "2026-07-31 21:03 CT",
+      "entered_at": "2026-07-31 21:05 CT",
       "market_ticker": "KXGDP-26OCT30-T4.0",
       "description": "GDP > 4.0%",
       "direction": "YES",
@@ -210,11 +210,11 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 14.0,
-      "last_checked": "2026-08-01 21:03 CT"
+      "last_checked": "2026-08-02 07:00 CT"
     },
     {
       "id": 9,
-      "entered_at": "2026-08-01 21:03 CT",
+      "entered_at": "2026-08-01 21:05 CT",
       "market_ticker": "KXGDP-27JUL29-T1.5",
       "description": "GDP > 1.5%",
       "direction": "YES",
@@ -232,7 +232,9 @@
       "exit_date": null,
       "pnl_dollars": null,
       "brier_score": null,
-      "close_note": null
+      "close_note": null,
+      "current_price_cents": 59.5,
+      "last_checked": "2026-08-02 07:00 CT"
     }
   ],
   "closed_positions": [
@@ -750,7 +752,7 @@
       "date": "2026-08-02",
       "bankroll": 994.17,
       "total_pnl": -5.83,
-      "open_positions": 7,
+      "open_positions": 8,
       "closed_positions": 1,
       "wins": 0,
       "losses": 0,
