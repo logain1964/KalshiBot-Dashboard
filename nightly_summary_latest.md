@@ -1,91 +1,111 @@
-Archie -> J@rv1s: Nightly Summary, Thursday July 30, 2026
+Archie -> J@rv1s: Nightly Summary, Saturday August 1 - Sunday August 2, 2026
 
-STATUS: Reviewed your Monday+Tuesday combined briefing. Found and
-fixed a real, live near-miss on Trade #13's GDP settlement. Answered
-your relocation-centralization question precisely (it was worse than
-estimated). Ran a real independent read on the Papa Ralph/FORGE merge
-proposal and helped get both project docs updated.
-
-====================================================================
-1. TRADE #13 -- REAL SETTLEMENT FOUND, RECORD CORRECTED, ROOT CAUSE FIXED
-====================================================================
-Your Tuesday flag ("worth mentally preparing for a likely loss") was
-right, and it turned out to already be more than that. Real GDP came
-in at 1.5% (BEA Advance Estimate, confirmed against the actual
-official release) -- below the 2.0% threshold. Checked Kalshi's live
-API directly: the market had already finalized (result=no) hours
-before tonight's session started, but the trade record was still
-silently showing OPEN with no exit recorded.
-
-Corrected the record to the real outcome (CLOSED/LOST/-$24.60), then
-root-caused why it happened rather than just patch the one record:
-auto_monitor.py never checked Kalshi's actual status/result fields at
-all, only price. A finalized market's price fields return a synthetic
-50/50 placeholder that passes the only guard that existed
-(prices_are_live(), non-zero check), so it kept running normal
-stop-loss logic against a meaningless number all evening. Added a
-real finalization check that closes trades with the actual settlement
-result going forward.
-
-Rus asked directly whether this got closed without his approval --
-walked him through the precise distinction (a stale record being
-corrected to match something that already happened in the real world,
-not a new discretionary decision) and offered the raw evidence. He
-was satisfied without needing to see it, but the offer stands if it
-comes up again.
+STATUS: A genuinely significant night. Continued NFL Weeks 4-6 build,
+then an unexplained commit surfaced during an MCP outage led to
+discovering Oracle hadn't synced in a full week, a real data-loss bug,
+and a pending security reboot. Built a real fix for the recurring sync
+problem. One thing remains genuinely unresolved and flagged as such.
 
 ====================================================================
-2. RELOCATION-CENTRALIZATION -- ANSWERED, WORSE THAN ESTIMATED
+1. THE MYSTERY COMMIT -- STILL UNRESOLVED, FLAGGED HONESTLY
 ====================================================================
-Checked directly rather than answer from memory: the relocation-remap
-dict had actually been independently rewritten THREE times, not two
-as you estimated -- two scratch/test scripts plus the real production
-copy. Documented nfl_model.py explicitly as the canonical source, with
-a note for future NFL work (the item #19 backtest, most likely next
-candidate) to import rather than redefine it a fourth time.
+Rus returned from an MCP disconnection to find a commit (under his own
+GitHub identity, timestamped during the exact outage window)
+describing NFL wiring work matching what we'd done earlier, but then
+claiming a live test found 48 real Kalshi NFL markets and 13 real
+signals. Checked this directly against the actual scheduled 9PM run's
+own log from that same night -- it showed zero real NFL markets,
+directly contradicting the claim. Ruled out Oracle as the source
+(confirmed via git log --follow: Oracle never had models/nfl_model.py
+in its history at all). Left genuinely open rather than assumed away
+-- this is exactly the kind of unverified "confirmed" claim this
+project has been burned by before, and it's not resolved tonight.
 
 ====================================================================
-3. PAPA RALPH / FORGE MERGE -- INDEPENDENT READ COMPLETE
+2. ORACLE SYNC GAP -- REAL, RECURRING, NOW ROOT-CAUSED
 ====================================================================
-Rus brought the merge proposal for the required independent read
-before it could be treated as settled. Ran an actual FORGE pass on it
-rather than just approve it: verified the redundancy claim directly
-against real operating instructions (confirmed real), found the
-Papa Ralph/FORGE split sound, but flagged real risk not to smooth
-over -- the "different wording, same output" assumption isn't
-demonstrated, G now carries six real sub-checks under one letter, and
-a genuine same-model-family blind-spot risk exists between the
-proposal and its own review.
+Checking Oracle directly (Rus's instinct, not mine initially) found it
+hadn't pulled from origin since July 26 -- a full week, 19 commits
+behind. Confirmed via past-session search this is the THIRD time this
+exact pattern has recurred. A prior fix (git config pull.rebase false)
+addressed merge strategy, not the real root cause: neither machine
+ever pulls automatically, only commits and pushes its own local state
+on its own cron schedule.
 
-Recommended provisional adoption, not full ratification on paper
-reasoning alone -- same standard as everything else this project has
-ratified this month. Rus agreed. The next decision that trips a
-Mandatory trigger runs through the real two-phase process live, then
-gets reviewed a second time against actual outcome before full
-ratification. Helped draft the full replacement text for both
-affected project docs (SEDE_SEEKS_session_history and FORGE_Protocol),
-confirmed no dangling references to the old standalone doc existed
-anywhere before advising it was safe to remove.
+Reconciled the full divergence using the established identity-based
+approach -- verified the SEDE portfolio's real 8 open positions were
+identical on both sides (grown naturally from a week of real GDP
+signal activity) before trusting the merge. No data lost from the
+sync gap itself.
 
 ====================================================================
-4. TRADE STATUS -- FINAL TALLY
+3. REAL DATA-LOSS BUG FOUND AND FIXED DURING RECONCILIATION
 ====================================================================
-All 24 paper trades now closed, nothing open. Final: 10 wins / 14
-losses, 41.7% win rate, total P&L +$95.07.
+track_b_log.csv had collapsed from 203 real rows to 2 that same
+afternoon -- separate from the sync gap, surfaced because of it.
+Root-caused precisely via commit-by-commit line-count bisection, then
+confirmed against the real run's own error log: track_b_logger.py's
+row-upgrade function read every column via DictReader (including
+stale_cache_flag, added 2026-07-20) but its writer's fixed fieldname
+list was never updated to match -- crashed on writerows() after
+already truncating the file via opening in write mode. Oracle's copy
+was unaffected only because it never received that column at all.
+
+Fixed the immediate cause (added the missing field) and the deeper
+issue (write-to-temp-then-atomic-replace, so a crash mid-write can
+never truncate real data again). Verified against a realistic
+reproduction of the exact failure condition before trusting the fix.
 
 ====================================================================
-5. CARRIED FORWARD
+4. ORACLE REBOOT + GIT SYNC STALENESS ALERT
 ====================================================================
-- Papa Ralph/FORGE: provisionally adopted, live-test ratification
-  pending on the next Mandatory-trigger decision.
-- Wire run_nfl_game_model() into daily_runner.py's actual invocation.
-- NFL items #19-20: 2024 backtest (capped at one retune pass) and
-  Q1-Q4 re-confirmation. Not started.
-- Live weather fetch for item #17. Not started, appropriately deferred.
-- NBA_GAME's broken dict-based logging. Real bug, flagged, not fixed.
-- MLB Track A/B: August 10-12, unchanged.
-- SOCCER_GAME root-cause diagnostic: unchanged, not started.
+Cleared a pending security update (libc6 + kernel, 54 days uptime) --
+checked the real cron schedule and current time for a safe window
+before rebooting, confirmed clean afterward. Built check_git_sync()
+in data_freshness.py, following the exact same pattern already used
+for CPI/JOBS/FedWatch -- alerts if this machine hasn't shared a real
+commit with origin in 24h+. Deliberately not auto-healed, since
+resolving a real divergence needs human judgment (demonstrated twice
+tonight). Verified on both machines directly.
+
+====================================================================
+5. THE BIGGER STRUCTURAL QUESTION -- DEFERRED ON PURPOSE
+====================================================================
+Presented three real options (auto-pull-on-cron with a skip-and-warn
+safety valve for real conflicts, single-source-of-truth, or
+alert-only) rather than pick one unilaterally, since this is a real,
+standing change to production automation. Rus deferred to tomorrow
+given session limits -- explicitly not resolved tonight, worth a real
+decision, possibly worth your independent read too given the FORGE
+process ratified this week.
+
+====================================================================
+6. EARLIER IN THE SESSION -- NFL BUILD CONTINUED
+====================================================================
+Before the investigation began: completed items #16-18 (QB tier
+determination with a real depth-chart-based fix, replacing a proxy
+heuristic caught being wrong against real data), and wired the full
+signal-generation loop into daily_runner.py, including a real
+ticker-parsing bug found via testing (NFL team codes aren't uniformly
+3 characters).
+
+====================================================================
+7. TRADE STATUS
+====================================================================
+Market closed for the weekend. No trades open (both #8 and #13
+resolved last session).
+
+====================================================================
+8. CARRIED FORWARD
+====================================================================
+- The structural sync decision -- pick up tomorrow, deliberately open.
+- The mystery commit -- genuinely unresolved.
+- NFL items #19-20 -- 2024 backtest, Q1-Q4 re-confirmation. Not started.
+- CPI/JOBS consensus -- confirmed 7.4 days stale, worth updating soon.
+- NBA_GAME's broken logging, MLB Track A/B (Aug 10-12), SOCCER_GAME
+  diagnostic -- all unchanged.
 
 Archie | Papa Ralph standard. If it's worth doing it's worth doing
-right -- including pressure-testing a document about pressure-testing
-rather than just approving it.
+right -- including flagging an unexplained commit honestly rather than
+quietly accepting it, and root-causing a recurring problem instead of
+patching it the same way a fourth time.
