@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-08-01T07:02:08"
+    "last_updated": "2026-08-01T21:05:15"
   },
   "config": {
     "sizing": {
@@ -29,8 +29,8 @@
     }
   },
   "performance": {
-    "total_trades": 8,
-    "open_trades": 7,
+    "total_trades": 9,
+    "open_trades": 8,
     "closed_trades": 1,
     "wins": 0,
     "losses": 0,
@@ -65,8 +65,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 56.5,
-      "last_checked": "2026-08-01 07:02 CT"
+      "current_price_cents": 51.5,
+      "last_checked": "2026-08-01 21:05 CT"
     },
     {
       "id": 3,
@@ -89,8 +89,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 78.0,
-      "last_checked": "2026-08-01 07:02 CT"
+      "current_price_cents": 76.5,
+      "last_checked": "2026-08-01 21:05 CT"
     },
     {
       "id": 4,
@@ -114,7 +114,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 74.5,
-      "last_checked": "2026-08-01 07:02 CT"
+      "last_checked": "2026-08-01 21:05 CT"
     },
     {
       "id": 5,
@@ -137,8 +137,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 56.0,
-      "last_checked": "2026-08-01 07:02 CT"
+      "current_price_cents": 55.0,
+      "last_checked": "2026-08-01 21:05 CT"
     },
     {
       "id": 6,
@@ -162,7 +162,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 78.0,
-      "last_checked": "2026-08-01 07:02 CT"
+      "last_checked": "2026-08-01 21:05 CT"
     },
     {
       "id": 7,
@@ -185,8 +185,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 50.5,
-      "last_checked": "2026-08-01 07:02 CT"
+      "current_price_cents": 51.0,
+      "last_checked": "2026-08-01 21:05 CT"
     },
     {
       "id": 8,
@@ -210,7 +210,29 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 14.0,
-      "last_checked": "2026-08-01 07:02 CT"
+      "last_checked": "2026-08-01 21:05 CT"
+    },
+    {
+      "id": 9,
+      "entered_at": "2026-08-01 21:05 CT",
+      "market_ticker": "KXGDP-27JUL29-T1.5",
+      "description": "GDP > 1.5%",
+      "direction": "YES",
+      "entry_price_cents": 59.5,
+      "contracts": 50,
+      "size_dollars": 30.0,
+      "max_loss_dollars": 30.0,
+      "max_profit_dollars": 20.25,
+      "model_probability_pct": 99.80026055583402,
+      "edge_cents": 40.30026055583401,
+      "sede_rating": "HIGH",
+      "status": "OPEN",
+      "result": null,
+      "exit_price_cents": null,
+      "exit_date": null,
+      "pnl_dollars": null,
+      "brier_score": null,
+      "close_note": null
     }
   ],
   "closed_positions": [
