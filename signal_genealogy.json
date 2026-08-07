@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-07T02:00:31.605669",
+  "generated_at": "2026-08-07T12:00:38.462223",
   "total_signals": 474,
   "signals_with_stats": 97,
   "min_resolved_required": 5,
@@ -117,7 +117,7 @@
       "direction": "NO",
       "model": "BTC",
       "market_type": "CRYPTO_BTC",
-      "fires": 135,
+      "fires": 136,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -127,7 +127,7 @@
       "avg_kalshi_cents": 52.0,
       "avg_model_pct": 68.4,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-01",
+      "last_fired": "2026-08-07",
       "has_stats": false
     },
     "BTC>$110k Dec31|NO|BTC": {
@@ -153,7 +153,7 @@
       "direction": "NO",
       "model": "BTC",
       "market_type": "CRYPTO_BTC",
-      "fires": 135,
+      "fires": 136,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -163,7 +163,7 @@
       "avg_kalshi_cents": 39.6,
       "avg_model_pct": 60.6,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-01",
+      "last_fired": "2026-08-07",
       "has_stats": false
     },
     "Fed cuts 2x 2026|YES|FED": {
@@ -549,7 +549,7 @@
       "direction": "NO",
       "model": "BTC",
       "market_type": "CRYPTO_BTC",
-      "fires": 113,
+      "fires": 114,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -559,7 +559,7 @@
       "avg_kalshi_cents": 62.6,
       "avg_model_pct": 75.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-01",
+      "last_fired": "2026-08-07",
       "has_stats": false
     },
     "Canadiens wins 4-2 vs Sabres [VERIFY GOALIE]|NO|NHL": {
