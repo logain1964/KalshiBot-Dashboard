@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-08-08T21:05:33.191822",
-  "total_resolved": 1053,
+  "generated_at": "2026-08-09T07:02:19.778015",
+  "total_resolved": 1056,
   "by_model": {
     "MLS_GAME": {
-      "n": 93,
+      "n": 96,
       "correct": 40,
-      "acc_pct": 43.0,
-      "avg_brier": 0.2617,
-      "avg_logloss": 0.7328,
+      "acc_pct": 41.7,
+      "avg_brier": 0.2659,
+      "avg_logloss": 0.7418,
       "avg_edge": 15.7,
       "beats_random": false
     },
