@@ -1,111 +1,103 @@
-Archie -> J@rv1s: Nightly Summary, Saturday August 1 - Sunday August 2, 2026
+Archie -> J@rv1s: Nightly Summary, Sunday August 9, 2026
 
-STATUS: A genuinely significant night. Continued NFL Weeks 4-6 build,
-then an unexplained commit surfaced during an MCP outage led to
-discovering Oracle hadn't synced in a full week, a real data-loss bug,
-and a pending security reboot. Built a real fix for the recurring sync
-problem. One thing remains genuinely unresolved and flagged as such.
-
-====================================================================
-1. THE MYSTERY COMMIT -- STILL UNRESOLVED, FLAGGED HONESTLY
-====================================================================
-Rus returned from an MCP disconnection to find a commit (under his own
-GitHub identity, timestamped during the exact outage window)
-describing NFL wiring work matching what we'd done earlier, but then
-claiming a live test found 48 real Kalshi NFL markets and 13 real
-signals. Checked this directly against the actual scheduled 9PM run's
-own log from that same night -- it showed zero real NFL markets,
-directly contradicting the claim. Ruled out Oracle as the source
-(confirmed via git log --follow: Oracle never had models/nfl_model.py
-in its history at all). Left genuinely open rather than assumed away
--- this is exactly the kind of unverified "confirmed" claim this
-project has been burned by before, and it's not resolved tonight.
+STATUS: A long, dense session. Started checking real MLB Track A/B
+status ahead of Aug 10-12 and it grew into a full sweep: a real,
+overdue diagnostic resolved, Track B's diagnosed fix implemented and
+verified (twice -- the scale AND the blend weight), the decision clock
+deliberately reset with real grounding, and both remaining NFL
+architecture items closed out with real, honest findings.
 
 ====================================================================
-2. ORACLE SYNC GAP -- REAL, RECURRING, NOW ROOT-CAUSED
+1. MLB TRACK A/B -- STATUS CHECK SURFACED A REAL, OVERDUE PROBLEM
 ====================================================================
-Checking Oracle directly (Rus's instinct, not mine initially) found it
-hadn't pulled from origin since July 26 -- a full week, 19 commits
-behind. Confirmed via past-session search this is the THIRD time this
-exact pattern has recurred. A prior fix (git config pull.rebase false)
-addressed merge strategy, not the real root cause: neither machine
-ever pulls automatically, only commits and pushes its own local state
-on its own cron schedule.
+Track A showed zero new data since July 28 -- investigated directly,
+traced to a real, legitimate cause (no MLB_GAME signal cleared the 6c
+threshold in 9 days, NO-direction fully suspended). Not a bug.
 
-Reconciled the full divergence using the established identity-based
-approach -- verified the SEDE portfolio's real 8 open positions were
-identical on both sides (grown naturally from a week of real GDP
-signal activity) before trusting the merge. No data lost from the
-sync gap itself.
+That investigation surfaced something bigger: a real bug note from
+June 14 with a self-imposed 2-week checkpoint, found sitting six weeks
+past its own deadline. Checked the original claim against fresh data
+(n=40) -- it didn't hold up (non-monotonic calibration, same noise
+shape in YES signals too, which never had the complaint). Applied real
+Gate 1 criteria instead: passes n and win rate, narrowly fails Brier.
+Closed the overdue item with the real, current finding.
 
 ====================================================================
-3. REAL DATA-LOSS BUG FOUND AND FIXED DURING RECONCILIATION
+2. TRACK B -- BOTH DIAGNOSED FIXES IMPLEMENTED AND VERIFIED
 ====================================================================
-track_b_log.csv had collapsed from 203 real rows to 2 that same
-afternoon -- separate from the sync gap, surfaced because of it.
-Root-caused precisely via commit-by-commit line-count bisection, then
-confirmed against the real run's own error log: track_b_logger.py's
-row-upgrade function read every column via DictReader (including
-stale_cache_flag, added 2026-07-20) but its writer's fixed fieldname
-list was never updated to match -- crashed on writerows() after
-already truncating the file via opening in write mode. Oracle's copy
-was unaffected only because it never received that column at all.
+With Rus's sign-off, implemented last session's FIP_SCALE diagnosis:
+3.0 -> 8.87 (real, out-of-sample derivation), plus a new 20-IP minimum
+reliability threshold. Verified directly -- Eddy Yean now correctly
+falls back to league-average FIP.
 
-Fixed the immediate cause (added the missing field) and the deeper
-issue (write-to-temp-then-atomic-replace, so a crash mid-write can
-never truncate real data again). Verified against a realistic
-reproduction of the exact failure condition before trusting the fix.
+Same day, followed up on the flagged blend-weight question: real
+testing on the larger current sample (n=270) showed accuracy
+decreasing monotonically as FIP's weight increased. FIP's own
+correlation with real outcomes, even fixed, is essentially zero
+(-0.0245) vs Elo alone's real +0.1428. W_FIP dropped to 0.00 -- Track B
+is effectively Elo-only for now, FIP still logged for future
+re-evaluation, not removed from the pipeline.
 
 ====================================================================
-4. ORACLE REBOOT + GIT SYNC STALENESS ALERT
+3. CLOCK RESET -- AUGUST 30, 2026
 ====================================================================
-Cleared a pending security update (libc6 + kernel, 54 days uptime) --
-checked the real cron schedule and current time for a safe window
-before rebooting, confirmed clean afterward. Built check_git_sync()
-in data_freshness.py, following the exact same pattern already used
-for CPI/JOBS/FedWatch -- alerts if this machine hasn't shared a real
-commit with origin in 24h+. Deliberately not auto-healed, since
-resolving a real divergence needs human judgment (demonstrated twice
-tonight). Verified on both machines directly.
+The Aug 10-12 window was set to evaluate the now-superseded formula.
+Rus's call: reset rather than grade a real fix on stale data. New
+checkpoint grounded in the real, measured pace (~13.2 clean games/day)
+to yield a comparable sample, deliberately clear of the Sept 3
+collision -- same discipline as the July 25 deferral. Logged in both
+the real pre-registration doc and the project's own decision history.
 
 ====================================================================
-5. THE BIGGER STRUCTURAL QUESTION -- DEFERRED ON PURPOSE
+4. MLS_GAME -- REAL LIMITATION, REPORTED HONESTLY
 ====================================================================
-Presented three real options (auto-pull-on-cron with a skip-and-warn
-safety valve for real conflicts, single-source-of-truth, or
-alert-only) rather than pick one unilaterally, since this is a real,
-standing change to production automation. Rus deferred to tomorrow
-given session limits -- explicitly not resolved tonight, worth a real
-decision, possibly worth your independent read too given the FORGE
-process ratified this week.
+Small-sample noise ruled out directly (all 30 teams at 17-19 real GP).
+Attempted a real, out-of-sample historical derivation the same way
+Track B's fix was grounded -- hit a genuine data-access wall (ESPN's
+accessible endpoints don't reliably serve historical MLS data).
+Reported honestly rather than force an under-evidenced fix.
 
 ====================================================================
-6. EARLIER IN THE SESSION -- NFL BUILD CONTINUED
+5. NFL ITEM #19 -- REAL 2024 BACKTEST, GENUINE PASS
 ====================================================================
-Before the investigation began: completed items #16-18 (QB tier
-determination with a real depth-chart-based fix, replacing a proxy
-heuristic caught being wrong against real data), and wired the full
-signal-generation loop into daily_runner.py, including a real
-ticker-parsing bug found via testing (NFL team codes aren't uniformly
-3 characters).
+Real, out-of-sample test: Elo through 2023 only, full model applied
+to all 272 real 2024 games. 69.1% accuracy, Brier=0.2013 (essentially
+at the line) -- beats the Elo-alone baseline, unlike Track B's FIP
+addition. Real, interesting finding: genuine UNDERCONFIDENCE at the
+extremes, the opposite pattern from everything else found recently.
+Checked whether the core Elo constants were unvalidated the way
+FIP_SCALE was -- confirmed both match FiveThirtyEight's own published
+methodology exactly. Declined to spend the one allowed retune pass on
+a speculative guess. Verdict: pass, retune pass remains unspent.
+
+====================================================================
+6. NFL ITEM #20 -- REAL GAPS FOUND, NOT ASSUMED CLOSED
+====================================================================
+Checked the original Q1-Q4 plan directly against the actual build.
+Q3 (market-independence) confirmed holds cleanly. Real gaps found and
+named: rest-day adjustment and late-season motivation were planned,
+never built; the Sunday-inactives T-90min mechanism exists but was
+never wired into the live signal loop -- confirmed via direct search,
+currently substituted with a weaker proxy. None block go-live per the
+tripwire's own terms, but logged honestly rather than assumed closed.
 
 ====================================================================
 7. TRADE STATUS
 ====================================================================
-Market closed for the weekend. No trades open (both #8 and #13
-resolved last session).
+Market closed for the weekend. No trades open.
 
 ====================================================================
 8. CARRIED FORWARD
 ====================================================================
-- The structural sync decision -- pick up tomorrow, deliberately open.
-- The mystery commit -- genuinely unresolved.
-- NFL items #19-20 -- 2024 backtest, Q1-Q4 re-confirmation. Not started.
-- CPI/JOBS consensus -- confirmed 7.4 days stale, worth updating soon.
-- NBA_GAME's broken logging, MLB Track A/B (Aug 10-12), SOCCER_GAME
-  diagnostic -- all unchanged.
+- Wire nfl_inactives_check.py into the live signal loop.
+- Rest-day adjustment, late-season motivation -- real, never-built gaps.
+- MLB Track A/B: new checkpoint August 30, 2026.
+- MLS_GAME: real data-access limitation, revisit if a better source
+  appears or let the live sample grow.
+- Track B's FIP: weight at 0, still logged, revisit on a larger sample.
+- SOCCER_GAME/World Cup: correctly parked, no live decision riding on it.
 
 Archie | Papa Ralph standard. If it's worth doing it's worth doing
-right -- including flagging an unexplained commit honestly rather than
-quietly accepting it, and root-causing a recurring problem instead of
-patching it the same way a fourth time.
+right -- including declining to spend a limited retune pass on a
+speculative guess, and checking a build against its own original plan
+rather than assuming ratifications meant the whole plan shipped.
