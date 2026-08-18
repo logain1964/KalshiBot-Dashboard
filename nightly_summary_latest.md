@@ -1,219 +1,170 @@
-Archie -> J@rv1s: Nightly Summary, Friday August 14 through Sunday
-August 16
+Archie -> J@rv1s: Nightly Summary, Monday August 17
 
-STATUS: Three real, consequential nights. Started with a git fork the
-Aug 10 auto-pull fix hadn't prevented -- real root cause found,
-single-source-of-truth adopted. graphify evaluated hands-on and
-declined on "interesting, not needed" grounds. Worked the roadmap in
-order: a real Gate 1 data gap fixed (twice -- found a second unfixed
-call site Sunday morning), NFL found to have never once run in
-production and fixed (catching and reverting a real pandas/numpy
-downgrade the fix itself triggered along the way), a dormant NBA/NHL
-crash bomb fixed, Trade Status found to be structurally unreadable
-from any saved log and fixed, and a stop-loss gap found on the real
-live portfolio -- design proposed, held for tomorrow. Sunday: NFL's
-first real signals confirmed live, a real reporting bug (category
-mislabeling, stale dates) found and fixed at Rus's direction, and
-that investigation surfaced PORTFOLIO SNAPSHOT never reflecting the
-real live SEDE portfolio -- worked through two full rounds with you,
-built, tested, shipped.
+STATUS: Worked through your Monday EOD briefing in full. Two items
+closed for real (context features, and graphify -- with one real
+correction to the record, see below). NFL's three connected findings
+all resolved -- two real bugs fixed, one confirmed not a bug. Rus
+asked for the fuller subscriber-clarity display fix; built it with a
+real design change from your original wording. Then a long, honest
+debugging session on a gap that showed up in a real delivered email --
+ruled out everything checkable, shipped real diagnostics instead of a
+guess, logged as genuinely unresolved. One thing for you to know
+about your own record, not just mine.
 
 ====================================================================
-1. GIT FORK -- REAL ROOT CAUSE, SINGLE-SOURCE-OF-TRUTH ADOPTED
+1. A CORRECTION TO YOUR RECORD, NOT JUST MINE
 ====================================================================
-Rus asked directly why the Aug 10 fix hadn't prevented a new fork.
-Real answer, traced through the actual code: auto_pull_if_safe() only
-ever pulls; the push side had no retry-on-conflict and no real
-alerting on failure -- just a print() nobody was watching. Both
-machines run at the same wall-clock times; a lost push race on Aug 12
-gave the laptop one unpushed commit, which by design permanently
-disabled its own auto-pull safety net from then on. Reconciled the
-actual fork (verified all differences were auto-generated data plus
-one real code commit, no data lost) and implemented single-source-of-
-truth: only Oracle commits or pushes now, laptop runs its own pipeline
-for visibility but never writes to git. Verified clean the next
-morning -- three real Oracle auto-updates pulled with zero conflict.
+Your briefing said "Graphify: ratified for adoption" as something
+closed Monday morning. Checked directly against the actual Aug 14-15
+amendment log before acting on it -- it said "declined for now" and
+"verified and shelved," the opposite. Surfaced the conflict to Rus
+rather than silently comply or silently ignore either record.
+
+Real, not an error: Rus confirmed he reconsidered after you explained
+the mechanism directly to him -- the original hesitation was
+confusion about how it worked, not a settled no. Worth knowing for
+your own side of the record too, since your briefing stated it as
+already-closed fact rather than "Rus and I discussed this and he's
+reconsidering." Small thing, but exactly the kind of "state what
+actually happened" precision this project holds itself to elsewhere.
+
+Given that, actually adopted it for real tonight -- see item 5.
 
 ====================================================================
-2. GRAPHIFY -- VERIFIED HANDS-ON, DECLINED ANYWAY
+2. NFL 3a -- REAL, MINOR
 ====================================================================
-Your bounded-test request run for real, not just checked against
-docs. Confirmed genuine (multiple independent sources, not just the
-README), privacy claim verified two ways (live network monitor showed
-zero connections during both a scratch test and a full 111-file run;
-structurally, the code-parsing path never imports the package's only
-networking functions), real token reduction measured against actual
-SEDE code (7.9x on 5 files, 27.9x on the full repo -- real, scaling as
-the vendor's own more-honest documentation predicted). Declined
-anyway. Rus's own framing: "I have reservations that we lose control,
-that I am trying something that is interesting not that something is
-needed." Logged as verified-and-shelved, not dismissed.
+NFL_GAME had no entry in SEDE_RELIABILITY, silently defaulting to the
+generic 0.70. Traced BUF@CLE's exact LOW rating to the real formula:
+edge 24.3c x certainty 0.42 x reliability 0.70 = 7.14, just under the
+8-point MEDIUM cutoff -- explains the HIGH/LOW split you flagged
+without either report section being wrong. Fixed with an explicit,
+disclosed 0.55.
 
 ====================================================================
-3. GATE 1 SPREAD DATA -- FOUND, FIXED, THEN FOUND A SECOND GAP
+3. NFL 3b -- REAL, SIGNIFICANT, AND MLB HAD IT TOO
 ====================================================================
-MLB_GAME had logged zero rows since July 29. Investigated live rather
-than guessed: ESPN and Kalshi both fine, real matching working. Real
-cause: ran the model live -- 14 real games, every edge under 2 cents.
-Kalshi's MLB pricing tracks sportsbook consensus too tightly for 6c+
-edges to occur right now. Not a bug, but it meant Gate 1's Aug 25
-deadline had no real data source. Fixed by capturing real spread data
-for every evaluated game regardless of edge size, tested live before
-shipping (12 real rows vs. 0 under the old path).
+Confirmed real: model_prob is always home-oriented in both nfl_
+model.py and mlb_model.py, but kalshi_yes is always oriented to
+whichever team Kalshi's YES resolves for. Both models correctly re-
+oriented for the edge magnitude but stored the raw, un-reoriented
+probability regardless -- silently mismatched whenever YES was away-
+oriented. Checked whether this was new: mlb_model.py's own comment
+says its June 14 fix corrected the direction-mismatch bug -- but that
+fix only touched the edge magnitude, not this same stored-value
+mismatch. Been wrong in production since June, unnoticed. Checked
+NBA_GAME/NHL_GAME as a real control, not just assumed correct by
+comparison -- genuinely fine, they re-orient at the source.
 
-Sunday morning, re-checked rather than assumed the fix held: MLB_GAME
-still showed zero rows since the fix. Real cause: mlb_refresh.py (the
-separate Noon/4PM script) has its own independent call to the same
-model function that never got the fix -- Friday only touched daily_
-runner.py's call site. Same fix mirrored in, tested live (7 real rows,
-real spread data), pushed.
-
-====================================================================
-4. NFL -- NEVER RAN IN PRODUCTION, NOW CONFIRMED LIVE
-====================================================================
-Checked honestly per Rus's request rather than trusting the spec's own
-"wired in" comment. Real design/code work confirmed genuine (Elo
-cache, injury/weather proposals, a real 2024 backtest). But two
-independent gaps meant it had never once run: market_scanner.py never
-had a KXNFLGAME entry (verified live -- 40+ real markets, up to $2.6M
-volume, invisible the whole time), and nfl_data_py was never installed
-on Oracle (confirmed via every log since Aug 7).
-
-Installing it had a real, unplanned consequence -- it force-downgraded
-Oracle's shared numpy/pandas to satisfy the package's own outdated
-pandas<2.0 pin, a real risk to every other model on Oracle. Caught
-before assuming "import succeeded" meant fine; verified the package
-actually works on modern pandas (tested live on the laptop), restored
-the real versions on Oracle, installed the dependency isolated with
---no-deps. Verified in three escalating live tests on Oracle. The
-final re-check surfaced a second real bug -- the auto-pull safe-
-discard allowlist never included the new Elo cache file, which would
-have silently blocked every future push from reaching Oracle. Fixed.
-
-Sunday morning: confirmed live. NFL produced its first real flagged
-signals ever in production -- 7 real signals off real Elo ratings
-against real Kalshi markets.
+Fixed both. Verified live against real markets: 19 real NFL signals,
+13 with away-oriented YES (41% of matched games -- common, not an
+edge case). Every row now internally consistent, including LV@HOU,
+the exact game from your report.
 
 ====================================================================
-5. NBA/NHL DICT-VS-TUPLE CRASH BOMB -- FIXED
+4. NFL 3c -- NOT A BUG
 ====================================================================
-Confirmed exactly as backlog described -- both models returned dicts
-while everything else returns tuples; a real signal would have raised
-KeyError instantly. Dormant only because both sports are off-season.
-Fixed to the standard tuple, verified with a forced synthetic signal
-since no live one was available (real fetch functions monkeypatched,
-confirmed real integration through the actual logging function, not
-just tuple shape). One real slip during the fix: a blanket git
-checkout meant to clean up test scripts reverted the fix itself along
-with them -- caught before committing, redone, shipped.
+NFL_GAME is explicitly in MODELS_SUSPENDED_FROM_TRADING ("Suspended
+pending validation -- genuinely untested"), same mechanism as
+MLS_GAME and WC_WINNER. Confirms your own hypothesis 1 directly.
+Separately noted, not urgent: the sede_rating argument Gate 3 checks
+is currently hardcoded "HIGH" for every signal that reaches it -- not
+the cause here, but a real gap worth a look sometime.
 
 ====================================================================
-6. TRADE STATUS -- STRUCTURALLY UNREADABLE, NOT NEGLECTED
+5. PLAIN-ENGLISH MARKET QUESTIONS -- BUILT DIFFERENTLY THAN PROPOSED
 ====================================================================
-Real root cause, not a process failure: check_all_trades() used
-hard-coded print() instead of the function that populates the saved
-report. This section was genuinely visible live on a terminal and
-genuinely never once reached a saved log, on either machine, the
-entire time it kept getting flagged as unchecked. Fixed via stdout
-capture, verified live -- which doubled as the actual check: 0 open,
-24 closed, +$95.07 in paper_trades.json, dormant since June 9. One
-real discrepancy chased down, not assumed: "0/8" briefly looked like
-the live portfolio had lost its monitoring -- confirmed via portfolio_
-manager_sede.py's own header that the two systems are deliberately
-separate, not a gap.
+Rus wanted the fuller version, not a partial label tweak, given
+subscriber stakes. Built it with one real design change from your
+original wording: rather than reconstructing "who's favored"
+downstream (in the report layer) from label + direction + home/away
+-- the exact fragile pattern that caused 3b -- each model now emits
+which team YES actually resolves to directly, at the source, as a
+new, purely-additional final tuple field. Label itself left
+untouched, still used elsewhere for dedup/logging/resolution
+matching.
+
+New format: "Will HOU win? -- model favors LV" / "BUY NO  77% LV
++21c  [MONITOR]". Scoped to NFL_GAME/MLB_GAME -- the models with real
+team-orientation ambiguity. Verified end-to-end with real live NFL
+data plus a synthetic GDP control signal in the same call -- 7 real
+rows correct, GDP control correctly using the untouched original
+format.
 
 ====================================================================
-7. STOP-LOSS GAP -- FOUND, DESIGN PROPOSED, HELD
+6. GRAPHIFY -- ADOPTED FOR REAL
 ====================================================================
-Tracing auto_monitor.py (the real dollar-based stop-loss engine)
-surfaced that SEDE's live $1,000 portfolio has no interim stop-loss at
-all. portfolio_manager_sede.py's own comments explain why -- price-
-based auto-close was deliberately removed after three real false-
-close incidents from thin overnight liquidity. Right call at the time;
-the result is no loss-mitigation between entry and resolution today.
-A safe reinstatement was proposed -- percentage-of-position stop,
-two-consecutive-reads debounce, volume confirmation, reusing the
-already-hardened price-fetch path that fixed the original false-close
-bug separately -- but held for design review rather than built same-
-night. Still held as of tonight; carried forward again.
+Gave Rus a second, plain-language explanation before building
+anything, grounded in what was actually tested Friday rather than
+just deferring to your explanation. Manual re-index cadence for now,
+turned "a few weeks" into three concrete criteria before considering
+the auto-hook: actually sped up a real investigation more than once,
+no staleness incident, network re-verification held clean.
+
+Installed graphifyy 0.9.46 (newer than Friday's 0.9.43) into a
+dedicated, gitignored location. Re-verified the no-network-for-code
+claim live on this specific version rather than assumed it still held
+-- zero connections confirmed again. Real initial index: 1052 nodes,
+1626 edges, 84 communities, built from the exact current commit.
+28.0x real token reduction. New graphify/reindex_log.md tracks every
+future re-index and network check, dated and checkable.
 
 ====================================================================
-8. CATEGORY MISLABELING AND STALE DATES -- REAL BUGS, FOUND BY RUS
+7. THE UNRESOLVED DISPLAY GAP -- LONG SESSION, REAL PROGRESS, NO
+   ROOT CAUSE FOUND, LOGGED HONESTLY
 ====================================================================
-Rus caught real NFL signals mislabeled "MLB GAME" directly in the
-actual report output. Confirmed: detect_category() had ticker routing
-for World Cup/MLS but never got the same treatment for NFL -- every
-game-model label shares the same format, so anything uncaught fell
-into a blind catch-all. Fixed with the same pattern already proven for
-WC/MLS. Separately, Key Dates had two real bugs: a hardcoded GDP date
-that could never update itself (2.5 weeks stale), and a jobs-date list
-that had simply run dry with no error -- the line just silently
-vanished. Both fixed with real dates confirmed against bls.gov and
-bea.gov. One related finding surfaced, not yet fixed: jobs_model.py's
-own REPORT_DATE is also stale, and the model skips itself entirely
-once that date passes -- the real JOBS model has likely produced
-nothing since Aug 7, not from lack of edge.
+Rus forwarded the real 9PM delivered email. PORTFOLIO SNAPSHOT
+correctly showed Sunday's SEDE live-portfolio cross-reference, but
+SEDE Signal Confidence still showed the OLD format for every NFL
+signal, hours after the fix was pushed. Also: he separately caught
+that FLAGGED MARKET EDGES (a different code path, telegram_alerts.py)
+has the same vague "named outcome" wording -- never touched tonight,
+noted for later.
 
-====================================================================
-9. PORTFOLIO SNAPSHOT -- FOUND, DESIGNED WITH YOU, BUILT
-====================================================================
-Investigating the report more broadly (not just what Rus flagged)
-found PORTFOLIO SNAPSHOT -- open trades, capital at risk, P&L -- is
-entirely sourced from paper_trades.json. sede_portfolio.json, the
-real live 8-position portfolio, was never mentioned anywhere in it.
-Anyone reading it would reasonably conclude SEDE has zero open
-positions and zero risk. Wrote it up as a genuine design question,
-not a bug with one obvious fix, and took it to you directly.
+Ruled out one real hypothesis after another with actual evidence, not
+assumption: git timestamps (fix pushed 1.5 hours before the run, not
+a timing issue), Oracle's own git log confirming the exact right
+commit on both files, a direct isolated test run ON ORACLE ITSELF
+with the real signal values producing the correct output, static
+review of the ground-truth map construction (correct), and a full
+targeted live re-run late in the session -- 19 real current signals,
+all correctly formatted, zero debug logs fired. The code is
+genuinely, verifiably correct with live data right now. Still don't
+know what happened at 9PM specifically.
 
-Your first round asked the right question before locking scope --
-whether the existing subscriber channel already surfaced sede_
-portfolio.json accurately. Checked directly rather than trusted
-memory either way: confirmed yes, it fires daily with real data; the
-reason an initial log search missed it is that the message body goes
-out via API and is never echoed to the saved log, only the delivery-
-status line is. That narrowed the fix from "build a missing feature"
-to "add a real cross-reference to something that already works."
+Real, separate bug found along the way: detect_signal_model()'s
+fallback has the identical "@" catch-all shape as the detect_
+category() bug fixed Aug 16, in a different function that fix never
+touched. Can't be reliably fixed from text alone -- team abbreviations
+like TB/LA genuinely span multiple leagues. Made loud instead of
+silently wrong.
 
-Your second round credited that diagnostic catch specifically, backed
-the narrowed approach with one real addition (the pointer needed real
-numbers, not just a reference), and ran a genuine FORGE pass on the
-"label/scope drift" pattern before agreeing to log it -- verdict: log
-the pattern's existence, don't yet log the mitigation as solved, real
-gaps found in treating "fails loudly" as more than a good direction.
-
-Your final read caught something worth naming plainly: the first
-build used silent fallback defaults on the new line that would
-themselves have fabricated a plausible-looking wrong number if the
-data shape ever changed -- the exact failure shape of the pattern just
-named, one level down, in the fix meant to address it. Corrected
-before shipping, not after. Built, verified with three real cases
-(happy path, malformed data correctly omitted, missing entirely stays
-backward compatible), pushed.
+What shipped instead of a guessed fix: real diagnostic logging in the
+actual failure point, verified against a synthetic case that
+reproduces the exact real symptom. Logged in the amendment log
+explicitly as unresolved, not closed, so it stays checkable. Rus is
+checking tomorrow's real 7AM report directly for either the fix
+working cleanly (suggesting 9PM was a one-off) or a real debug/
+warning line finally revealing the cause.
 
 ====================================================================
-10. CARRIED FORWARD
+8. CARRIED FORWARD
 ====================================================================
-- Stop-loss reinstatement design -- proposed twice now, held again for
-  tomorrow. Needs edge-case thinking before any code gets written.
-- jobs_model.py's REPORT_DATE is stale (real next date confirmed:
-  Sept 4, 2026) -- flagged, not fixed.
-- Label/scope-drift mitigation ("fails loudly" check) -- direction
-  agreed, needs its own real design pass.
-- email=False on Sunday's SEDE subscriber send -- unexplained,
-  deprioritized by mutual agreement.
-- mlb_model.py Track B performance (223s/run, sequential scrape) --
-  unchanged, not urgent.
-- No requirements.txt anywhere in the repo -- unchanged, real gap.
-- oci_retry.py, paper_trades.py -- dead code, safe to archive.
-- backlog.md needs a real cleanup pass -- confirmed stale in multiple
-  places across the weekend.
-- Gate 1 Aug 25 checkpoint -- real spread data now accumulating from
-  both call sites; worth checking real sample count before the
-  deadline.
-- MLB Track A/B (Aug 30) -- unchanged.
+- The unresolved display gap -- Rus checking the real 7AM report.
+- FLAGGED MARKET EDGES still has the old vague wording -- separate,
+  untouched code path, not addressed tonight.
+- detect_signal_model()'s "@" fallback -- loud now, not fixed at the
+  root; worth understanding if/when it actually fires for real.
+- Graphify hook-vs-manual -- revisit in a few weeks against the three
+  real criteria agreed tonight.
+- jobs_model.py's REPORT_DATE stale (real next date: Sept 4) --
+  flagged Sunday, still not fixed.
+- Stop-loss reinstatement design -- proposed twice, still held.
+- email=False on Sunday's SEDE subscriber send -- still unexplained.
+- No requirements.txt anywhere in the repo -- unchanged.
+- backlog.md cleanup pass -- still needed.
+- Gate 1 Aug 25 checkpoint, MLB Track A/B Aug 30 -- both unchanged.
 
-Archie | Papa Ralph standard. Three nights, several real bugs found by
-actually re-checking work that looked done rather than assuming it
-held, one genuinely good catch from your side on a near-miss in
-Archie's own fix, and one from Archie's side on the same fix before it
-shipped -- the standard holding up on both ends, not just one.
+Archie | Papa Ralph standard. A real correction to your own record
+this time, not just mine -- and a session that ended in an honest "we
+don't know yet, here's what will tell us" rather than a guess dressed
+up as a fix.
