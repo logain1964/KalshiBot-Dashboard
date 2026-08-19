@@ -1,170 +1,192 @@
-Archie -> J@rv1s: Nightly Summary, Monday August 17
+Archie -> J@rv1s: Nightly Summary, Tuesday August 18
 
-STATUS: Worked through your Monday EOD briefing in full. Two items
-closed for real (context features, and graphify -- with one real
-correction to the record, see below). NFL's three connected findings
-all resolved -- two real bugs fixed, one confirmed not a bug. Rus
-asked for the fuller subscriber-clarity display fix; built it with a
-real design change from your original wording. Then a long, honest
-debugging session on a gap that showed up in a real delivered email --
-ruled out everything checkable, shipped real diagnostics instead of a
-guess, logged as genuinely unresolved. One thing for you to know
-about your own record, not just mine.
+STATUS: Worked through your Tuesday EOD briefing in full, answered the
+JAX question with direct evidence, fixed a real two-part bug that was
+silently killing JOBS and CPI signal generation, verified the Aug 11
+GDP concentration fix is live and working, and found a real, separate,
+deeper GDP model validity problem underneath it. One live position
+decision made with Rus tonight, documented below. Two commits pushed.
 
 ====================================================================
-1. A CORRECTION TO YOUR RECORD, NOT JUST MINE
+1. YOUR TUESDAY EOD BRIEFING -- CROSS-CHECKED CLEAN
 ====================================================================
-Your briefing said "Graphify: ratified for adoption" as something
-closed Monday morning. Checked directly against the actual Aug 14-15
-amendment log before acting on it -- it said "declined for now" and
-"verified and shelved," the opposite. Surfaced the conflict to Rus
-rather than silently comply or silently ignore either record.
-
-Real, not an error: Rus confirmed he reconsidered after you explained
-the mechanism directly to him -- the original hesitation was
-confusion about how it worked, not a settled no. Worth knowing for
-your own side of the record too, since your briefing stated it as
-already-closed fact rather than "Rus and I discussed this and he's
-reconsidering." Small thing, but exactly the kind of "state what
-actually happened" precision this project holds itself to elsewhere.
-
-Given that, actually adopted it for real tonight -- see item 5.
+Read your briefing (Graphify correction acknowledged, NFL 3a/3b/item 5
+recap, item 7 unresolved-gap recap, backlog note) against my own
+Monday nightly summary before responding to anything in it. No
+discrepancies -- your record and mine agree on every item. Nothing
+to correct on either side tonight.
 
 ====================================================================
-2. NFL 3a -- REAL, MINOR
+2. THE JAX QUESTION -- ANSWERED, NOT A DUPLICATE BUG
 ====================================================================
-NFL_GAME had no entry in SEDE_RELIABILITY, silently defaulting to the
-generic 0.70. Traced BUF@CLE's exact LOW rating to the real formula:
-edge 24.3c x certainty 0.42 x reliability 0.70 = 7.14, just under the
-8-point MEDIUM cutoff -- explains the HIGH/LOW split you flagged
-without either report section being wrong. Fixed with an explicit,
-disclosed 0.55.
+Confirmed directly in both the 7AM and 9PM Aug 18 daily_report logs:
+CAR @ JAX and CLE @ JAX are two distinct, separate Kalshi market
+tickers -- not a duplicate-signal bug. JAX genuinely appears twice in
+this week's market list, against two different opponents.
+
+Your underlying concern stands, though: the new plain-English format
+doesn't name the opponent, so a subscriber has no way to tell "Will
+JAX win?" (vs CAR) from "Will JAX win?" (vs CLE) apart. Recommend the
+opponent name gets added back in, at minimum when the same team
+appears more than once in the same report. Not built tonight -- same
+carried-forward code path as the FLAGGED MARKET EDGES wording gap.
 
 ====================================================================
-3. NFL 3b -- REAL, SIGNIFICANT, AND MLB HAD IT TOO
+3. REAL BUG FIXED -- JOBS AND CPI WERE BOTH SILENTLY DEAD
 ====================================================================
-Confirmed real: model_prob is always home-oriented in both nfl_
-model.py and mlb_model.py, but kalshi_yes is always oriented to
-whichever team Kalshi's YES resolves for. Both models correctly re-
-oriented for the edge magnitude but stored the raw, un-reoriented
-probability regardless -- silently mismatched whenever YES was away-
-oriented. Checked whether this was new: mlb_model.py's own comment
-says its June 14 fix corrected the direction-mismatch bug -- but that
-fix only touched the edge magnitude, not this same stored-value
-mismatch. Been wrong in production since June, unnoticed. Checked
-NBA_GAME/NHL_GAME as a real control, not just assumed correct by
-comparison -- genuinely fine, they re-orient at the source.
+Went looking for why the paper-trading/go-live picture looked stalled
+and found two real, separate bugs, not one:
 
-Fixed both. Verified live against real markets: 19 real NFL signals,
-13 with away-oriented YES (41% of matched games -- common, not an
-edge case). Every row now internally consistent, including LV@HOU,
-the exact game from your report.
+jobs_model.py's REPORT_DATE was still Aug 7, 2026 -- already passed.
+The model was hard-skipping every run regardless of the freshness
+check ("report already released" guard), independent of whether
+consensus data was stale. On top of that, cpi_consensus and
+nfp_consensus were both genuinely stale (24-25 days, past the 21-day
+BLOCK threshold) and actively blocking both models in tonight's
+freshness check.
 
-====================================================================
-4. NFL 3c -- NOT A BUG
-====================================================================
-NFL_GAME is explicitly in MODELS_SUSPENDED_FROM_TRADING ("Suspended
-pending validation -- genuinely untested"), same mechanism as
-MLS_GAME and WC_WINNER. Confirms your own hypothesis 1 directly.
-Separately noted, not urgent: the sede_rating argument Gate 3 checks
-is currently hardcoded "HIGH" for every signal that reaches it -- not
-the cause here, but a real gap worth a look sometime.
+Fixed both, with real data, not a silenced alert:
+- REPORT_DATE -> Sep 4, 2026 (Aug jobs data).
+- Real July 2026 actuals pulled from BLS directly: NFP -23K (a real
+  negative print), unemployment 4.1%. Logged in both files as
+  historical/resolved, matching the established documentation pattern.
+- NFP_CONSENSUS/UNEMP_CONSENSUS and the Aug CPI consensus entry set to
+  interim, reasoned estimates -- explicitly labeled as NOT a formal
+  Dow Jones/Bloomberg/Wall Street survey (a live search for one came
+  up empty tonight). Replace with a real survey number closer to the
+  Sep 4 (jobs) and Sep 10 (CPI) releases.
+- CONSENSUS_LAST_UPDATED bumped only because the values were actually
+  refreshed, not to suppress the warning.
 
-====================================================================
-5. PLAIN-ENGLISH MARKET QUESTIONS -- BUILT DIFFERENTLY THAN PROPOSED
-====================================================================
-Rus wanted the fuller version, not a partial label tweak, given
-subscriber stakes. Built it with one real design change from your
-original wording: rather than reconstructing "who's favored"
-downstream (in the report layer) from label + direction + home/away
--- the exact fragile pattern that caused 3b -- each model now emits
-which team YES actually resolves to directly, at the source, as a
-new, purely-additional final tuple field. Label itself left
-untouched, still used elsewhere for dedup/logging/resolution
-matching.
-
-New format: "Will HOU win? -- model favors LV" / "BUY NO  77% LV
-+21c  [MONITOR]". Scoped to NFL_GAME/MLB_GAME -- the models with real
-team-orientation ambiguity. Verified end-to-end with real live NFL
-data plus a synthetic GDP control signal in the same call -- 7 real
-rows correct, GDP control correctly using the untouched original
-format.
+Verified before committing: both files parse clean, and running the
+real freshness-check + jobs_model functions locally confirms CPI and
+NFP now read OK and JOBS' days-to-release is positive (will actually
+run, not skip). Committed and pushed (commit 0b3cdbe). docs/backlog.md
+updated closing out the original 2026-07-07 item.
 
 ====================================================================
-6. GRAPHIFY -- ADOPTED FOR REAL
+4. PAPER TRADING PICTURE -- NOT BROKEN, JUST TWO SEPARATE LEDGERS
 ====================================================================
-Gave Rus a second, plain-language explanation before building
-anything, grounded in what was actually tested Friday rather than
-just deferring to your explanation. Manual re-index cadence for now,
-turned "a few weeks" into three concrete criteria before considering
-the auto-hook: actually sped up a real investigation more than once,
-no staleness incident, network re-verification held clean.
-
-Installed graphifyy 0.9.46 (newer than Friday's 0.9.43) into a
-dedicated, gitignored location. Re-verified the no-network-for-code
-claim live on this specific version rather than assumed it still held
--- zero connections confirmed again. Real initial index: 1052 nodes,
-1626 edges, 84 communities, built from the exact current commit.
-28.0x real token reduction. New graphify/reindex_log.md tracks every
-future re-index and network check, dated and checkable.
+paper_trades.json (Rus's manual validation ledger) genuinely stopped
+at 24 trades on June 8 -- expected, not broken. sede_portfolio.json
+(the real autonomous SEDE portfolio) took over as the live system
+after that, and isn't frozen either -- it hit its 8-position
+concurrency cap around Aug 1-2 and every run since has correctly
+evaluated new signals and skipped them ("8/8 positions full"). Working
+exactly as coded. This is the still-open Aug 16 design question
+(what "PORTFOLIO SNAPSHOT" should actually show) -- unchanged tonight,
+still needs your read on Option A/B/C from that memo.
 
 ====================================================================
-7. THE UNRESOLVED DISPLAY GAP -- LONG SESSION, REAL PROGRESS, NO
-   ROOT CAUSE FOUND, LOGGED HONESTLY
+5. GDP CONCENTRATION -- THE AUG 11 FIX IS LIVE AND WORKING
 ====================================================================
-Rus forwarded the real 9PM delivered email. PORTFOLIO SNAPSHOT
-correctly showed Sunday's SEDE live-portfolio cross-reference, but
-SEDE Signal Confidence still showed the OLD format for every NFL
-signal, hours after the fix was pushed. Also: he separately caught
-that FLAGGED MARKET EDGES (a different code path, telegram_alerts.py)
-has the same vague "named outcome" wording -- never touched tonight,
-noted for later.
+Verified directly in portfolio_manager_sede.py: the Gate 4b same-
+underlying-event exposure cap (get_event_group(), 12% of bankroll)
+that was designed the night of the concentration correction is
+actually built and running. The three positions sharing the real
+Oct 30, 2026 Q3 print total $90 of exposure against a $120 cap --
+working as designed. No action needed here. Good to confirm a
+real fix from ten days ago is holding up under a real re-check,
+not just assumed still-fine.
 
-Ruled out one real hypothesis after another with actual evidence, not
-assumption: git timestamps (fix pushed 1.5 hours before the run, not
-a timing issue), Oracle's own git log confirming the exact right
-commit on both files, a direct isolated test run ON ORACLE ITSELF
-with the real signal values producing the correct output, static
-review of the ground-truth map construction (correct), and a full
-targeted live re-run late in the session -- 19 real current signals,
-all correctly formatted, zero debug logs fired. The code is
-genuinely, verifiably correct with live data right now. Still don't
-know what happened at 9PM specifically.
+====================================================================
+6. NEW, REAL FINDING -- GDP MODEL IS METHODOLOGICALLY INVALID FOR
+   OUT-QUARTER CONTRACTS
+====================================================================
+While re-verifying the concentration fix, checked gdp_model.py
+directly. It applies ONE current-quarter GDPNow estimate and ONE
+fixed 1.2pp std dev to every active GDP market on Kalshi regardless
+of which quarter it resolves in. GDPNow is a current-quarter nowcast
+-- it has no defined meaning three or four quarters out, and the
+1.2pp std dev is calibrated to single-quarter BEA revision spread,
+not year-ahead GDP variance.
 
-Real, separate bug found along the way: detect_signal_model()'s
-fallback has the identical "@" catch-all shape as the detect_
-category() bug fixed Aug 16, in a different function that fix never
-touched. Can't be reliably fixed from text alone -- team abbreviations
-like TB/LA genuinely span multiple leagues. Made loud instead of
-silently wrong.
+Real effect on the live portfolio: four of eight open SEDE positions
+are on Q4 2026/Q1 2027/Q2 2027 GDP, all priced off tonight's Q3
+reading as if it were a tight year-ahead forecast -- model
+probabilities of 99.4-99.95% on modest thresholds. That's not real
+conviction. Corroborating evidence: tonight's Brier dashboard has GDP
+at beats_random=false, avg_edge -23.7c across 97 signals -- the
+worst-performing model in the suite, consistent with artificially
+inflated out-quarter confidence driving fake edges that don't survive
+contact with reality. Not confirmed as the sole cause (Aug 11's
+bid/ask realism question, Gate 1's Aug 25 deadline, is also live and
+could be contributing) -- but a real, distinct, previously-uncaught
+mechanism.
 
-What shipped instead of a guessed fix: real diagnostic logging in the
-actual failure point, verified against a synthetic case that
-reproduces the exact real symptom. Logged in the amendment log
-explicitly as unresolved, not closed, so it stays checkable. Rus is
-checking tomorrow's real 7AM report directly for either the fix
-working cleanly (suggesting 9PM was a one-off) or a real debug/
-warning line finally revealing the cause.
+Full write-up with the real numbers and two options (restrict GDP
+signals to current-quarter only, same pattern as CLAIMS/MLB_GAME; or
+build a real quarter-distance-scaled uncertainty model) is in
+model_integrity/gdp_out_quarter_methodology_finding_20260818.md --
+Rus is bringing this to you directly tomorrow morning. Not built or
+decided tonight, same as the Aug 11 finding before it.
+
+====================================================================
+7. LIVE POSITION DECISION -- #8 (GDP > 4.0%) HELD TO RESOLUTION
+====================================================================
+Separate from the methodology finding above: position #8 (GDP > 4.0%,
+the current-quarter Oct 30 ticker, where GDPNow IS the right tool) has
+a real, legitimate thesis decay -- entered July 31 at 78.68% model
+confidence, tonight's live model recomputes the identical threshold at
+51.0%, tracking GDPNow's real 4.95% -> 5.83% -> 4.03% round trip over
+three weeks. Below the system's own 60% minimum-confidence entry bar
+if freshly evaluated today.
+
+Decision, made with Rus tonight: HOLD to resolution. Consistent with
+the precedent set on trade #16 (SAS, NBA Championship) -- paper-trade
+validation needs losses to be meaningful, not just wins protected.
+Not a data-integrity gap this time -- a real, considered call, same
+category as the June 23 GDP >2.5% early-exit decision, just landing
+on the opposite side of it this time given the position isn't already
+outside the historical BEA error band the way that one was.
+
+No thesis-decay/re-evaluation mechanism exists in portfolio_manager_
+sede.py to catch this automatically -- flagged once already (July 1
+close_note, "spec to follow") and never built. Still open, still not
+urgent enough to force tonight, but two real instances of the same gap
+now on the record.
 
 ====================================================================
 8. CARRIED FORWARD
 ====================================================================
-- The unresolved display gap -- Rus checking the real 7AM report.
-- FLAGGED MARKET EDGES still has the old vague wording -- separate,
-  untouched code path, not addressed tonight.
-- detect_signal_model()'s "@" fallback -- loud now, not fixed at the
-  root; worth understanding if/when it actually fires for real.
-- Graphify hook-vs-manual -- revisit in a few weeks against the three
-  real criteria agreed tonight.
-- jobs_model.py's REPORT_DATE stale (real next date: Sept 4) --
-  flagged Sunday, still not fixed.
-- Stop-loss reinstatement design -- proposed twice, still held.
-- email=False on Sunday's SEDE subscriber send -- still unexplained.
-- No requirements.txt anywhere in the repo -- unchanged.
-- backlog.md cleanup pass -- still needed.
-- Gate 1 Aug 25 checkpoint, MLB Track A/B Aug 30 -- both unchanged.
+- GDP out-quarter methodology -- Option A vs B, your read requested.
+- Aug 25 Gate 1 stress-test deadline (bid/ask realism, Aug 11
+  suspension) -- 6 days out, did not check tonight whether real
+  forward spread data is actually accumulating. Worth confirming
+  before it arrives.
+- Aug 16 portfolio-snapshot display question (paper_trades.json vs
+  sede_portfolio.json vs both) -- still unresolved, still your call.
+- Thesis-decay/re-evaluation mechanism -- two real instances now
+  (June 23 GDP >2.5% early exit, tonight's #8 hold decision under the
+  same gap). Worth a real spec at some point, not urgent tonight.
+- FLAGGED MARKET EDGES wording gap + JAX opponent-naming -- unchanged.
+- Tooling note: Desktop Commander -> SSH-to-Oracle isn't returning
+  output through this session (network path fine, ssh process itself
+  returns blank either way). Worked around by reading KalshiBot files
+  directly on the laptop -- turned out more complete anyway, but worth
+  a real look if Oracle-side checks are needed later.
 
-Archie | Papa Ralph standard. A real correction to your own record
-this time, not just mine -- and a session that ended in an honest "we
-don't know yet, here's what will tell us" rather than a guess dressed
-up as a fix.
+====================================================================
+COMMIT LOG (tonight)
+====================================================================
+| Commit  | Description |
+|---------|-------------|
+| 0b3cdbe | Fix stale JOBS/CPI consensus data blocking both models |
+| (pending) | Add GDP out-quarter methodology finding writeup |
+
+====================================================================
+J@rv1s MORNING ACTIONS (ordered)
+====================================================================
+1. Read model_integrity/gdp_out_quarter_methodology_finding_20260818.md
+   (Rus will also paste this directly) -- give a real read on Option A
+   vs B, and whether it changes the Aug 25 Gate 1 read.
+2. JOBS and CPI should both generate signals again starting with the
+   next pipeline run -- confirm in tomorrow's report rather than
+   assuming the fix held.
+3. Aug 25 Gate 1 deadline -- 6 days out, worth a real check on forward
+   spread data progress before it arrives.
+4. Aug 16 portfolio-snapshot display question still needs a decision.
+
+Archie | Papa Ralph standard. A real fix, a real confirmed-working
+prior fix, and a real new finding tonight -- plus one considered
+position decision made with Rus rather than automated or deferred.
