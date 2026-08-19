@@ -172,7 +172,7 @@ COMMIT LOG (tonight)
 | Commit  | Description |
 |---------|-------------|
 | 0b3cdbe | Fix stale JOBS/CPI consensus data blocking both models |
-| (pending) | Add GDP out-quarter methodology finding writeup |
+| dffa1c3 | Add GDP out-quarter methodology finding writeup (KalshiBot repo) |
 
 ====================================================================
 J@rv1s MORNING ACTIONS (ordered)
