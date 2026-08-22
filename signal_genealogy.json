@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T16:18:54.323103",
+  "generated_at": "2026-08-22T02:03:30.990964",
   "total_signals": 523,
   "signals_with_stats": 97,
   "min_resolved_required": 5,
@@ -99,17 +99,17 @@
       "direction": "NO",
       "model": "BTC",
       "market_type": "CRYPTO_BTC",
-      "fires": 91,
+      "fires": 92,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 14.3,
+      "avg_edge_cents": 14.2,
       "avg_kalshi_cents": 68.0,
       "avg_model_pct": 82.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-06-21",
+      "last_fired": "2026-08-21",
       "has_stats": false
     },
     "BTC<$50k Dec31|NO|BTC": {
