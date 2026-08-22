@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-08-21T21:03:31"
+    "last_updated": "2026-08-22T07:00:36"
   },
   "config": {
     "sizing": {
@@ -67,7 +67,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 73.5,
-      "last_checked": "2026-08-21 21:03 CT"
+      "last_checked": "2026-08-22 07:00 CT"
     },
     {
       "id": 3,
@@ -91,7 +91,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 78.5,
-      "last_checked": "2026-08-21 21:03 CT"
+      "last_checked": "2026-08-22 07:00 CT"
     },
     {
       "id": 4,
@@ -115,7 +115,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 63.5,
-      "last_checked": "2026-08-21 21:03 CT"
+      "last_checked": "2026-08-22 07:00 CT"
     },
     {
       "id": 5,
@@ -139,7 +139,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 56.0,
-      "last_checked": "2026-08-21 21:03 CT"
+      "last_checked": "2026-08-22 07:00 CT"
     },
     {
       "id": 6,
@@ -163,7 +163,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 76.5,
-      "last_checked": "2026-08-21 21:03 CT"
+      "last_checked": "2026-08-22 07:00 CT"
     },
     {
       "id": 7,
@@ -187,7 +187,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 50.5,
-      "last_checked": "2026-08-21 21:03 CT"
+      "last_checked": "2026-08-22 07:00 CT"
     },
     {
       "id": 8,
@@ -211,7 +211,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 15.5,
-      "last_checked": "2026-08-21 21:03 CT"
+      "last_checked": "2026-08-22 07:00 CT"
     },
     {
       "id": 9,
@@ -235,7 +235,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 62.5,
-      "last_checked": "2026-08-21 21:03 CT"
+      "last_checked": "2026-08-22 07:00 CT"
     }
   ],
   "closed_positions": [
