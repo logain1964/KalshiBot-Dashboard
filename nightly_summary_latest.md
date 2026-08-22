@@ -1,101 +1,135 @@
-# Archie Nightly Summary -- 2026-08-20 (evening session)
-For J@rv1s -- Rus will paste this in the morning.
+# Nightly Summary — Archie → J@rv1s
+## Friday August 21, 2026 into Saturday August 22 (session close ~00:45 CT)
+NOTE: written retroactively 2026-08-22 afternoon (backfill -- wrong
+filename/location used the night of). See Archie's session archive for
+the full note.
+
+---
+
+## HEADLINE
+
+JOBS was structurally blind to its own real markets since late June --
+found, fixed, and shipped (ff582c3). While verifying that fix, also
+found the original JOBS Gate 1 pass (the thing the Aug 25 checkpoint
+existed to re-validate) was itself scored against a placeholder
+consensus number for 84% of its sample, not real Dow Jones data --
+confirmed against actual git history, not inferred. Rus ratified three
+decisions in response.
+
+---
+
+## WHAT SHIPPED
+
+**Commit ff582c3** -- Fixed two live JOBS market-matching bugs,
+verified against real Kalshi data before and after:
+1. NFP category filter now also matches KXPAYROLLS's real title
+   wording ("jobs be added"), not just "nonfarm"/"payroll". Was 0/22
+   real KXPAYROLLS markets matching since the June 29 addition.
+2. matches_report_month() now only requires a year token when the
+   title actually has one -- real KXU3 titles never carry one. Was
+   0/12 real KXU3 markets matching since the June 27 fix that
+   introduced the year requirement.
+
+Live verification before commit: NFP markets 0->10, Unemp 0->5,
+Evaluated 0->15, Flagged 0->8 (all FLAG NO). Not confirmed against a
+real scheduled production run as of session close.
+
+**Commit 472a4fc** -- Documentation only: Gate 1 checkpoint reset +
+consensus-data audit (below).
+
+---
+
+## THE AUDIT (why the 8 new signals are held, not traded)
+
+The fix surfaced 8 real signals, all FLAG NO, uniform across the NFP
+threshold ladder -- the shape of a miscalibrated single anchor, not
+eight independent findings. J@rv1s's read, ratified by Rus: hold, log
+only, do not trade, until NFP_CONSENSUS is real rather than the
+current +15,000 placeholder.
+
+Audited whether JOBS's ORIGINAL Gate 1 pass (n=63 locally / n=73 cited
+elsewhere, Brier match confirms same population) was itself scored
+against real or placeholder consensus data. Cross-referenced all 63
+signal dates (2026-05-30 through 2026-06-16) against jobs_model.py's
+actual git history:
+
+- 53 of 63 signals (84%) ran against NFP_CONSENSUS values the code's
+  own comments explicitly called "PLACEHOLDER" at the time.
+- Only 10 of 63 (16%, Jun 4-5) ran against a real, dated Dow Jones
+  survey figure (90K) -- the one clean window in the dataset.
+
+Not hidden -- JOBS's own June 27, 2026 integrity check already
+flagged it in writing the same week the data was accumulating
+(Required Action 2: "update with real Dow Jones/Bloomberg numbers").
+Never closed out before JOBS was later cited elsewhere as VALIDATED,
+trust-these-signals. Full detail:
+model_integrity/gate1_checkpoint_reset_20260822.md. Amendment logged:
+model_integrity/integrity_jobs.md v1.1.0.
+
+This doesn't mean JOBS's edge is fake -- the std-dev logic is real and
+independent of the point estimate's accuracy. But "JOBS passed Gate 1"
+should not be read as "validated against real market consensus" -- for
+84% of the sample, it wasn't.
+
+---
+
+## DECISIONS RATIFIED (Rus)
+
+1. Hold the 8 new JOBS signals as log-only, not tradeable.
+2. Gate 1 checkpoint reset: Aug 25 -> **September 8, 2026** (third
+   reset since the Aug 11 provisional-suspension ratification). Real
+   prerequisites outstanding: JOBS spread persistence (never built,
+   zero rows ever) and a real sourced NFP_CONSENSUS by then.
+3. Consensus-data audit run same night, not deferred.
+
+---
+
+## VALIDATION TRACKER
+
+Original go-live target (Aug 15) has now passed with SEDE still in
+paper trading -- named plainly rather than let it pass silently.
+Given everything found this week (ESPN/MLB_GAME data gap, JOBS's
+structural blindness, now the placeholder-consensus finding), staying
+in paper trading was clearly right. No new go-live target set --
+open decision.
+
+JOBS: only model that has ever cleared Gate 1 on paper, but per this
+audit that pass rests mostly on placeholder consensus data. Should be
+treated as unconfirmed pending Sept 8, not a standing credential.
+
+MLB_GAME: real spread data resumed Aug 21 (26 rows) after a ~10-11 day
+silent gap from the ESPN/Akamai block, fixed 08-20/21. Never passed
+Gate 1 to begin with.
+
+GDP: scoring stall since July 30 -- still open, untouched.
+
+---
 
 ## ORACLE CLOUD STATUS
-Healthy. Real 9PM production run (2026-08-20) confirmed both of
-tonight's MLB fixes live and correct: "Games today: 9 total," Stats
-API fetch working from Oracle where ESPN is now Akamai-blocked.
-Tonight's second commit (NFL Elo + SharpAPI pagination fix, a611edf)
-was pulled and independently verified on Oracle after the fact, but
-has NOT yet been exercised by a real scheduled cron run -- the next
-2AM or 9PM CT run is the first real confirmation of both in production.
 
-## VALIDATION TRACKER / MODEL STATUS
-- JOBS: flagged tonight as the most concerning open item. Zero signals
-  of any kind since June 17 -- over two months. This is the one model
-  the project's own instructions call VALIDATED and trustworthy
-  (67%+, 54+ signals, Brier 0.1351, beats_random TRUE); that status is
-  currently resting on two-month-old data. Root cause NOT chased yet.
-- GDP: still generating raw signals daily but nothing has been SCORED
-  since July 30 (679 blank actual_outcome rows in signals_log.csv as
-  of tonight). Possibly related to the JOBS gap, not confirmed.
-- MLB_GAME: suspended (unchanged), but its data pipeline got a real
-  fix tonight -- see below.
-- Aug 25 Gate 1 stress-test checkpoint: 4 days out at session close.
-  Not checked tonight for real forward-spread-data volume.
-- Aug 30 MLB Track A/B checkpoint: unchanged.
-- NFL: not yet live-trading (still suspended pending validation, per
-  design), but its Elo mechanism got a real structural fix tonight --
-  see below.
-
-## TONIGHT'S WORK -- WHAT SHIPPED
-
-**MLB ESPN block (confirmed, fixed, verified in real production):**
-ESPN's scoreboard endpoint is Akamai-blocked from Oracle's IP
-specifically (403, confirmed via direct test) -- not a code bug, not
-intermittent. fetch_mlb_schedule() (mlb_model.py) and
-mlb_outcome_backfill.py's outcome-fetch both rewritten to MLB Stats
-API, the same source pregame_context.py already used reliably from
-Oracle the entire time. One real bug caught by testing before
-shipping: an ARI/AZ alias-map fix that looked right on paper failed a
-real Diamondbacks@Padres test case, rewritten to independent per-side
-matching. Verified twice each (laptop + independent Oracle scripts,
-byte-identical results), then confirmed live in the real 9PM
-production run itself.
-
-**SEDE calibration static line -- root cause found, a second finding
-surfaced, sent to J@rv1s, replied to, chased further:**
-The static "SEDE calibration" number traces to RESOLVED_MARKETS
-(signal_scorer.py) being unmaintained since June 30. Separately, a
-GDP/JOBS actual_outcome convention conflict was found (echoes the
-July 14 precedent). J@rv1s asked whether that conflict is live or
-historical before assigning urgency -- checked against real row data:
-historical only, confirmed by grep + row inspection, not the code path
-alone. That check is what surfaced the JOBS/GDP scoring-silence
-finding above -- arguably the more important discovery of the night.
-
-**NFL Sept 3 readiness -- two real bugs found and fixed, both
-verified live:**
-1. NFL Elo ratings were structurally pinned at through_season=2025
-   for the entire 2026 season (nfl_season - 1 never changes),
-   directly contradicting the documented week-by-week Elo update
-   design. Fixed to through_season=nfl_season -- verified safe
-   (byte-identical output right now, since no 2026 games have
-   resolved yet; will correctly start incorporating real 2026 results
-   once Week 1 finishes).
-2. SharpAPI's shared odds-pagination function (_fetch_raw_odds, used
-   by both MLB and NFL) has been crashing past ~500 rows since it was
-   written -- root cause: the API returns an explicit null next_offset
-   past that point instead of omitting the key, which dict.get()'s
-   default doesn't catch. Fixed to follow next_cursor instead. This
-   also delivered the actual 2-book coverage re-test: real number is
-   30/271 events (11.1%), not the stale 1.6% from July 18 -- that
-   figure was almost certainly measured under this same broken
-   pagination and truncated. Worth not relying on the old number for
-   Sept 3 planning.
-
-Both NFL fixes committed (a611edf), verified live on the laptop, and
-independently re-verified on Oracle (8f4f05c) before session close.
+Not directly checked (no SSH session run) -- indirect evidence
+healthy: real daily_report files for all Aug 21 slots, the 2100 run
+independently reconfirmed the NFL Elo through-season fix live, normal
+git push/pull activity. Real confirmation of ff582c3 requires the next
+Oracle-side cron run -- pending as of session close.
 
 ## OPEN POSITIONS / SPORTS MONITORING
-Not run tonight. This was a continuation session already mid-
-investigation at start (context carried over from earlier tonight),
-not a fresh session-opener -- the standard trade health check
-(paper_trades.json review, live Kalshi prices, sports scores for
-game-tied positions) was not performed. Flag this for the next real
-session open rather than assume it's covered.
 
-## TONIGHT'S WORK ORDER FOR J@RV1S
-1. JOBS silence since June 17 -- this is the priority. Worth deciding
-   whether to chase root cause before or alongside Aug 25 prep.
-2. GDP scoring stalled since July 30 -- likely related, needs its own
-   look.
-3. RESOLVED_MARKETS dynamism -- direction already agreed (make it
-   read real backfilled outcomes instead of a hand list); build
-   explicitly deferred past Aug 25 unless it turns out necessary to
-   unblock #1/#2.
-4. Confirm real production run (next 2AM/9PM CT) exercises tonight's
-   Elo + SharpAPI fixes cleanly -- first real confirmation beyond
-   tonight's manual verification.
+Not reviewed this session -- work was entirely model-integrity and
+data-validation focused. MLB season runs through Sept 27, no rush on
+the separate Aug 30 Track A/B checkpoint. NFL preseason, Elo cache
+current. No live positions flagged.
 
-Papa Ralph standard. If it's worth doing it's worth doing right.
+---
+
+## FOR NEXT SESSION (priority order)
+
+1. Confirm ff582c3 in a real production run -- real evaluation counts,
+   not just the isolated test.
+2. Decide a new go-live target now that Aug 15 has passed.
+3. Before Sept 8: real spread instrumentation for JOBS, and a real
+   sourced NFP_CONSENSUS (or documented proxy fallback).
+
+---
+
+Archie | Papa Ralph standard.
