@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-08-23T07:00:33"
+    "last_updated": "2026-08-23T11:18:46"
   },
   "config": {
     "sizing": {
@@ -66,8 +66,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 72.5,
-      "last_checked": "2026-08-23 07:00 CT"
+      "current_price_cents": 73.5,
+      "last_checked": "2026-08-23 11:18 CT"
     },
     {
       "id": 3,
@@ -91,7 +91,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 78.5,
-      "last_checked": "2026-08-23 07:00 CT"
+      "last_checked": "2026-08-23 11:18 CT"
     },
     {
       "id": 4,
@@ -115,7 +115,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 65.5,
-      "last_checked": "2026-08-23 07:00 CT"
+      "last_checked": "2026-08-23 11:18 CT"
     },
     {
       "id": 5,
@@ -139,7 +139,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 56.0,
-      "last_checked": "2026-08-23 07:00 CT"
+      "last_checked": "2026-08-23 11:18 CT"
     },
     {
       "id": 6,
@@ -163,7 +163,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 76.5,
-      "last_checked": "2026-08-23 07:00 CT"
+      "last_checked": "2026-08-23 11:18 CT"
     },
     {
       "id": 7,
@@ -187,7 +187,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 50.5,
-      "last_checked": "2026-08-23 07:00 CT"
+      "last_checked": "2026-08-23 11:18 CT"
     },
     {
       "id": 8,
@@ -211,7 +211,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 15.5,
-      "last_checked": "2026-08-23 07:00 CT"
+      "last_checked": "2026-08-23 11:18 CT"
     },
     {
       "id": 9,
@@ -235,7 +235,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 61.0,
-      "last_checked": "2026-08-23 07:00 CT"
+      "last_checked": "2026-08-23 11:18 CT"
     }
   ],
   "closed_positions": [
