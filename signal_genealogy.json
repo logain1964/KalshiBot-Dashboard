@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-24T02:03:41.764915",
-  "total_signals": 541,
+  "generated_at": "2026-08-24T12:00:28.394603",
+  "total_signals": 542,
   "signals_with_stats": 97,
   "min_resolved_required": 5,
   "signals": {
@@ -9441,7 +9441,7 @@
       "direction": "NO",
       "model": "JOBS",
       "market_type": "JOBS_REPORT",
-      "fires": 5,
+      "fires": 6,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -9451,7 +9451,7 @@
       "avg_kalshi_cents": 15.5,
       "avg_model_pct": 30.9,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-23",
+      "last_fired": "2026-08-24",
       "has_stats": false
     },
     "NFP>+90K Sep26|NO|JOBS": {
@@ -9459,7 +9459,7 @@
       "direction": "NO",
       "model": "JOBS",
       "market_type": "JOBS_REPORT",
-      "fires": 5,
+      "fires": 6,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -9469,7 +9469,7 @@
       "avg_kalshi_cents": 71.0,
       "avg_model_pct": 82.6,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-23",
+      "last_fired": "2026-08-24",
       "has_stats": false
     },
     "NFP>+50K Sep26|NO|JOBS": {
@@ -9477,7 +9477,7 @@
       "direction": "NO",
       "model": "JOBS",
       "market_type": "JOBS_REPORT",
-      "fires": 5,
+      "fires": 6,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -9487,7 +9487,7 @@
       "avg_kalshi_cents": 46.4,
       "avg_model_pct": 66.9,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-23",
+      "last_fired": "2026-08-24",
       "has_stats": false
     },
     "NFP>+30K Sep26|NO|JOBS": {
@@ -9495,7 +9495,7 @@
       "direction": "NO",
       "model": "JOBS",
       "market_type": "JOBS_REPORT",
-      "fires": 5,
+      "fires": 6,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -9505,7 +9505,7 @@
       "avg_kalshi_cents": 37.0,
       "avg_model_pct": 57.4,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-23",
+      "last_fired": "2026-08-24",
       "has_stats": false
     },
     "NFP>+60K Sep26|NO|JOBS": {
@@ -9513,17 +9513,17 @@
       "direction": "NO",
       "model": "JOBS",
       "market_type": "JOBS_REPORT",
-      "fires": 5,
+      "fires": 6,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 17.2,
-      "avg_kalshi_cents": 54.1,
+      "avg_edge_cents": 17.3,
+      "avg_kalshi_cents": 54.0,
       "avg_model_pct": 71.3,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-23",
+      "last_fired": "2026-08-24",
       "has_stats": false
     },
     "NFP>+0K Sep26|NO|JOBS": {
@@ -9531,7 +9531,7 @@
       "direction": "NO",
       "model": "JOBS",
       "market_type": "JOBS_REPORT",
-      "fires": 5,
+      "fires": 6,
       "resolved": 0,
       "wins": 0,
       "win_rate_pct": null,
@@ -9541,11 +9541,29 @@
       "avg_kalshi_cents": 25.0,
       "avg_model_pct": 42.6,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-23",
+      "last_fired": "2026-08-24",
       "has_stats": false
     },
     "NFP>+40K Sep26|NO|JOBS": {
       "market": "NFP>+40K Sep26",
+      "direction": "NO",
+      "model": "JOBS",
+      "market_type": "JOBS_REPORT",
+      "fires": 6,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 19.1,
+      "avg_kalshi_cents": 43.2,
+      "avg_model_pct": 62.3,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-08-24",
+      "has_stats": false
+    },
+    "NFP>+80K Sep26|NO|JOBS": {
+      "market": "NFP>+80K Sep26",
       "direction": "NO",
       "model": "JOBS",
       "market_type": "JOBS_REPORT",
@@ -9555,29 +9573,11 @@
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
-      "avg_edge_cents": 18.7,
-      "avg_kalshi_cents": 43.6,
-      "avg_model_pct": 62.3,
-      "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-23",
-      "has_stats": false
-    },
-    "NFP>+80K Sep26|NO|JOBS": {
-      "market": "NFP>+80K Sep26",
-      "direction": "NO",
-      "model": "JOBS",
-      "market_type": "JOBS_REPORT",
-      "fires": 4,
-      "resolved": 0,
-      "wins": 0,
-      "win_rate_pct": null,
-      "avg_brier": null,
-      "beats_random": null,
       "avg_edge_cents": 11.6,
       "avg_kalshi_cents": 67.6,
       "avg_model_pct": 79.2,
       "confidence": "INSUFFICIENT_DATA",
-      "last_fired": "2026-08-23",
+      "last_fired": "2026-08-24",
       "has_stats": false
     },
     "KC @ TB|YES|NFL_GAME": {
@@ -9740,6 +9740,24 @@
       "avg_model_pct": 60.2,
       "confidence": "INSUFFICIENT_DATA",
       "last_fired": "2026-08-23",
+      "has_stats": false
+    },
+    "NFP>+70K Sep26|NO|JOBS": {
+      "market": "NFP>+70K Sep26",
+      "direction": "NO",
+      "model": "JOBS",
+      "market_type": "JOBS_REPORT",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 13.4,
+      "avg_kalshi_cents": 62.0,
+      "avg_model_pct": 75.4,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-08-24",
       "has_stats": false
     }
   }
