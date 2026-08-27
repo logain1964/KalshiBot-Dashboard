@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-08-27T07:00:37"
+    "last_updated": "2026-08-27T11:18:29"
   },
   "config": {
     "sizing": {
@@ -66,8 +66,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 81.0,
-      "last_checked": "2026-08-27 07:00 CT"
+      "current_price_cents": 81.5,
+      "last_checked": "2026-08-27 11:18 CT"
     },
     {
       "id": 3,
@@ -90,8 +90,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 75.0,
-      "last_checked": "2026-08-27 07:00 CT"
+      "current_price_cents": 74.5,
+      "last_checked": "2026-08-27 11:18 CT"
     },
     {
       "id": 4,
@@ -114,8 +114,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 56.5,
-      "last_checked": "2026-08-27 07:00 CT"
+      "current_price_cents": 49.5,
+      "last_checked": "2026-08-27 11:18 CT"
     },
     {
       "id": 5,
@@ -138,8 +138,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 44.5,
-      "last_checked": "2026-08-27 07:00 CT"
+      "current_price_cents": 46.0,
+      "last_checked": "2026-08-27 11:18 CT"
     },
     {
       "id": 6,
@@ -162,8 +162,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 39.5,
-      "last_checked": "2026-08-27 07:00 CT"
+      "current_price_cents": 46.0,
+      "last_checked": "2026-08-27 11:18 CT"
     },
     {
       "id": 7,
@@ -187,7 +187,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 50.5,
-      "last_checked": "2026-08-27 07:00 CT"
+      "last_checked": "2026-08-27 11:18 CT"
     },
     {
       "id": 8,
@@ -210,8 +210,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 11.0,
-      "last_checked": "2026-08-27 07:00 CT"
+      "current_price_cents": 10.5,
+      "last_checked": "2026-08-27 11:18 CT"
     },
     {
       "id": 9,
@@ -234,8 +234,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 59.0,
-      "last_checked": "2026-08-27 07:00 CT"
+      "current_price_cents": 59.5,
+      "last_checked": "2026-08-27 11:18 CT"
     }
   ],
   "closed_positions": [
