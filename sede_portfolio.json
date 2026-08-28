@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-08-28T07:00:31"
+    "last_updated": "2026-08-28T11:18:41"
   },
   "config": {
     "sizing": {
@@ -67,7 +67,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 79.5,
-      "last_checked": "2026-08-28 07:00 CT"
+      "last_checked": "2026-08-28 11:18 CT"
     },
     {
       "id": 3,
@@ -90,8 +90,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 73.0,
-      "last_checked": "2026-08-28 07:00 CT"
+      "current_price_cents": 72.5,
+      "last_checked": "2026-08-28 11:18 CT"
     },
     {
       "id": 4,
@@ -115,7 +115,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 67.5,
-      "last_checked": "2026-08-28 07:00 CT"
+      "last_checked": "2026-08-28 11:18 CT"
     },
     {
       "id": 5,
@@ -138,8 +138,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 59.0,
-      "last_checked": "2026-08-28 07:00 CT"
+      "current_price_cents": 58.0,
+      "last_checked": "2026-08-28 11:18 CT"
     },
     {
       "id": 6,
@@ -163,7 +163,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 77.5,
-      "last_checked": "2026-08-28 07:00 CT"
+      "last_checked": "2026-08-28 11:18 CT"
     },
     {
       "id": 7,
@@ -187,7 +187,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 51.0,
-      "last_checked": "2026-08-28 07:00 CT"
+      "last_checked": "2026-08-28 11:18 CT"
     },
     {
       "id": 8,
@@ -211,7 +211,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 13.0,
-      "last_checked": "2026-08-28 07:00 CT"
+      "last_checked": "2026-08-28 11:18 CT"
     },
     {
       "id": 9,
@@ -235,7 +235,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 62.5,
-      "last_checked": "2026-08-28 07:00 CT"
+      "last_checked": "2026-08-28 11:18 CT"
     }
   ],
   "closed_positions": [
