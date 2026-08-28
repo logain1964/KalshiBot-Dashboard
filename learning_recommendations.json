@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-27T16:18:28.814655",
+  "generated_at": "2026-08-28T02:03:30.056095",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -24,16 +24,14 @@
     {
       "model": "GDP",
       "current_threshold": 8,
-      "suggested_threshold": 9,
-      "action": "RAISE",
-      "confidence": "MEDIUM",
+      "suggested_threshold": 8,
+      "action": "HOLD",
+      "confidence": "LOW",
       "n_above": 207,
       "n_below": 0,
-      "brier_above": 0.37641,
+      "brier_above": 0.160787,
       "brier_below": null,
-      "reason": [
-        "Above-threshold signals underperforming: Brier=0.3764 (n=207)"
-      ]
+      "reason": []
     },
     {
       "model": "JOBS",
@@ -152,14 +150,14 @@
     {
       "model": "GDP",
       "current_weight": 0.6,
-      "suggested_weight": 0.55,
-      "delta": -0.05,
-      "action": "LOWER",
+      "suggested_weight": 0.62,
+      "delta": 0.02,
+      "action": "RAISE",
       "confidence": "MEDIUM",
       "n": 97,
-      "brier": 0.39,
+      "brier": 0.1598,
       "reason": [
-        "Below random: Brier=0.3900 (random=0.25) (n=97)"
+        "Good calibration: Brier=0.1598 (n=97)"
       ]
     },
     {
