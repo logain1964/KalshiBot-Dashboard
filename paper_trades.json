@@ -556,5 +556,27 @@
     "result": "EARLY_EXIT",
     "close_note": "AUTO_STOP_LOSS (BUG, fixed 2026-07-07): calculate_current_loss() had inverted NO-branch sign, misread favorable NO price rise (38c->92c) as a loss. Real P&L was a genuine gain; early exit at 92c likely cost a few dollars vs full resolution.",
     "exit_subtype": "BUG_INDUCED_EXIT"
+  },
+  {
+    "id": 25,
+    "entered_at": "2026-08-30 16:04 CT",
+    "market_ticker": "KXGDP-26OCT30-T3.5",
+    "description": "GDP > 3.5% (Q3 2026 advance estimate)",
+    "direction": "YES",
+    "entry_price_cents": 21,
+    "contracts": 119,
+    "max_loss_dollars": 24.99,
+    "max_profit_dollars": 94.01,
+    "model_probability_pct": 82.2,
+    "kalshi_implied_pct": 21,
+    "edge_cents": 61.2,
+    "thesis": "Q3 2026 GDPNow-derived signal from 2026-08-30 07:00 CT daily_runner run (GDPNow 4.6099%). SEDE score 23.8 (HIGH), edge 61.7c per signals_log.csv. Picked over 4 other same-day GDP candidates (same KXGDP-26OCT30 event, different thresholds) specifically for having the lowest model certainty (82.2%) of the five, since a validation ledger meant to test calibration is most informative from the least-obvious outcome. Rus approved this specific candidate on 2026-08-30; Archie entered it via position_manager.py (Tier 1 workflow per model_integrity/paper_trades_target_and_reentry_20260830.md) -- not typed in by Rus directly.",
+    "event_date": "2026-10-30",
+    "status": "OPEN",
+    "exit_price_cents": null,
+    "exit_date": null,
+    "pnl_dollars": null,
+    "result": null,
+    "close_note": null
   }
 ]

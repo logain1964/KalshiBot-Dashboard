@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-08-31T21:05:13"
+    "last_updated": "2026-09-01T07:02:26"
   },
   "config": {
     "sizing": {
@@ -26,7 +26,8 @@
       "hard_drawdown_stop_dollars": 200.0,
       "hard_drawdown_stop_pct": 20.0,
       "max_single_trade_dollars": 30.0,
-      "max_same_event_exposure_pct": 12.0
+      "max_same_event_exposure_pct": 12.0,
+      "max_positions_per_model": 3
     }
   },
   "performance": {
@@ -50,6 +51,7 @@
       "entered_at": "2026-06-20 21:02 CT",
       "market_ticker": "KXBTCMINY-27JAN01-50000.00",
       "description": "BTC<$50k Dec31",
+      "model": "BTC",
       "direction": "NO",
       "entry_price_cents": 43.50000000000001,
       "contracts": 57,
@@ -66,14 +68,15 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 81.5,
-      "last_checked": "2026-08-31 21:05 CT"
+      "current_price_cents": 79.0,
+      "last_checked": "2026-09-01 07:02 CT"
     },
     {
       "id": 3,
       "entered_at": "2026-07-30 21:05 CT",
       "market_ticker": "KXGDP-26OCT30-T1.5",
       "description": "GDP > 1.5%",
+      "model": "GDP",
       "direction": "YES",
       "entry_price_cents": 70.5,
       "contracts": 42,
@@ -90,14 +93,15 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 73.5,
-      "last_checked": "2026-08-31 21:05 CT"
+      "current_price_cents": 73.0,
+      "last_checked": "2026-09-01 07:02 CT"
     },
     {
       "id": 4,
       "entered_at": "2026-07-30 21:05 CT",
       "market_ticker": "KXGDP-27JAN28-T1.5",
       "description": "GDP > 1.5%",
+      "model": "GDP",
       "direction": "YES",
       "entry_price_cents": 74.5,
       "contracts": 40,
@@ -115,13 +119,14 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 66.0,
-      "last_checked": "2026-08-31 21:05 CT"
+      "last_checked": "2026-09-01 07:02 CT"
     },
     {
       "id": 5,
       "entered_at": "2026-07-30 21:05 CT",
       "market_ticker": "KXGDP-26OCT30-T2.5",
       "description": "GDP > 2.5%",
+      "model": "GDP",
       "direction": "YES",
       "entry_price_cents": 57.99999999999999,
       "contracts": 51,
@@ -138,14 +143,15 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 47.5,
-      "last_checked": "2026-08-31 21:05 CT"
+      "current_price_cents": 49.5,
+      "last_checked": "2026-09-01 07:02 CT"
     },
     {
       "id": 6,
       "entered_at": "2026-07-31 21:05 CT",
       "market_ticker": "KXGDP-27JAN28-T1.0",
       "description": "GDP > 1.0%",
+      "model": "GDP",
       "direction": "YES",
       "entry_price_cents": 78.0,
       "contracts": 32,
@@ -163,13 +169,14 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 77.5,
-      "last_checked": "2026-08-31 21:05 CT"
+      "last_checked": "2026-09-01 07:02 CT"
     },
     {
       "id": 7,
       "entered_at": "2026-07-31 21:05 CT",
       "market_ticker": "KXGDP-27APR29-T2.0",
       "description": "GDP > 2.0%",
+      "model": "GDP",
       "direction": "YES",
       "entry_price_cents": 50.5,
       "contracts": 59,
@@ -187,13 +194,14 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 53.5,
-      "last_checked": "2026-08-31 21:05 CT"
+      "last_checked": "2026-09-01 07:02 CT"
     },
     {
       "id": 8,
       "entered_at": "2026-07-31 21:05 CT",
       "market_ticker": "KXGDP-26OCT30-T4.0",
       "description": "GDP > 4.0%",
+      "model": "GDP",
       "direction": "YES",
       "entry_price_cents": 18.5,
       "contracts": 162,
@@ -211,13 +219,14 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 13.0,
-      "last_checked": "2026-08-31 21:05 CT"
+      "last_checked": "2026-09-01 07:02 CT"
     },
     {
       "id": 9,
       "entered_at": "2026-08-01 21:05 CT",
       "market_ticker": "KXGDP-27JUL29-T1.5",
       "description": "GDP > 1.5%",
+      "model": "GDP",
       "direction": "YES",
       "entry_price_cents": 59.5,
       "contracts": 50,
@@ -235,7 +244,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 62.5,
-      "last_checked": "2026-08-31 21:05 CT"
+      "last_checked": "2026-09-01 07:02 CT"
     }
   ],
   "closed_positions": [
