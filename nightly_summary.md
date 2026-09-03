@@ -1,178 +1,166 @@
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Last updated:** 2026-09-02 | **Session end:** ~10:45 PM CT
+**Last updated:** 2026-06-18 | **Session end:** ~11:30 PM CT
 **Prepared by:** Archie (Claude Desktop)
-
-Note: the previous version of this file was stale since 2026-06-18 --
-this session's summary was not being regenerated for months. Restarting
-the habit tonight; flagging the gap rather than quietly overwriting it.
 
 ---
 
 ## TONIGHT IN ONE SENTENCE
 
-Found and fixed a real gap in last night's NFL_SPREAD display fix (a
-ground-truth-map miss was defeating it for at least one live signal,
-and the same miss was corrupting SEDE Signal Confidence scoring, not
-just display text); continued the still-unresolved cron data-loss
-investigation with rigorous instrumentation and an external second
-opinion; ran a critical, honest UX review of the subscriber alert
-format with Gemini and marked what's genuinely useful vs. what
-conflicts with the existing product spec; confirmed the MLB_GAME
-historical-loss concern is very likely not a systemic issue.
+Six deliverables: MLB post-fix WR confirmed healthy (65.4%), sede_portfolio.json
+built and wired, signal_scorer.py Unicode crash fixed, Fed cuts 0x NO signal
+suppressed in hike-bias environment, WC Elo updated post Round 1, England/France
+results scored -- WC_GAME WR now 44% on 18 signals, genuine model flag.
 
 ---
 
-## 1. NFL_SPREAD DISPLAY FIX -- RESIDUAL GAP FOUND AND CLOSED (commit 408b627)
+## 1. MLB POST-FIX ACCURACY CHECK
 
-Last night's fix (913f0b4) closed the "P(team win)" mislabeling for
-NFL_SPREAD rows, verified against synthetic tuples before shipping.
-Tonight Rus pasted a real line from the actual 21:00 CT report --
-"LV >2.5 [THIN MARKET]" -- still showing the old wrong text an hour
-after that fix was live. Confirmed genuine (not stale) against the
-saved report file, then traced it: the fix only fires when the
-ground-truth `label_to_model` lookup hits; for this label it missed
-and fell back to `detect_signal_model()`, which predates NFL_SPREAD
-and had never been taught its label shape, so it returned "OTHER"
-and defeated the fix for that row specifically.
+Post-fix (June 14+): 7 resolved signals, 7/7 wins (100% WR), Brier 0.172.
+Sample too small to be conclusive but directionally excellent.
 
-**Shipped:** a regex branch in `detect_signal_model()` recognizing
-NFL_SPREAD's label shape directly (fixes the symptom regardless of
-why the map misses), plus a `[ModelType] WARNING` log on every
-ground-truth map miss to surface the underlying cause on the next
-real run. Root cause of the map miss itself is still open.
+All-time deduped: 81 resolved signals, **65.4% WR**, Brier 0.254.
+Well above Gate 1 threshold (55%). Green light trajectory.
 
-**Bigger than display:** `compute_sede_confidence()` shares the exact
-same fallback and the same map. Any NFL_SPREAD signal hitting this
-miss since Aug 22 wasn't just mislabeled -- its SEDE confidence rating
-was very likely scored under the wrong model's reliability stats.
-Tonight's fix resolves this too, but past NFL_SPREAD confidence
-ratings since Aug 22 should be treated as suspect until spot-checked.
-Confirmed (from the code, not assumed) that the actual email --
-`email_alerts.py`'s `fmt_signal()` -- uses a different, tuple-content
-based mechanism and was never affected by this specific gap.
-
-Full writeup: `claude/nfl_spread_display_fix_proposal_20260902.md`
-(addendum).
+Only YES direction in post-fix window -- NO direction hasn't had resolved
+signals since the fix, so the direction bug impact still can't be isolated.
 
 ---
 
-## 2. CRON DATA-LOSS BUG -- STILL UNRESOLVED, REAL PROGRESS
+## 2. SEDE_PORTFOLIO.JSON -- BUILT (commit c01c465)
 
-signals_log.csv intermittently fails to commit on cron runs (not
-manual runs) with zero exceptions anywhere -- multiple recurrences
-through early Sept. Ruled out (with real evidence, not assumption):
-gitignore, crash, header-migration path, concurrent process, silent
-truncation, git push failure, swallowed exceptions.
+Primary deliverable. Subscriber-facing autonomous portfolio operational.
 
-Diagnostic checkpoints (start / pre_logging / pre_push) added this
-week evolved twice tonight: added print breadcrumbs on entry/success
-(commit 4cc666a) after the Sept 2 21:00 CT run showed only the
-"start" checkpoint's write actually landing on disk -- pre_logging
-and pre_push never wrote at all, despite proof execution passed both
-points and zero exceptions anywhere. Then replaced buffered
-`open().write()` with raw `os.open`/`write`/`fsync` plus an
-independent re-read verification and inode/device identity logging
-(commit 7fb9631), since buffered I/O couldn't be fully ruled out
-as an explanation even though the timing already argued against it.
+**Files created:**
+- `data/sede_portfolio.json` -- initialized at $1,000 bankroll, paper status,
+  zero trades. On both GitHub repos including public dashboard.
+- `portfolio_manager_sede.py` -- autonomous manager with full feature set:
+  - 6-gate auto-entry: edge>=20c, confidence>=60%, rating=HIGH,
+    max 8 concurrent, hard drawdown stop at -$200, no duplicate tickers
+  - Auto-close: polls live Kalshi prices, closes on resolution/97c/3c
+  - Daily snapshot for subscriber charting
+  - `--status` CLI for quick checks
+- Wired into `daily_runner.py` as Step 10b -- fires after signal generation,
+  before Telegram/email delivery
+- `sede_portfolio.json` added to dashboard .gitignore allowlist
 
-Also wrote up the investigation anonymized and had it reviewed by
-Gemini as a second opinion -- most of the suggestions were generic
-incident-response boilerplate, but a few were genuinely checkable
-(git hooks, `os.chdir()` search) and were checked: Oracle's git hooks
-directory is empty (confirmed directly), ruling that out.
+**Known gap:** ticker lookup in daily_runner wire is fuzzy match. Will miss
+some signals and log "no market ticker" skip. Fix: pass tickers explicitly
+from each model at signal generation time. Low priority follow-up.
 
-**Not resolved tonight.** Next real data point needs the 07:00 CT
-Sept 3 cron cycle -- specifically whether the new print breadcrumbs
-show `pre_logging`/`pre_push` "starting" without "OK" (write itself
-failing silently) or not printing "starting" at all (call site
-somehow not reached, which would contradict everything confirmed so
-far). Rus checking this directly when it lands.
+**This is what Anthony sees in 45 days.**
 
 ---
 
-## 3. SUBSCRIBER ALERT FORMAT -- HONEST UX REVIEW, NO CODE CHANGES
+## 3. SIGNAL_SCORER.PY UNICODE CRASH -- FIXED (commit 88f6bb4)
 
-Rus asked directly: would a newcomer to prediction markets understand
-tonight's alert output? Honest answer: no -- "BUY NO," cents pricing,
-and "Edge" are all unexplained jargon, and (until fix #1 above) the
-NFL_SPREAD row was actively telling even an experienced reader the
-wrong thing. This is a known, already-spec'd gap -- `sede_product_spec_v1`
-explicitly bans raw edge_cents/model probabilities from ever reaching
-subscribers (P2, Subscriber Signal Formatter, BLOCKING, not yet built).
-A partial plain-English fix ("Will HOU win? -- model favors LV")
-shipped a while back but only for NFL_GAME/MLB_GAME, never extended to
-NFL_SPREAD/GDP/JOBS -- which is why tonight's report is a mix of clear
-and cryptic rows.
+Unicode box-drawing characters (U+2500) and emoji (U+2705, U+1F6AB)
+caused CP1252 encode errors on Windows console, silently crashing
+score_full_log() partway through the table print. Fixed by replacing
+with ASCII equivalents ([OK], [X], -).
 
-Rus then had Gemini review the same output and asked for a critical
-read, not a rubber stamp. Marked up and saved
-(`claude/subscriber_format_ideas_gemini_20260903.md`):
-
-- Gemini independently re-derived the exact NFL_SPREAD bug from fix #1
-  above, from the text alone -- a real outside confirmation.
-- Genuinely new and worth keeping for P2: generic probability labels
-  tied to the market's own question (would make this whole bug class
-  structurally impossible, not just patched per model); a warning that
-  the 6-7 GDP threshold positions are correlated, not independent bets
-  (confirmed real -- see Open Positions below, this isn't hypothetical);
-  tying "thin market" warnings to real bid/ask/size data, which lines
-  up directly with the Sept 8 spread stress-test work already in
-  flight.
-- Real pushback: most of Gemini's mockups show exact model
-  probabilities and raw cents-edge to the reader, which
-  `sede_product_spec_v1` explicitly bans for subscribers. Flagged so
-  P2 doesn't get built off those mockups by mistake.
+**Key finding from running clean scorer:**
+WC_GAME was already at **58% WR** in full log -- the 34.9% figure
+J@rv!s had was stale, predating the Draw entries in RESOLVED_MARKETS.
+The scoring logic was correct all along.
 
 ---
 
-## 4. MLB_GAME HISTORICAL LOSS CONCERN -- CHECKED, LIKELY NOT SYSTEMIC
+## 4. FED CUTS 0X NO SIGNAL SUPPRESSED (commit ef3ef3e)
 
-Carried-forward ask from J@rv1s: was the MLB_GAME cron-loss pattern
-longstanding? Git history shows 15 consecutive clean days before the
-incident window started -- doesn't look like a longstanding systemic
-issue, more consistent with something that started recently (see #2).
+J@rv!s flagged: "Fed cuts 0x 2026 -- BUY NO +19.9c, model 39.3%" as
+confusing post-FOMC.
 
----
+**Root cause:** BUY NO on "cuts 0x" = betting the Fed cuts at least
+once. Post-FOMC with dot plot projecting a hike, Kalshi pricing 81c on
+zero cuts is rational -- it agrees with the hike bias. The apparent 20c
+edge was a FedWatch/Kalshi alignment artifact, not a real trade.
 
-## OPEN POSITIONS (sede_portfolio.json, live-read tonight)
-
-8 open positions, all pre-dating the Aug 11 Gate 1 suspension --
-no new entries since (correct, trading is suspended pending Sept 8):
-
-| Market | Model | Direction | Entry | Current |
-|--------|-------|-----------|-------|---------|
-| BTC<$50k Dec31 | BTC | NO | 43.5c | 81.5c |
-| GDP >1.5% (Oct30) | GDP | YES | 70.5c | 76.0c |
-| GDP >1.5% (Jan28) | GDP | YES | 74.5c | 65.5c |
-| GDP >2.5% (Oct30) | GDP | YES | 58.0c | 54.0c |
-| GDP >1.0% (Jan28) | GDP | YES | 78.0c | 77.5c |
-| GDP >2.0% (Apr29) | GDP | YES | 50.5c | 53.5c |
-| GDP >4.0% (Oct30) | GDP | YES | 18.5c | 11.5c |
-| GDP >1.5% (Jul29) | GDP | YES | 59.5c | 61.5c |
-
-Worth flagging plainly: this is exactly the correlated-exposure
-pattern Gemini's review called out (item #3 above) -- 7 of 8 open
-positions are GDP threshold bets on the same underlying quarterly
-GDP outcome, not independent trades. Not a new problem tonight, but
-real, and worth a look whenever GDP position sizing gets revisited.
+**Fix:** Suppression gate added to `run_fed_model()`. When cuts_0 > 55%
+(hike-bias environment), "Fed cuts 0x BUY NO" is suppressed with a
+log line explaining why. Auto-reinstates when cuts_0 drops below 55%.
 
 ---
 
-## COMMIT LOG (tonight, 2026-09-02)
+## 5. WC ELO STRENGTH UPDATE -- POST ROUND 1 (commit 2e5f18d)
+
+`models/world_cup_model.py` WC_TEAMS strength values updated.
+
+**Source:** eloratings.net January 2026 Elo points, normalized to 0-1
+scale anchored on Spain=2171=0.94.
+
+**Key corrections from pre-tournament values:**
+- Spain correctly moved to #1 (was incorrectly behind France)
+- Colombia and Ecuador elevated per actual Elo standing
+- Germany up after 7-1 Curacao
+- Australia up after 2-0 Turkey
+- Japan held -- drew Netherlands, confirmed mid-pack quality
+- Turkey, Curacao, Haiti, South Africa all down post R1 losses
+- Norway elevated -- Elo 1922, higher than originally assigned
+
+---
+
+## 6. WC RESULTS SCORED -- ENGLAND/FRANCE -- MODEL FLAG
+
+**Added to RESOLVED_MARKETS:**
+- England 4-2 Croatia (June 15) -- England wins YES
+- France 3-1 Senegal (June 16) -- France wins YES
+
+**Result: WC_GAME WR dropped from 57% (14 signals) to 44% (18 signals)**
+
+**This is a genuine model flag, not a scoring artifact.**
+
+The model had flagged:
+- England wins NO (model 55.7%, betting against England) -- LOST
+- Croatia wins YES (model 26.9%, backing Croatia) -- LOST
+- France wins NO (model 42%, betting against France) -- LOST
+- Senegal wins YES (model 19.8%, backing Senegal) -- LOST
+
+Pattern: model is systematically underestimating tournament favorite
+win probability and generating NO signals on favorites that then win
+comfortably. This is a calibration problem, not a scoring bug.
+
+**Action for J@rv!s:**
+- WC_GAME remains CALIBRATION ONLY
+- DO NOT allow portfolio_manager_sede.py to trade WC_GAME signals
+  until WR recovers above 55% with 30+ signals
+- Investigate: are lambda values underweighting strong favorites?
+  The Spain/Cape Verde problem pattern may be recurring
+- June 26 group stage checkpoint is now a model review, not just
+  a sample size check
+
+---
+
+## OPEN POSITIONS
+
+| # | Description | Entry | Status |
+|---|-------------|-------|--------|
+| 8 | Fed 1x cut YES | 21c | HOLD -- thesis dead, documented loss |
+| 12 | GDP >2.5% YES | 40c | GDPNow 3.04%, buffer +54bps, HOLD |
+| 13 | GDP >2.0% YES | 60c | GDPNow 3.04%, comfortable, HOLD |
+
+---
+
+## SEDE PORTFOLIO STATUS (new tonight)
+
+Bankroll: $1,000.00 | Trades: 0 | Status: paper
+No auto-entries yet -- portfolio manager needs tickers from models
+to fire. First real entries expected on tomorrow's pipeline run.
+
+---
+
+## COMMIT LOG (tonight)
 
 | Commit | Description |
 |--------|-------------|
-| 408b627 | Fix NFL_SPREAD residual gap: detect_signal_model() fallback + [ModelType] WARNING diagnostic |
-| 7fb9631 | Diag checkpoint v3: raw os.open/write/fsync + independent re-read + inode/dev identity |
-| 4cc666a | Diag checkpoint: print breadcrumbs on entry/success, not just failure |
-| 8260acb | Auto-update 2026-09-02 21:00 CT (clean cycle -- first since the cron data-loss bug started) |
-| 324910d | Add cron-vs-manual env diagnostic instrumentation (v1) |
-| 3343958 | Merge branch 'main' |
-| 913f0b4 | Fix NFL_SPREAD outcome_desc misprinting as team-win moneyline text |
-| 91efc60 | Auto-update 2026-09-02 11:15 CT (data-loss recurrence) |
-| 5f1ecd2 | Auto-update 2026-09-02 07:00 CT |
+| c01c465 | Build sede_portfolio.json + portfolio_manager_sede.py |
+| 88f6bb4 | Fix signal_scorer.py Unicode/emoji crash (CP1252) |
+| ef3ef3e | Suppress Fed cuts 0x NO in hike-bias environment |
+| 2e5f18d | WC Elo post Round 1 + England/France scored |
+| 762744d | Merge: Oracle pipeline data |
+
+Oracle: run `sede-pull` to sync all tonight's commits.
 
 ---
 
@@ -180,56 +168,85 @@ real, and worth a look whenever GDP position sizing gets revisited.
 
 | Component | Status |
 |-----------|--------|
-| GATE 1 (project-wide) | SUSPENDED since Aug 11 -- pending real bid/ask-spread stress test, checkpoint Sept 8 |
-| CLAIMS | SUSPENDED -- never trade |
-| MLB_GAME NO | SUSPENDED -- YES direction experimental tier only |
-| GDP | REDUCED WEIGHT (0.60) -- scoring stalled since Jul 30, root cause open |
-| JOBS | CAVEATED -- statistically passed original Gate 1 but with material caveats, not unconditionally validated |
-| NFL_SPREAD display bug | FIXED tonight (408b627), both display and confidence-scoring paths |
-| Cron data-loss bug | UNRESOLVED -- v3 diagnostic live, next data point needs 07:00 CT Sept 3 |
-| Subscriber format (P2) | Not built -- design ideas captured tonight for when it is |
-| MLB_GAME historical concern | Checked -- likely not systemic (15 clean days pre-incident) |
-| Oracle 21:00 CT cron | Clean -- first clean cycle since data-loss bug started |
+| Oracle SSH | ✅ Fixed (key permissions) |
+| Oracle sync | ✅ sede-pull confirmed clean before dinner |
+| sede_portfolio.json | ✅ BUILT -- $1,000 bankroll, 0 trades |
+| portfolio_manager_sede.py | ✅ Built and wired into daily_runner |
+| FedWatch data | ✅ Post-FOMC, cuts_0=60.7% |
+| Fed cuts 0x NO | ✅ Suppressed in hike-bias environment |
+| GDPNow | ✅ 3.04%, next update Jun 25 |
+| GDP trades | ✅ Both healthy |
+| Trade #8 Fed | ⚠️ Documented loss, HOLD |
+| MLB_GAME | ✅ 65.4% WR all-time, 100% post-fix (n=7) |
+| WC_GAME | ⚠️ 44% WR (18 signals) -- MODEL FLAG |
+| WC Elo | ✅ Updated post Round 1 |
+| signal_scorer.py | ✅ Unicode crash fixed, runs clean |
+| JOBS | ✅ Go-live eligible |
+| Claims | SUSPENDED -- holiday test passed |
+| sede-pull alias | ✅ Live on Oracle |
 
 ---
 
 ## J@rv1s MORNING ACTIONS (ordered)
 
-1. **Check for `[ModelType] WARNING` / `[Diag]` lines** in the next
-   real report (07:00 CT Sept 3 or later) -- this is the actual
-   evidence for both open investigations (#1 map-miss root cause,
-   #2 cron data-loss). Don't let these get buried by other log noise.
+1. **Oracle sede-pull** -- sync tonight's commits (c01c465 through 762744d)
 
-2. **NFL_SPREAD rows** -- spot-check that today's live report shows
-   correct spread-cover language, not "P(team win)," on any NFL_SPREAD
-   signal. The fix should hold now regardless of ground-truth map
-   misses, but verify against real output, not just trust the fix.
+2. **WC_GAME model flag** -- 44% WR on 18 signals. Pattern is systematic:
+   model underestimates strong favorites, generates losing NO signals.
+   Flag for dedicated investigation before June 26 checkpoint.
+   Do NOT allow portfolio_manager_sede.py to trade WC_GAME signals.
 
-3. **Sept 8 checkpoint** -- GATE 1 stays project-wide suspended until
-   then. Don't treat any model's prior Gate 1 pass as confirmed,
-   JOBS included, per standing instructions.
+3. **Portfolio manager first run** -- check daily_report for "SEDE PORTFOLIO
+   MANAGER" section. Were any signals passed with valid tickers? If zero
+   entries, the ticker lookup is the gap -- flag for Archie.
 
-4. **Subscriber format ideas** -- no action needed now, just aware:
-   `claude/subscriber_format_ideas_gemini_20260903.md` has marked
-   ideas for whenever P2 gets prioritized, including a real, live
-   example of the GDP correlated-exposure problem (see Open Positions).
+4. **sede_portfolio.json** -- now public on dashboard. Confirm file is
+   visible at github.com/logain1964/KalshiBot-Dashboard
 
-5. **This file** -- was stale since June 18. If it goes stale again,
-   flag it rather than quietly working around a missing summary.
+5. **WC results backfill** -- Several Round 1 results not yet in
+   RESOLVED_MARKETS (NED 2-2 JPN, GER 7-1 CUW, IVC 1-0 ECU, USA 4-1 PAR,
+   BEL vs IRN, AUS 2-0 TUR). Verify Kalshi market name strings in
+   signals_log.csv before adding -- wrong name = wrong score.
+
+6. **Today's June 18 results** -- Switzerland vs Bosnia, Canada vs Qatar,
+   Mexico vs South Korea, Czechia vs South Africa all played today.
+   Add to RESOLVED_MARKETS once Kalshi market strings confirmed.
 
 ---
 
 ## VALIDATION TRACKER
 
-| Model | Status |
-|-------|--------|
-| GATE 1 (project-wide) | SUSPENDED since Aug 11, checkpoint Sept 8 |
-| CLAIMS | SUSPENDED |
-| MLB_GAME | NO suspended; YES experimental tier only |
-| GDP | REDUCED WEIGHT (0.60), scoring stalled since Jul 30 |
-| JOBS | Caveated -- n=73, 58.9% WR, Brier 0.134, but real caveats (see project instructions) |
-| NFL_SPREAD | Display + confidence-scoring bug fixed tonight |
+| Model | Status | Gate 1 Progress |
+|-------|--------|-----------------|
+| JOBS | ✅ GO-LIVE ELIGIBLE | n=73, 58.9%, Brier 0.134 |
+| GDP | Active | 3 open positions, Jul 30 |
+| CPI | Active | Accumulating monthly |
+| Claims | SUSPENDED | Holiday test passed |
+| MLB_GAME YES | Active | 65.4% WR, 7/7 post-fix |
+| WC_GAME | ⚠️ CALIBRATION -- MODEL FLAG | 44% WR (18), below random |
+| Fed | Active | Trade #8 = documented loss |
+| SEDE Portfolio | ✅ BUILT | $1,000 starting bankroll |
 
 ---
 
-Archie | Papa Ralph standard. If it's worth doing it's worth doing right.
+## KEY DATES
+
+| Date | Event |
+|------|-------|
+| Jun 19 | Juneteenth -- federal holiday |
+| Jun 25 | GDPNow next update |
+| Jun 25-27 | Kalshi opens June unemployment markets |
+| Jun 26 | WC group stage ends -- WC_GAME model review |
+| Jul 1 | NFL build window opens |
+| Jul 2 | Jobs report 8:30 AM CT |
+| Jul 30 | Q2 2026 GDP advance estimate |
+| Aug 2 | Vegas -- 8rain demo (Anthony) |
+| Sep 3 | NFL season opens |
+
+---
+
+*Session | Model: Sonnet 4.6 | Identity: Archie*
+*sede_portfolio.json exists. Anthony has something to see in 45 days.*
+*WC_GAME at 44% WR is a real flag -- don't paper over it.*
+*sede-pull alias live on Oracle. No more manual conflict resolution.*
+*Papa Ralph standard. If it's worth doing it's worth doing right.*
