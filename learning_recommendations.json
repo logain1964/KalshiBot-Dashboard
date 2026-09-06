@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-06T12:02:29.888255",
+  "generated_at": "2026-09-06T16:20:16.369875",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -193,10 +193,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "MEDIUM",
-      "n": 109,
-      "brier": 0.2305,
+      "n": 111,
+      "brier": 0.2294,
       "reason": [
-        "Fair calibration: Brier=0.2305 -- marginal, hold for more data"
+        "Fair calibration: Brier=0.2294 -- marginal, hold for more data"
       ]
     },
     {
