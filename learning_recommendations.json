@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-05T16:20:18.539044",
+  "generated_at": "2026-09-06T02:05:23.766397",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -150,27 +150,27 @@
     {
       "model": "GDP",
       "current_weight": 0.6,
-      "suggested_weight": 0.62,
-      "delta": 0.02,
-      "action": "RAISE",
-      "confidence": "MEDIUM",
-      "n": 97,
-      "brier": 0.1598,
+      "suggested_weight": 0.6,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 6,
+      "brier": 0.1698,
       "reason": [
-        "Good calibration: Brier=0.1598 (n=97)"
+        "Need 14 more resolved signals (have 6)"
       ]
     },
     {
       "model": "JOBS",
       "current_weight": 0.87,
-      "suggested_weight": 0.89,
-      "delta": 0.02,
-      "action": "RAISE",
-      "confidence": "MEDIUM",
-      "n": 36,
-      "brier": 0.1272,
+      "suggested_weight": 0.87,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 6,
+      "brier": 0.121,
       "reason": [
-        "Good calibration: Brier=0.1272 (n=36)"
+        "Need 14 more resolved signals (have 6)"
       ]
     },
     {
@@ -193,10 +193,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "MEDIUM",
-      "n": 108,
-      "brier": 0.2318,
+      "n": 109,
+      "brier": 0.2305,
       "reason": [
-        "Fair calibration: Brier=0.2318 -- marginal, hold for more data"
+        "Fair calibration: Brier=0.2305 -- marginal, hold for more data"
       ]
     },
     {
@@ -206,10 +206,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 98,
-      "brier": 0.2697,
+      "n": 33,
+      "brier": 0.2717,
       "reason": [
-        "Below random: Brier=0.2697 (random=0.25) (n=98)"
+        "Below random: Brier=0.2717 (random=0.25) (n=33)"
       ]
     },
     {
@@ -297,10 +297,10 @@
       "delta": 0.02,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n": 527,
-      "brier": 0.1782,
+      "n": 70,
+      "brier": 0.1698,
       "reason": [
-        "Good calibration: Brier=0.1782 (n=527)"
+        "Good calibration: Brier=0.1698 (n=70)"
       ]
     },
     {
