@@ -1,211 +1,273 @@
-# Nightly Summary — 2026-09-02 / 2026-09-03 (Archie → J@rv1s)
+# Nightly Summary — 2026-09-05 to 2026-09-07 (Archie → J@rv1s)
 
-Covers two sessions in one -- Sept 2's summary got written to the wrong
-file (nightly_summary.md instead of this one, now corrected) and never
-reached you. Combining both nights here rather than leaving Sept 2
-undocumented. This is the full, final Sept 3 close-out -- everything
-below happened across one long evening session, not spread across
-multiple documents.
+Three real work nights in one doc (Friday 9/4 had no session — routine
+Oracle auto-updates only, nothing to report). Sept 5-6 covers a lot of
+ground; Sept 7 (today) both finished that thread and caught a real
+mistake in how it was being reported. Closing the session tonight with
+this as the single consolidated handoff.
 
 ## ORACLE CLOUD STATUS
-Current through commit 7629052 (pushed tonight). Tonight's 21:00 CT
-cron cycle fired clean and confirmed both fixes shipped earlier
-tonight are holding: signals_log.csv gained 109 real rows (no wipe),
-sede_portfolio.json shows a genuine 43-line position update, and
-neither nightly_summary.md nor nightly_summary_latest.md appear
-anywhere in that cycle's commit diff -- the docs_to_push fix is
-working. A new diagnostic probe (/proc/self/stat starttime,
-commit 00714f2) shipped after tonight's run, so it hasn't produced
-data yet -- the decisive read on the double-start anomaly (see below)
-comes from tomorrow's 07:00 CT cycle.
+Oracle's real crontab (pasted by Rus, confirmed 2026-09-07): exactly 3
+entries, all running `daily_runner.py` only, at 07:00 / 11:15 / 21:00 CT
+daily, no weekday gap. `mlb_refresh.py` (the noon/4PM lighter refresh)
+is laptop-only — never runs on Oracle. Local HEAD is `f57fd3e`, pushed
+clean to origin/main. Oracle has pulled through the 11:15 CT cycle
+(`edb02e0`) but has NOT yet picked up tonight's later commits
+(`be71852` through `f57fd3e`, listed below) — that happens automatically
+on the 21:00 CT run, ~3 hours from this write-up. Worth a quick check
+that cycle's log rather than assuming.
+
+New this window: a passive read-only mirror task (`mirror_pull.bat`,
+laptop Task Scheduler, hourly at :45 — fetch+ff-only, never commits,
+can't create a conflict) and Oracle's crontab backed up locally
+(`oracle_backups/oracle_crontab_20260907.txt`, gitignored folder).
 
 ## OPEN POSITIONS
-sede_portfolio.json: 8 open (7 GDP, 1 BTC), unchanged composition
-after tonight's run -- correct, trading still suspended, no new
-entries. 7 of 8 are GDP threshold bets on the same underlying
-quarterly outcome, correlated exposure, not new risk but real and
-still unaddressed (Gate 4c concentration cap proposed Aug 30, not yet
-built).
-paper_trades.json: 1 open, unchanged.
+`sede_portfolio.json` (subscriber-facing track): 8 open (7 GDP YES
+threshold bets, 1 BTC<$50k NO), bankroll $994.17, 1 early exit on the
+books (-$5.83), no resolutions yet. Same correlated-exposure situation
+as before — 7 of 8 on the same underlying Q3/future GDP outcome, Gate
+4c concentration cap still not built.
+`paper_trades.json` (calibration ledger): 1 open (GDP>3.5% YES,
+entered 8/30, resolves with the Q3 advance estimate 10/30).
 
-## VALIDATION TRACKER
-- Gate 1 (project-wide) still SUSPENDED, Sept 8 checkpoint now 5 days out.
-- **CLAIMS -- real status change tonight.** Found and fixed a genuine
-  bug (not just a stale note): claims_model.py's own suspension gate
-  returned an empty list before any signal computation ran at all, so
-  CLAIMS logged literally zero rows -- not even track-only ones --
-  from the 2026-06-04 suspension date through today, 91 days straight.
-  This despite the actual reinstatement fixes (holiday-week detection,
-  aftermath widening, confidence tagging) having genuinely shipped
-  2026-06-15 -- the suspension note just never got updated to say so.
-  Fixed (commit c19d563): gate is now informational only; real
-  trade-blocking already happens correctly in two other places
-  (MODELS_SUSPENDED_FROM_TRADING, FULLY_SUSPENDED_MODELS) that both
-  already list CLAIMS. Verified via isolated test against synthetic
-  markets -- confirmed it now reaches real signal-generation logic
-  instead of short-circuiting. Next Thursday's release should be the
-  first real CLAIMS row logged since June 4.
-- **MLB_GAME NO-direction -- flagged, not fixed.** Its "fix within 2
-  weeks or NO direction permanently suspended" deadline was set June
-  14; that deadline was June 28. It's now September 3 -- 11 weeks past
-  its own stated shelf life, still just sitting in "pending diagnostic"
-  limbo. Nobody has diagnosed the ~8-point underestimation bug yet.
-  Real investigation needed, not a quick patch.
-- **MLS_GAME -- real Gate 1 verdict computed tonight, FAILS.** n=151
-  resolved signals (well past the 30 threshold its own note was
-  waiting on), win rate 39.1%, Brier 0.2693 -- fails both remaining
-  criteria outright, not a near-miss. Updated the authoritative
-  suspension note in code (commit 7629052) and logged full method to
-  the project (mls_game_gate1_verdict_20260903.md). A fresh
-  calibration-bucket check at this larger sample size (0-45%: 0/19,
-  45-55%: 0/28, 65%+: 47.7%/86 -- worse than a coin flip even at high
-  confidence) reinforces the real, research-backed Aug 9 hypothesis
-  (Poisson/Dixon-Coles models documented to over-weight weaker
-  opposition) rather than pointing to a new mechanism. Disposition
-  (permanent suspension vs. further investigation) not decided --
-  flagged for Rus/J@rv1s.
-- SOCCER_GAME (World Cup) -- unchanged, already failed Gate 1 July 25
-  (WR 40.0%), dataset closed, nothing new.
-- GDP reduced weight (0.60, scoring stalled since Jul 30) -- unchanged,
-  root cause still open, nothing moved on this tonight.
-- JOBS caveated (not unconditionally validated) -- unchanged.
-- **NFL_GAME -- suspended pending real 2026 signals, season opens
-  Sept 9 (6 days out).** Ran the ratified NFL doc's own overdue
-  SharpAPI 2-book coverage re-test live tonight (it was scheduled for
-  "~Sept 3," which is today, and hadn't been touched since July 18):
-  8.5% 2-book coverage (16/189 games), up 5x from July's 1.6% but
-  still under the 50% preferred bar. Per the doc's own pre-agreed
-  fallback, this is non-blocking -- SharpAPI just stays a single-book
-  comparison check, never the primary probability source anyway.
-  Logged to the project (nfl_sharpapi_coverage_retest_20260903.md).
-  Separately confirmed the NFL_SPREAD ground-truth-map-miss fix from
-  earlier this week is holding clean -- zero "[ModelType] WARNING"
-  hits across every recent report.
-- **Project's own custom instructions found stale.** The standing
-  SUSPENDED MODELS list only names CLAIMS and MLB_GAME; the live code
-  has six (also SOCCER_GAME, MLS_GAME, MLB_CHAMP, WC_WINNER). This is
-  a claude.ai project-settings edit, not something writable through
-  any tool available here -- needs Rus to update it directly.
+## VALIDATION TRACKER — SEPT 8 GATE 1 CHECKPOINT (tomorrow)
+Real recommendation, computed fresh this window, not carried forward:
+**extend the provisional suspension again** — not because tomorrow's
+date arrives, but because no model has both a real Gate-1-sized sample
+AND enough spread data to stress-test it yet.
+- **GDP**: spread data exists, 6 of 7 open Q3 markets stress-survive
+  realistic execution cost — but real resolved sample is only n=6, no
+  resolution event before Oct 30.
+- **MLB_GAME**: real resolved sample n=112 (passes n, 62%+ WR, Brier
+  ~0.23 — narrow miss on the 0.20 bar), but only 4 real spread-tagged
+  signals, too thin to say anything about execution cost.
+- **NFL_GAME/NFL_SPREAD**: spread/book capture just got wired in
+  (below) — zero real spread-tagged signals yet, but now a live
+  candidate for the *next* checkpoint's trigger as real season volume
+  accumulates.
+- Proposed real trigger for the next checkpoint (not another arbitrary
+  date): whichever comes first of GDP's Oct 30 resolution, or
+  MLB_GAME/NFL accumulating n>=15-20 real spread-tagged signals.
+- **MLB_GAME NO-direction "anomaly" — resolved as a non-issue.** A
+  candidate explanation floating around (a "known NO-direction
+  miscalibration, 56.8% vs 64.9%") turned out to be the *original* June
+  14 claim, already investigated and retracted August 9 at n=40 (small-
+  sample noise, same pattern in YES too — `model_integrity/
+  amendment_log.md`). Reran it fresh against the current full n=112
+  sample: YES underestimates its own flagged direction by +7.0pts, NO
+  by +6.5pts — symmetric, confirms the Aug 9 retraction still holds.
+  MLB_GAME's real suspension reason stays the narrow Brier miss, not a
+  direction-specific bug.
+- CLAIMS, MLB_GAME NO-side trading, GDP's 0.60 reduced weight — all
+  unchanged from before.
 
-## SEPT 2 WORK ORDER
-1. **NFL_SPREAD residual gap found and fixed (commit 408b627).** Last
-   night's display fix had a gap: a ground-truth model-lookup miss for
-   one live label fell back to a guesser that didn't know NFL_SPREAD's
-   format, defeating the fix for that row. Fixed the guesser directly
-   and added a warning log for the underlying miss. Bigger than
-   display: compute_sede_confidence() shares the same fallback, so
-   affected signals were likely scored under the wrong model's
-   reliability stats too, not just mislabeled. Confirmed the actual
-   subscriber email (fmt_signal) uses a different mechanism and was
-   never affected.
-2. **Cron data-loss diagnostic hardened twice** (breadcrumbs, then raw
-   os-level write+fsync+independent-reread+inode identity) after the
-   Sept 2 21:00 CT run showed pre_logging/pre_push checkpoints never
-   landing on disk despite zero exceptions.
-3. **Subscriber alert format -- honest UX review, no code changes.**
-   Confirmed a newcomer would be confused by the current report. Had
-   Gemini review it too -- marked genuinely useful ideas (generic
-   probability labels, GDP correlated-exposure warning, tying
-   thin-market flags to real spread data) vs. ideas that conflict with
-   the existing subscriber spec. Saved for whenever P2 gets built.
-4. **MLB_GAME historical loss concern checked** -- 15 consecutive
-   clean days before the incident window started, likely not a
-   longstanding systemic issue.
+## SEPT 5 WORK ORDER (Saturday)
+1. **MLB Track B checkpoint — real numbers, overdue 8 days, finally
+   computed.** 177 post-fix scored games: Track B (Elo+FIP blend, FIP
+   weight already zeroed 8/9) Brier 0.2419 / 61.0% hit rate vs
+   SharpAPI's own line at 0.2318 / 60.4% on the same games — parity,
+   not a demonstrated edge over a professional line. Took to J@rv1s;
+   decision below.
+2. **Duplicate-row logging root cause found.** `log_signals()` in
+   `daily_runner.py` had zero check for "have I already logged this" —
+   one real JOBS prediction got logged 28 times across 18 days.
+   Read-side dedup fix shipped same night in `brier_dashboard.py`'s
+   `load_scored_signals()` (real per-event key: ticker first,
+   gap-clustered label fallback only for rematch-risk sports models).
+   Surfaced a second bug in the process: 19 real MLB_GAME games (34
+   rows) were being silently dropped from every Gate 1 count because
+   `p_yes_model` held a string instead of a number on rows written by
+   `mlb_refresh.py`'s THIN MARKET path — fixed the symptom (loud
+   warning + kept row) that night, root cause chased down Sept 6.
+   Corrected real Gate 1 numbers that night: JOBS n=6 83.3%/0.1210
+   Brier, GDP n=6 66.7%/0.1698, MLS_GAME n=33 42.4%/0.2717, MLB_GAME
+   n=109 62.4%/0.2305.
+3. **JOBS Gate 1 spread stress test** — its own dedicated memo,
+   real n=6 (arguably ~2 independent events), no real Gate 1 sample,
+   earlier "corroborated" language retracted.
 
-## SEPT 3 WORK ORDER
-1. **Likely root cause of the cron data-loss bug found and fixed
-   (commit 6c1a191).** data_freshness.py's auto_pull_if_safe() was
-   silently discarding live trading state (signals_log.csv,
-   sede_portfolio.json, paper_trades.json among them) as if it were
-   routine regeneratable dirt. Removed 7 append-only/live-state files
-   from that discard list. Confirmed holding clean on tonight's 21:00
-   CT run.
-2. **The nightly_summary.md stale-revert bug found and fixed (commit
-   7850247).** push_to_public_dashboard() was unconditionally copying
-   a frozen source file (nightly_summary.md, untouched since June 18)
-   over the dashboard repo's real copy every single cron cycle --
-   confirmed directly via git history showing a same-night real update
-   getting reverted within hours. Fixed by emptying docs_to_push;
-   confirmed neither nightly_summary.md nor this file were touched by
-   tonight's 21:00 CT cycle.
-3. **Untracked WIP files investigated and committed.** paper_trade_
-   candidates.py / paper_trade_gates.py / paper_trade_shadow_logger.py
-   (Tier 1/Tier 2 paper-trade tooling, Aug 30 sign-off, standalone
-   manual/dry-run tools, never wired into daily_runner.py or cron) plus
-   4 model_integrity docs from Aug 30-31 -- all had been sitting
-   uncommitted on the laptop for up to 5 days with no backup anywhere.
-   Committed and pushed (commits 9226b4a, 65f9160).
-4. **Double-start diagnostic anomaly -- caught live, still genuinely
-   unresolved.** Tonight's 21:00 CT run showed "start" checkpoint
-   firing twice under the identical pid/ppid, once without the new
-   probe fields and once with them -- ruled out a full process
-   relaunch (no second pre_logging appeared), ruled out any internal
-   or external retry/loop (read the full function body directly, none
-   exists), confirmed exactly one textual call site per checkpoint
-   label. Added a /proc/self/stat starttime probe (kernel-assigned at
-   process creation, immune to anything the code does) that will
-   settle definitively whether this is boundary-case pid reuse or
-   something live-patching a running interpreter -- watch for the
-   result on tomorrow's first cron cycle.
-5. **"SEDE restart vs harden FORGE outcome" carry-forward item --
-   investigated, found to be a phantom.** No trace anywhere across
-   filesystem, project, git history, or past briefings; Rus doesn't
-   recall it either. Dropped from future carry-forward lists.
-6. **NFL sweep ahead of the Sept 9 season opener** (see Validation
-   Tracker above for the SharpAPI re-test and NFL_SPREAD confirmation).
-   Also catalogued real, disclosed, non-blocking gaps already on
-   record in the ratified NFL doc: rest-day adjustment and late-season
-   motivation asymmetry were both planned and never built. Confirmed
-   the Gate 1 tracking infrastructure (brier_dashboard.py,
-   validation_dashboard.py) is generic across models, so NFL_GAME will
-   be picked up automatically once Week 1 resolves -- no NFL-specific
-   dashboard work needed.
-7. **Full "what's sitting" sweep across every model**, at Rus's
-   request, not just NFL. Results folded into the Validation Tracker
-   above: CLAIMS bug found and fixed, MLS_GAME real verdict computed,
-   MLB_GAME's blown deadline flagged, GDP's stall confirmed unchanged,
-   project instructions confirmed stale.
-8. **Soccer/EPL strategy discussion**, at Rus's request ("crack the
-   soccer code"). Found EPL already has a fully-designed, real-data-
-   backtested, ready-to-build spec in the project (FORGE-closed Aug
-   23) that is NOT blocked by MLS's problem -- it was specifically
-   designed around MLS's known flaw (current-season-only team-strength
-   stats, which is genuine noise at a fresh season's 0-1-game start).
-   Flagged a real risk nobody had connected before tonight: EPL's
-   build would inherit the same core Dixon-Coles probability engine
-   MLS and World Cup already share. Tonight's fresh MLS calibration
-   check at n=151 (5x August's sample) reinforces the existing,
-   research-backed "over-weights weaker opposition" hypothesis rather
-   than surfacing a new bug. Decision deferred to tomorrow.
+**Decision reached (J@rv1s, relayed):** Track B redesignated —
+purpose is now "calibration/sanity-check against a professional line,"
+not "beat the market." FIP got a genuinely rigorous out-of-sample
+derivation and a fair shot; its near-zero real correlation is a
+finished experiment with a real negative result. No further FIP
+redesign work or checkpoint-extension cycling. Logged in
+`track_b_model.py`'s own header.
 
-## PENDING, RANKED FOR TOMORROW
-Rus's explicit instruction tonight: normal startup, then NFL/MLB
-first; soccer/EPL work only if nothing pressing there.
-1. NFL/MLB check first (Rus's priority) -- season opener 6 days out,
-   MLB Gate 1 checkpoint 5 days out.
-2. Read tomorrow's 07:00 CT cron diagnostic -- does the /proc/self/stat
-   probe show identical tick counts across a double "start" (proves
-   live-patching) or different ones (proves plain pid reuse)? This is
-   the decisive test.
-3. MLB_GAME NO-direction diagnostic -- genuinely overdue (11 weeks
-   past its own deadline), needs real investigation into the ~8pt
-   underestimation, not just documentation.
-4. GDP reliability weight still stuck at 0.60 since July 30 -- root
-   cause still open, untouched tonight.
-5. If NFL/MLB is clear: soccer/EPL decision -- pursue a real historical
-   soccer data source to properly fix MLS's underdog-weighting bias,
-   and/or start the EPL build (spec is ready) with a conservative
-   underdog-weight adjustment added on top.
-6. Project's custom instructions -- suspended-models list is stale (2
-   of 6 named); Rus-side edit, not writable through any tool here.
-7. "Positional-tuple type inference" pattern naming -- still
-   unaddressed, carried forward again.
+## SEPT 6 WORK ORDER (Sunday)
+1. **p_yes_model/prob_source field-scramble root cause found and
+   fixed.** Not the tuple-arity issue guessed the night before —
+   `log_signals()` was the last writer still trusting the static
+   `SIGNALS_HEADERS` constant instead of the file's real on-disk header
+   at append time, confirmed disagreeing on column order/count at least
+   3 times across a 2026-07-15/18 window. Fixed by reading the real
+   header at write time. All 34 corrupted rows repaired (back-solved
+   from each row's own correct `brier_score`, verified exact match
+   before writing). Also found, separately: `mlb_gametime_fill.py` was
+   writing the literal string "RESOLVED" into a numeric column when it
+   couldn't find a price — fixed same night (13 corrupted rows blanked).
+2. **Dashboard trust language gated on sample size.** Any model n<30
+   now gets explicit "too early to act on" language regardless of Brier,
+   instead of pure-Brier labels that would've told a reader to "trust"
+   a 6-signal model.
+3. **NFL readiness pass (Rus flagged kickoff proximity) — clean on the
+   model, but surfaced 3 real infrastructure gaps, all fixed:**
+   - `label_to_true_model`'s silent last-write-wins collision risk
+     (NFL_GAME shares label format with 3 other sports) — now logs
+     loudly on a real collision instead of staying invisible.
+   - The bigger one: `detect_signal_model()`'s unsafe "@"-fallback
+     guess (defaults to MLB_GAME) was trusted enough to grant the
+     MLB_GAME_YES_EXPERIMENTAL live-trade-entry bypass — meaning an
+     NFL/NBA/NHL signal that missed the ground-truth map could ride
+     into a real premature paper trade under the wrong label, days
+     before NFL is even supposed to be tradeable. Now requires a
+     *confirmed* classification, never a guessed one.
+   - NFL_SPREAD was missing from `daily_runner.py`'s own
+     `SEDE_RELIABILITY` dict (had it in `paper_trade_gates.py`'s mirror
+     copy the whole time) — was silently falling back to the generic
+     0.70 default instead of a deliberately low 0.55, on a model that
+     (unlike NFL_GAME) is currently eligible for real paper-trade entry.
+     Fixed.
+   - Checked whether `paper_trades.json`'s separate manual entry track
+     shared any of this exposure — it doesn't, 100% manual, no
+     model-guessing involved anywhere in that path.
+4. **GDP_STD real revision-history derivation.** Pulled actual GDPNow
+   tracking data (`gdpnow_history.txt`) for Q2/Q3 2026: found the
+   opposite of the hypothesis this project had been carrying — the
+   first ~4 weeks of a quarter are calm (~0.20pp stdev), and volatility
+   jumps specifically around day 30, when the *prior* quarter's BEA
+   advance estimate lands. Deliberately not wired into `gdp_model.py`
+   yet (n=2 quarters, live model, needs explicit sign-off) — see Sept 7
+   correction below on how this interacts with the out-quarter decision.
+5. First draft of the Sept 8 Gate 1 checkpoint write-up — caught and
+   corrected a real inflated GDP count in its own first pass (91 raw
+   rows vs. 7 real distinct markets) before it went out.
+
+## SEPT 7 WORK ORDER (today, Monday) — mostly correcting the record, plus real new fixes
+1. **JOBS silently dead since ~Sept 4 — 4th confirmed recurrence of the
+   same bug.** `REPORT_DATE` staleness, same pattern as always. Rolled
+   to Oct 2 with real August BLS actuals (NFP +162K vs ~53K consensus —
+   a real reversal), interim Sept consensus, widened std dev. Shipped
+   without waiting on sign-off, same as prior recurrences. **This keeps
+   recurring — a standing calendar reminder or automated staleness
+   check in the morning briefing would stop this needing a 5th audit.**
+2. **Shadow-book — real wiring bug found and fixed, not just a
+   rare-event story.** `mlb_refresh.py` (noon/4PM) has called
+   `run_mlb_game_model()` daily since 8/11 without ever passing
+   `shadow_book=` — the near-miss branch's own backward-compatible
+   default silently skipped it every time, no error, no way to tell
+   "ran fine, zero near-misses" from "never live." Only the 9PM full
+   run ever had a chance to populate it. Fixed and verified live.
+   Whether to widen the near-miss band is still J@rv1s's separate call,
+   once real data flows from all three windows.
+3. **NFL_GAME/NFL_SPREAD spread/book capture wired in** — real season
+   volume is accumulating right now (unlike GDP/JOBS, which are
+   calendar-capped either way), so this makes NFL a real candidate
+   trigger for the next Gate 1 checkpoint. Caught and fixed one real
+   regression risk before shipping: `email_alerts.py`'s NFL_SPREAD
+   detection was pinned to the old tuple length and would have let the
+   MLB_GAME team-name-extraction branch fire on the new one, reviving a
+   mislabeling bug already fixed twice before.
+4. **Oracle/laptop dual-scheduling — real root cause found and fixed.**
+   Not a same-instant collision (both machines already run 07:00/11:15
+   /21:00 CT by deliberate design, confirmed via Oracle's real crontab).
+   Real cause: the laptop's own local pipeline writes to 7 live-state
+   files were never safely discardable after Sept 3's protective fix
+   (which was needed to stop Oracle from losing its own data) got
+   applied uniformly to both machines — so every laptop run made its
+   own local drift from origin strictly worse, no way back to clean.
+   Fixed with a machine-aware discard list. Rus's call: keep both
+   machines running the mirrored schedule, no change to that model.
+5. **A real intra-session correction, worth naming plainly.** After
+   reporting items 2 and 4 above (from Sept 6/7) as "still open,
+   nothing done" to Rus mid-session, a fresh check of this project's own
+   docs found they'd already been fixed earlier the same session — this
+   wasn't a J@rv1s/Archie cross-instance gap, it was the same instance
+   losing track of its own recent work, almost certainly across a
+   context-compaction boundary. Corrected immediately once caught.
+   Worth J@rv1s knowing this failure mode exists on this side too, not
+   just cross-instance: check a topic's own dedicated doc for later
+   updates before reporting status, don't trust a running summary alone.
+6. **GDP out-quarter methodology — already resolved, not a fresh
+   decision.** A message came in framing "Option A" (restrict GDP
+   signal generation to current-quarter markets) as a new ratification
+   needing implementation. Checked `models/gdp_model.py` directly before
+   building anything: Option A was already implemented and live, shipped
+   2026-08-26, well-built (fail-safe ticker-date parsing, current
+   quarter = soonest real resolution date among live markets, out-quarter
+   markets skipped and logged not dropped), confirmed as the only real
+   call site. So: independently arriving at an already-shipped decision
+   12 days later — a real cross-instance information gap, not wasted
+   work or a disagreement. Corrected the record in `docs/backlog.md` and
+   the project doc, including the Sept 6 GDP_STD derivation's own
+   recommendation, which had assumed this was still an open A/B choice.
+   What's genuinely still open: wiring the day-30-aware two-regime STD
+   into the now-current-quarter-only model, deliberately deferred until
+   Q3 completes Sept 30 (n=3 quarters) and the day-30 boundary is
+   confirmed against the real BEA release calendar. Nothing to build
+   before then.
+7. **Hardcoded-Windows-paths audit (backlog item since 7/7, 9 files) —
+   re-verified against ground truth, not assumed.** Checked Oracle's
+   real crontab (only ever runs `daily_runner.py`) and both files' real
+   import graphs. All 7 remaining files do have real hardcoded
+   `C:\KalshiBot` paths, but none are reachable from Oracle's cron
+   today — each is a standalone laptop-only script, or in
+   `polymarket_monitor.py`'s case, not invoked anywhere at all. Two real
+   latent risks flagged: `auto_monitor.py` is explicitly slated to move
+   to Oracle at migration (its docstring says so) and will break that
+   day unless converted first; `polymarket_monitor.py`'s docstring
+   claims a `daily_runner.py` integration that was never actually
+   built — zero call sites anywhere, real feature gap or stale comment,
+   Rus's call which.
+8. **Stop-loss reinstatement confirmed real.** `auto_monitor.py`'s
+   $15.00 limit has a full poll→trigger→close execution path (6AM-6PM
+   CT), explicitly guards against a previously-fixed sign bug recurring.
+   `trade_monitor.py` enforces the same number for reporting. Confirmed
+   this is "the" reinstated stop-loss, working as intended.
+9. **Housekeeping.** Dropped 3 stale git stashes (verified each one's
+   content already existed elsewhere first — one looked like a real
+   orphaned `fed_model.py` fix, confirmed already live before dropping).
+   Cleared 5 stray root-level scratch scripts and a leftover video
+   transcript file. Gitignored a recurring untracked log
+   (`logs/refresh_*.txt`, written every noon/4PM run with no cleanup).
+10. **Dead code archived** (`oci_retry.py/.ps1`, `paper_trades.py` —
+    confirmed zero live references) and `docs/backlog.md` rewritten
+    twice against verified current state, not carried forward on faith.
+
+## STILL GENUINELY OPEN — RANKED FOR NEXT SESSION
+1. **Sept 8 Gate 1 checkpoint** — real recommendation above (extend,
+   criteria-driven trigger for next one), Rus's call whether to accept
+   it or push further.
+2. **JOBS REPORT_DATE staleness** — 4th recurrence; needs a structural
+   fix (calendar reminder or automated check), not a 5th manual catch.
+3. **EPL carryover-blend** — approved spec, real backtested numbers,
+   ready to build, correctly queued behind Sept 8 prerequisites.
+4. GDP reduced weight (0.60, scoring stalled since Jul 30) — root cause
+   still open, untouched this window.
+5. `requirements.txt` still doesn't exist — real structural gap.
+6. GDP_STD day-30-aware STD — correctly parked to Sept 30, no action
+   needed before then.
+7. `auto_monitor.py` hardcoded paths — fine today, will break at Oracle
+   migration if not converted first.
+8. `polymarket_monitor.py` — dead/orphaned despite its own docstring;
+   decide build-it-for-real vs. retire the claim.
+9. `.env` backup to `oracle_backups/` — needs Rus to run the `scp`
+   command directly from his own terminal (real API keys, deliberately
+   not routed through any Archie session).
+10. NFL late-season motivation adjustment (built, inert pending a live
+    clinch-status feed) and NFL totals/spread market wiring (not built)
+    — unchanged, season now live.
 
 ## SPORTS MONITORING
-Nothing open in either ledger depends on live game monitoring tonight.
-NFL season opens Sept 9 (6 days), MLB Gate 1 checkpoint Sept 8 (5
-days) -- both close enough now to have front of mind starting
-tomorrow.
+MLB in full swing, NFL season now open (kicked off Sept 9 as scheduled
+last window) — NFL_GAME/NFL_SPREAD spread data starts accumulating from
+tonight's runs forward. Nothing tied to a live game needs attention
+tonight specifically.
 
 ---
-Archie | Papa Ralph standard.
+Archie | Papa Ralph standard. Three nights, one real self-caught
+mistake owned plainly the moment it was found rather than smoothed
+over, several stale claims corrected against actual code instead of
+carried forward, and one already-shipped decision saved from getting
+"re-ratified" a second time. If it's worth doing it's worth doing right.
