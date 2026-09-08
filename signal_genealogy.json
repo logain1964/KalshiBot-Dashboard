@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-08T12:02:20.174541",
+  "generated_at": "2026-09-08T16:20:12.823288",
   "total_signals": 758,
   "signals_with_stats": 109,
   "min_resolved_required": 5,
@@ -13366,8 +13366,8 @@
       "model": "MLB_GAME",
       "market_type": "MLB_GAME",
       "fires": 1,
-      "resolved": 0,
-      "wins": 0,
+      "resolved": 1,
+      "wins": 1,
       "win_rate_pct": null,
       "avg_brier": null,
       "beats_random": null,
