@@ -1,121 +1,120 @@
-# Nightly Summary — 2026-09-08 (Archie → J@rv1s)
+# Nightly Summary — 2026-09-09/10 (Archie → J@rv1s)
 
 ## ORACLE CLOUD STATUS
-No changes tonight. Single-source-of-truth holds (Oracle commits/pushes,
-laptop pulls only). Oracle's real crontab unchanged: 07:00 / 11:15 / 21:00
-CT, daily_runner.py only.
+Single-source-of-truth held all night (Oracle commits/pushes, laptop pulls
+only). Three real pieces of work landed on Oracle tonight:
 
-**New finding, not yet fixed:** the laptop's local `C:\KalshiBot` tree has
-an uncommitted code-file diff in `models/fed_model.py` — a real FedWatch
-consensus refresh (CONSENSUS_DATE Sept 4 -> Sept 7, updated cuts_0..4plus
-probabilities), sitting locally, never committed. Per the standing
-dual-machine rule, `auto_pull_if_safe()` correctly refuses to touch a
-tracked CODE file with local modifications rather than silently discard
-it — which is the right safety behavior, but the practical effect is the
-laptop has likely not cleanly pulled anything from Oracle since this diff
-first appeared (unknown exactly when). Not diagnosed further tonight —
-first item for tomorrow, second only to the MLS_GAME decision below.
-Two real questions to resolve: (1) is this refresh legitimate data that
-should just get committed and pushed from Oracle, discarding the laptop's
-uncommitted copy once superseded, or is it a stale local artifact; (2)
-how long has the laptop's auto-pull actually been silently blocked as a
-result.
+1. **fed_model.py mystery — RESOLVED.** Last night's uncommitted local diff
+   (FedWatch consensus refresh, CONSENSUS_DATE Sept 4 -> Sept 7) was
+   confirmed byte-identical to what Oracle had already pushed independently.
+   `git checkout --` + `git pull` — laptop now clean, 0 commits behind
+   origin. Not a bug, just an unresolved sync question from last night, now
+   closed.
+2. **MLS_GAME market-disagreement hard exclusion — deployed (commit
+   `42f6b8e`).** Per last night's confirmed finding (n=49: 73.9% wrong when
+   the model bets against the market favorite vs. 34.6% wrong when it
+   agrees), added a hard exclusion: picks priced below 40c are suppressed
+   unless model confidence clears an extreme-confidence gate (70%). Verified
+   against 132 real live KXMLSGAME markets before Rus deployed it via Oracle
+   SSH.
+3. **Scoped output/storage-layer rebuild — deployed (commit `736a1f5`).**
+   Full writeup in project doc
+   `signal_schema_output_storage_rebuild_20260910.md`. New `SignalRecord`
+   dataclass (validates at construction, tuple-compatible), `log_all_signals()`
+   header-drift fix (same bug class as `log_signals()`'s Sept 6/7 fix,
+   closing the identical gap), and MLS_GAME migrated as the first proof-of-
+   concept model. Rus reviewed the actual `git diff` on Oracle himself before
+   committing. First attempt at pasting the deploy bundle got corrupted
+   mid-paste by the terminal; recovered by re-delivering as checksummed
+   base64 chunks instead — worth remembering as the reliable pattern for any
+   future large multi-file Oracle paste.
+
+## RESTART-VS-HARDEN — INDEPENDENT READ DELIVERED
+Rus surfaced the Sept 1 J@rv1s FORGE document ("SEDE Restart vs. Harden")
+tonight — the same one retracted Sept 8 after four exhaustive searches found
+no trace of it. Provenance still unresolved (likely an unsaved J@rv1s chat
+transcript); not chased further. Archie performed a real independent read of
+its core claim against the actual incident record (four project docs, not
+the document's own framing). **Verdict: ratify "harden, don't restart," but
+widen the scope.** The document worried mainly about tuple-arity drift; the
+real worst incidents since it was written were storage-format bugs (the
+`p_yes_model`/`prob_source` scramble, three separate header-drift incidents).
+Rus authorized the widened-scope rebuild unattended, explicitly as a trust
+call: *"use your best judgment... Back at 22:00."* Result is the rebuild
+above.
 
 ## OPEN POSITIONS
 Only one open paper trade: **#25**, GDP > 3.5% (Q3 2026 advance estimate),
-YES, entered 21c, currently 28c — a $7.74 unrealized gain (auto_monitor's
-log line labels this "loss=$-7.74"; negative loss = gain, the field name
-reads backwards, flagged as a minor fix-whenever item). auto_monitor.py
-confirmed running via direct log-tail (last entry 17:50:25 CT, checked
-inside 3 minutes of that) — correctly went to sleep at 18:00:25 CT for the
-night (outside market hours), as designed. No other real positions open;
-sede_portfolio.json unchanged from prior session's tracked state.
+YES, entry 21c, now 36c — a real unrealized gain (~$17.85 on 119 contracts;
+auto_monitor's log line still says "loss=$-18.45" — negative loss = gain,
+the field name reads backwards, still a trivial fix-whenever carried
+forward). auto_monitor.py confirmed healthy via direct log-tail — correctly
+went to sleep at 18:00:26 CT for the night, no errors, all cycles clean.
 
-## VALIDATION TRACKER — SEPT 8 GATE 1 CHECKPOINT
-Project-wide Gate 1 remains provisionally suspended (since Aug 11),
-pending the real bid/ask-spread stress test. Tonight's Sept 8 checkpoint
-did not resolve that infrastructure gap — it produced a fallback plan
-instead:
+## VALIDATION TRACKER
+No change to Gate 1 status tonight — project-wide Gate 1 remains
+provisionally suspended (since Aug 11) pending the real bid/ask-spread
+stress test, Oct 1 fallback date from Sept 8's checkpoint still stands,
+untouched tonight. MLS_GAME's Gate 1 verdict (suspended, 39.1% WR, n=151) is
+**unchanged** by tonight's hard-exclusion fix — the fix targets *future* win
+rate, it doesn't retroactively alter the Sept 3 verdict. NFL_GAME remains
+suspended (by design — zero resolved 2026 signals yet, season opened
+tonight); see below for what tonight's first live exposure surfaced.
 
-**October 1, 2026 — new fallback re-check date, approved by both
-instances and Rus.** A backstop, not a target: if the real stress-test
-infra still isn't built by then, that's the forced review point. Sits 3
-days after MLB_GAME's Sept 27 hard data ceiling and well before GDP's
-Oct 30 resolution. If the infra is ready sooner, the review happens then
-instead — Oct 1 doesn't mean waiting.
+## NEW FINDING — NFL_GAME HAS NO LIVE-GAME-STATE AWARENESS
+Full detail and the specific ask for J@rv1s in project doc
+`nfl_game_live_state_gap_20260910.md`. Short version: tonight was the real
+2026 NFL season opener (NE @ SEA, a Super Bowl LX rematch), and NFL_GAME's
+first-ever live exposure to a real 2026 game. Kickoff was 7:20 PM CT;
+daily_runner.py's 9PM CT scheduled run fired the game's signal alert
+~1h40m later — almost certainly mid-3rd-quarter. Confirmed in code:
+`run_nfl_game_model()` takes no live score/clock/quarter input at all (its
+win probability is a one-shot pregame Elo + QB-tier computation), and
+neither the model nor the pipeline has any "is this game already in
+progress" gate — unlike MLS_GAME/`soccer_game_model.py`, which explicitly
+checks `game_status.fetch_game_status`/`GameState` before flagging. Net
+effect: any NFL_GAME signal generated after kickoff is very likely comparing
+a stale pregame number against an already game-informed live market price —
+which would explain the unusually large edges (30-40c) in tonight's alert
+better than "the model found real inefficiency" does. NFL_GAME is already
+suspended from real trading (no capital at risk), so no urgency to rush a
+fix, but this needs a real design decision before any future reinstatement
+is credible. Not fixed tonight, not scoped yet. **Rus is bringing the
+project doc to J@rv1s tomorrow morning and relaying J@rv1s's read back
+tomorrow night** — the doc has three candidate approaches and three specific
+questions for J@rv1s at the end.
 
-**MLB_GAME spread-tagged signal rate:** only 8 signals have `spread_cents`
-populated (Aug 29-Sept 7, feature is brand new), ~0.8/day, projecting to
-roughly n=23 cumulative by Sept 27. Technically clears the n=15-20 target
-but on a genuinely thin 8-point sample. Agreed framing: Sept 27 is a hard
-cutoff ("score on whatever n exists"), not a date anyone should expect
-with confidence to clear the bar.
+## TONIGHT'S WORK ORDER — WHAT SHIPPED
+1. fed_model.py sync mystery — resolved (see Oracle Cloud Status).
+2. MLS_GAME market-disagreement hard exclusion — built, verified, deployed.
+3. Restart-vs-harden independent read — delivered, ratified with widened
+   scope.
+4. Scoped output/storage-layer rebuild (SignalRecord + log_all_signals()
+   header-drift fix + MLS_GAME migration) — built unattended, verified
+   end-to-end against the real writer functions, deployed after Rus's own
+   review of the diff.
+5. NFL_GAME live-game-state gap — found, documented, not fixed. Ask for
+   J@rv1s is explicit in the project doc.
 
-## TONIGHT'S WORK — SEPT 8 CHECKPOINT, FIVE ITEMS
-Answered all five items from J@rv1s's Sept 8 briefing with real evidence
-(full detail in the project doc
-`sept8_checkpoint_mls_clustering_and_jarvls_asks_20260908.md` and in
-`SEDE_SEEKS_session_history_latest.md`):
-
-1. auto_monitor.py — confirmed running via log-tail (methodology note:
-   prefer this over the process-list check, which returned garbled
-   output twice this session).
-2. **"Restart-vs-harden FORGE" / identity-mixup reference — RETRACTED.**
-   Searched four separate ways before answering (full project doc list,
-   two project searches, filesystem grep across two directories) and
-   found zero trace. Rus then recalled it happened during an identity
-   mixup last week; even taking that as true, no document, no verdict,
-   and no record of the mixup itself exists anywhere — including in this
-   project's own session-history file, which is exactly where such
-   cross-instance incidents are supposed to get logged. J@rv1s
-   independently reached the same conclusion, citing the standing
-   content-verification rule from J@rv1s's own Aug 11 fabrication
-   incident, and retracted the reference outright rather than speculate.
-   Rus accepted. Closed unless a real, findable source resurfaces.
-3. **MLS_GAME favorite/underdog clustering — CONFIRMED, real numbers.**
-   n=49 resolved signals (via `load_scored_signals()`, the dashboard's
-   own dedup function): 34.6% wrong (n=26) when the model agrees with
-   the market's favorite, 73.9% wrong (n=23) when it bets against the
-   market (avg kalshi 39.5c vs. avg model confidence 57.4% in that
-   bucket). Confirms the Aug 9 Dixon-Coles-overweighting-weak-opposition
-   hypothesis with real evidence. J@rv1s recommended real, near-term
-   priority on a fix ahead of further MLS_GAME validation accumulation.
-   **Rus accepted the finding and the priority call — the actual fix
-   (penalty term vs. hard exclusion below ~40c) is not yet built or even
-   chosen; that's the first item on the books for tomorrow's session,
-   per Rus's explicit direction tonight.**
-4. MLB_GAME signal rate vs. Sept 27 — see Validation Tracker above.
-5. Sept 8 Gate 1 fallback date — Oct 1, 2026, see Validation Tracker
-   above.
-
-## TOMORROW'S WORK ORDER — RANKED
-1. **MLS_GAME market-disagreement fix — decide the approach.** Two real
-   options on the table, neither built: (a) a market-disagreement penalty
-   term scaled to how far the model's pick diverges from the market
-   price, or (b) a hard exclusion of picks priced below ~40c absent
-   extreme model confidence. Rus's explicit instruction tonight: put this
-   first thing tomorrow's session. J@rv1s already flagged this as the one
-   finding here with a clear, already-quantified next step — worth real
-   priority, not just logged alongside everything else.
-2. **fed_model.py's uncommitted local diff** (see Oracle Cloud Status
-   above) — needs a real decision on whether the Sept 7 consensus refresh
-   is legitimate and should be committed from Oracle, plus a check on how
-   long the laptop's auto-pull has been silently blocked as a result.
+## TOMORROW NIGHT'S WORK ORDER — RANKED
+1. **J@rv1s's read on the NFL_GAME live-state gap** — Rus is relaying this
+   back tomorrow night. First item once that comes in.
+2. Consider whether/when to migrate any model besides MLS_GAME onto
+   `SignalRecord` — deliberately not decided tonight, foundation only.
 3. auto_monitor.py's backwards "loss" label (negative loss = gain) —
-   trivial, fix whenever there's a spare moment.
-4. polymarket_monitor.py disposition (build for real vs. retire the
-   docstring claim) — carried forward, unchanged.
-5. Everything else already on record in `SEDE_SEEKS_session_history_latest.md`'s
-   carried-forward lists (429-retry log visibility, MLB Track B unpack
-   error, GDPNow anomaly verification, NFL_GAME suspended-status
-   decision, item #8 motivation-adjustment clinch feed, SharpAPI
-   pagination live-boundary test) — untouched tonight, still open exactly
-   as previously logged.
+   trivial, still just needs a spare moment.
+4. Everything else already on record in
+   `SEDE_SEEKS_session_history_latest.md`'s carried-forward lists
+   (polymarket_monitor.py disposition, 429-retry log visibility, MLB Track B
+   unpack error, GDPNow anomaly verification, item #8 motivation-adjustment
+   clinch feed, SharpAPI pagination live-boundary test) — untouched tonight,
+   still open exactly as previously logged.
 
 ## SPORTS MONITORING
-No sports-tied open positions tonight — the only open trade is GDP
-(macro, not sports-tied). MLB_GAME and MLS_GAME remain suspended from
-real trading regardless of signal quality, so no live game monitoring
-was needed for open positions.
+NE @ SEA was the only sports-relevant activity tonight, and it wasn't a real
+position — NFL_GAME is track-only. Final: Seattle 13, New England 10
+(confirmed via three independent sources). No open sports-tied positions;
+the only open trade is GDP (macro). MLB_GAME and MLS_GAME remain suspended
+from real trading regardless of signal quality.
 
 Archie | Papa Ralph standard.
