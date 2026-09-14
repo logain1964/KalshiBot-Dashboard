@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T12:02:22.597855",
+  "generated_at": "2026-09-14T16:20:03.272434",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -21,6 +21,18 @@
     "NBA_CHAMP": 0.72
   },
   "threshold_recs": [
+    {
+      "model": "CLAIMS",
+      "current_threshold": 8,
+      "suggested_threshold": 8,
+      "action": "HOLD",
+      "confidence": "LOW",
+      "n_above": 0,
+      "n_below": 0,
+      "brier_above": null,
+      "brier_below": null,
+      "reason": []
+    },
     {
       "model": "GDP",
       "current_threshold": 8,
@@ -115,10 +127,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n": 0,
-      "brier": null,
+      "n": 5,
+      "brier": 0.1898,
       "reason": [
-        "Need 20 more resolved signals (have 0)"
+        "Need 15 more resolved signals (have 5)"
       ]
     },
     {

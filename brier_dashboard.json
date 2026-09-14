@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-14T12:02:22.593839",
-  "total_resolved": 295,
+  "generated_at": "2026-09-14T16:20:03.268440",
+  "total_resolved": 300,
   "by_model": {
     "MLS_GAME": {
       "n": 49,
@@ -54,6 +54,15 @@
       "avg_brier": 0.1626,
       "avg_logloss": 0.4975,
       "avg_edge": 12.4,
+      "beats_random": true
+    },
+    "CLAIMS": {
+      "n": 5,
+      "correct": 3,
+      "acc_pct": 60.0,
+      "avg_brier": 0.1898,
+      "avg_logloss": 0.5166,
+      "avg_edge": 39.5,
       "beats_random": true
     }
   },
