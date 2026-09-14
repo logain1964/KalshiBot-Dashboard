@@ -1,252 +1,108 @@
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Last updated:** 2026-06-18 | **Session end:** ~11:30 PM CT
+**Last updated:** 2026-09-14 | **Session end:** ~10:45 PM CT
 **Prepared by:** Archie (Claude Desktop)
 
 ---
 
 ## TONIGHT IN ONE SENTENCE
 
-Six deliverables: MLB post-fix WR confirmed healthy (65.4%), sede_portfolio.json
-built and wired, signal_scorer.py Unicode crash fixed, Fed cuts 0x NO signal
-suppressed in hike-bias environment, WC Elo updated post Round 1, England/France
-results scored -- WC_GAME WR now 44% on 18 signals, genuine model flag.
+EPL_GAME model built end-to-end (Poisson + carryover blend, football-data.co.uk, since ESPN's eng.1 is confirmed dead too) and shipped track-only; both open design questions sent to J@rv1s, answered, and closed out for real tonight — the taper formula independently re-derived and confirmed, and the Gate 1 "beats_random" question resolved with a correction to J@rv1s's own cited base rate along the way. One real housekeeping gap found and flagged below: this exact file has been serving J@rv1s stale June content for months, now fixed.
 
 ---
 
-## 1. MLB POST-FIX ACCURACY CHECK
+## 1. EPL_GAME MODEL — BUILT, TESTED, SHIPPED (commit 88f377c)
 
-Post-fix (June 14+): 7 resolved signals, 7/7 wins (100% WR), Brier 0.172.
-Sample too small to be conclusive but directionally excellent.
+Rus explicitly authorized building EPL now rather than waiting on the stalled Sept 8 Gate 1 checkpoint, and explicitly chose football-data.co.uk over football-data.org as the data source.
 
-All-time deduped: 81 resolved signals, **65.4% WR**, Brier 0.254.
-Well above Gate 1 threshold (55%). Green light trajectory.
+**Before writing any code**, re-verified live (not assumed from the Aug 22/23 design docs) whether ESPN's `eng.1/standings` and `eng.1/scoreboard` still worked. They don't — 403, same Akamai block that's hit every other sport since Aug 9. So unlike MLS, EPL has **zero ESPN fallback at all**, live or standings.
 
-Only YES direction in post-fix window -- NO direction hasn't had resolved
-signals since the fix, so the direction bug impact still can't be isolated.
+**What got built:**
+- `game_status.py`: SharpAPI league code `"EPL"` confirmed live (108 real rows). Added `epl` to `SHARPAPI_LEAGUE`/`BLACKOUT_BUFFER_HOURS` (2.5h, same as MLS).
+- `models/soccer_game_model.py`: `FD_TO_KALSHI_EPL` alias table, verified against real live `KXEPLGAME` tickers (all 20 current clubs) — caught two real mismatches: Chelsea is `CFC` not `CHE`, Liverpool is `LFC` not `LIV`. Carryover-blend taper implemented per the locked Aug 23 FORGE spec. Promoted-club floor applied (loudly logged, not silent) for Coventry/Hull/Ipswich — all three genuinely newly promoted for 2026-27, confirmed against real data, not an error. `run_epl_game_model()` mirrors `run_mls_game_model()`'s structure.
+- **Deliberately did NOT port** MLS's `MLS_DISAGREEMENT_PRICE_FLOOR`/`MLS_EXTREME_CONFIDENCE_GATE` hard-exclusion filter — that was earned from a real n=49 MLS backtest; EPL has zero signal history to justify an equivalent yet.
+- `market_scanner.py`: `KXEPLGAME` wired into `TRACKED_SERIES`.
+- `daily_runner.py`: full pipeline wiring, `SEDE_RELIABILITY["EPL_GAME"]=0.55`, added to `MODELS_SUSPENDED_FROM_TRADING` (track-only). **Found and fixed a real bug along the way**: EPL signal labels are textually identical to MLS_GAME's (`"X vs Y -- Z wins"`) — `detect_signal_model()` would have silently misattributed every EPL signal to MLS_GAME. Fixed by disambiguating on the real Kalshi team-abbreviation set (verified zero overlap with MLS's live codes).
 
----
+**Verified live**, not synthetic: full run against real `KXEPLGAME` markets — 10 games, 7 signals flagged. Full writeup: `claude/epl_build_20260914.md`.
 
-## 2. SEDE_PORTFOLIO.JSON -- BUILT (commit c01c465)
-
-Primary deliverable. Subscriber-facing autonomous portfolio operational.
-
-**Files created:**
-- `data/sede_portfolio.json` -- initialized at $1,000 bankroll, paper status,
-  zero trades. On both GitHub repos including public dashboard.
-- `portfolio_manager_sede.py` -- autonomous manager with full feature set:
-  - 6-gate auto-entry: edge>=20c, confidence>=60%, rating=HIGH,
-    max 8 concurrent, hard drawdown stop at -$200, no duplicate tickers
-  - Auto-close: polls live Kalshi prices, closes on resolution/97c/3c
-  - Daily snapshot for subscriber charting
-  - `--status` CLI for quick checks
-- Wired into `daily_runner.py` as Step 10b -- fires after signal generation,
-  before Telegram/email delivery
-- `sede_portfolio.json` added to dashboard .gitignore allowlist
-
-**Known gap:** ticker lookup in daily_runner wire is fuzzy match. Will miss
-some signals and log "no market ticker" skip. Fix: pass tickers explicitly
-from each model at signal generation time. Low priority follow-up.
-
-**This is what Anthony sees in 45 days.**
+**Real caution, not a green light**: several flagged edges were 15-22c on a model with zero backtesting history (e.g. Brentford over Chelsea at 54.2% model vs 32c market). That's more likely a sign of model error than confirmed market inefficiency at this stage. Logged directly in the `MODELS_SUSPENDED_FROM_TRADING["EPL_GAME"]` entry so it can't get quietly forgotten before real Gate 1 data exists. **Suspended from trading. Track-only.**
 
 ---
 
-## 3. SIGNAL_SCORER.PY UNICODE CRASH -- FIXED (commit 88f6bb4)
+## 2. EPL TWO OPEN ITEMS — SENT TO J@RV1S, ANSWERED, CLOSED
 
-Unicode box-drawing characters (U+2500) and emoji (U+2705, U+1F6AB)
-caused CP1252 encode errors on Windows console, silently crashing
-score_full_log() partway through the table print. Fixed by replacing
-with ASCII equivalents ([OK], [X], -).
+Full referral: `claude/epl_open_items_referral_20260914.md`. J@rv1s's full FORGE response is in the conversation record; both items now have real, grounded resolutions (`claude/epl_open_items_resolution_20260914.md`, `claude/epl_taper_derivation_20260914.md`).
 
-**Key finding from running clean scorer:**
-WC_GAME was already at **58% WR** in full log -- the 34.9% figure
-J@rv!s had was stale, predating the Draw entries in RESOLVED_MARKETS.
-The scoring logic was correct all along.
+**Item 1 — the missing taper-derivation doc.** `claude/epl_taper_derivation_20260823.md` (meant to hold the taper formula's full derivation) doesn't exist — confirmed missing. Per J@rv1s's recommendation, re-derived it for real tonight: pulled 7 real football-data.co.uk seasons (2019-20 through 2025-26), walked matches chronologically with no lookahead, grid-searched against real outcomes. **The locked asymptote (0.70) came back exact in every configuration**, with or without the 2020-21 no-fans season. Slope/crossing differ slightly from locked but the real performance difference is 0.2% — noise for the size of grid searched. **No code change made.** The formula is now independently verified, not just trusted.
+
+**Item 2 — the Gate 1 "beats_random" bar.** Turned out simpler than either of us first thought. Read the actual scoring code (not just the one verdict doc): `beats_random` is a fixed, uniform `Brier < 0.25` check (coin-flip baseline) applied identically to every model — and since 0.25 > 0.20, **it's mathematically implied by passing Gate 1's own Brier<=0.20 criterion**. There's no 3-way-vs-binary adjustment to make because it was never a 3-way check at all. The real place a base-rate question lives is the 55% win-rate threshold — same mechanism as every other binary-leg model in this project, and the same class of risk `MLS_DISAGREEMENT_PRICE_FLOOR` already guards against for MLS_GAME. **No EPL-specific bar adjustment recommended.**
+
+**One correction on the way through, flagged plainly rather than let stand**: J@rv1s cited a "real current" home/draw/away rate of 42/27/31. Pulled it directly from the same football-data.co.uk seasons everyone's using (last 4 complete seasons, n=1520 real matches): **44.5% home / 24.1% draw / 31.4% away** — closer to my original estimate than to J@rv1s's correction. Noted in the resolution doc so it doesn't quietly stand uncontested.
 
 ---
 
-## 4. FED CUTS 0X NO SIGNAL SUPPRESSED (commit ef3ef3e)
+## 3. ONE REAL HOUSEKEEPING GAP FOUND — FLAGGED AND FIXED
 
-J@rv!s flagged: "Fed cuts 0x 2026 -- BUY NO +19.9c, model 39.3%" as
-confusing post-FOMC.
+**This exact file has been serving J@rv1s stale content.** `nightly_summary.md` (the literal filename J@rv1s's morning routine fetches from `raw.githubusercontent.com/.../main/nightly_summary.md`) was last meaningfully updated June 18 — every real nightly summary since (Sept 2 through tonight) has actually been going into `nightly_summary_latest.md` instead, committed by Rus by hand. Tonight's push updates **both** files with identical current content so J@rv1s's actual automated fetch target stops serving June data. Worth deciding going forward whether `nightly_summary.md` or `nightly_summary_latest.md` is the one true target — right now there are two files and only one was being kept current by habit.
 
-**Root cause:** BUY NO on "cuts 0x" = betting the Fed cuts at least
-once. Post-FOMC with dot plot projecting a hike, Kalshi pricing 81c on
-zero cuts is rational -- it agrees with the hike bias. The apparent 20c
-edge was a FedWatch/Kalshi alignment artifact, not a real trade.
-
-**Fix:** Suppression gate added to `run_fed_model()`. When cuts_0 > 55%
-(hike-bias environment), "Fed cuts 0x BUY NO" is suppressed with a
-log line explaining why. Auto-reinstates when cuts_0 drops below 55%.
+(A second suspected gap — `sede_portfolio.json` looking 5 days stale — turned out to be my own mistake: I'd read it before pulling latest from origin. After `git pull`, `last_updated` is `2026-09-14T11:20:04` — today, confirmed. The daily pipeline is actively running; no real gap there. Correcting this here rather than letting a false alarm stand, since the whole point of flagging things is that the flags be real.)
 
 ---
 
-## 5. WC ELO STRENGTH UPDATE -- POST ROUND 1 (commit 2e5f18d)
+## OPEN POSITIONS (per `sede_portfolio.json`, confirmed current as of today's 11:20 CT pipeline run)
 
-`models/world_cup_model.py` WC_TEAMS strength values updated.
+| # | Description | Entry | Current (Sept 14) |
+|---|---|---|---|
+| 1 | BTC<$50k Dec31, NO | 43.5c | 83.5c |
+| 3 | GDP>1.5% (Oct30), YES | 70.5c | 77.5c |
+| 4 | GDP>1.5% (Jan28), YES | 74.5c | 66.0c |
+| 5 | GDP>2.5% (Oct30), YES | 58.0c | 50.5c |
+| 6 | GDP>1.0% (Jan28), YES | 78.0c | 77.5c |
+| 7 | GDP>2.0% (Apr29), YES | 50.5c | 52.5c |
+| 8 | GDP>4.0% (Oct30), YES | 18.5c | 17.0c |
+| 9 | GDP>1.5% (Jul29), YES | 59.5c | 62.5c |
 
-**Source:** eloratings.net January 2026 Elo points, normalized to 0-1
-scale anchored on Spain=2171=0.94.
-
-**Key corrections from pre-tournament values:**
-- Spain correctly moved to #1 (was incorrectly behind France)
-- Colombia and Ecuador elevated per actual Elo standing
-- Germany up after 7-1 Curacao
-- Australia up after 2-0 Turkey
-- Japan held -- drew Netherlands, confirmed mid-pack quality
-- Turkey, Curacao, Haiti, South Africa all down post R1 losses
-- Norway elevated -- Elo 1922, higher than originally assigned
-
----
-
-## 6. WC RESULTS SCORED -- ENGLAND/FRANCE -- MODEL FLAG
-
-**Added to RESOLVED_MARKETS:**
-- England 4-2 Croatia (June 15) -- England wins YES
-- France 3-1 Senegal (June 16) -- France wins YES
-
-**Result: WC_GAME WR dropped from 57% (14 signals) to 44% (18 signals)**
-
-**This is a genuine model flag, not a scoring artifact.**
-
-The model had flagged:
-- England wins NO (model 55.7%, betting against England) -- LOST
-- Croatia wins YES (model 26.9%, backing Croatia) -- LOST
-- France wins NO (model 42%, betting against France) -- LOST
-- Senegal wins YES (model 19.8%, backing Senegal) -- LOST
-
-Pattern: model is systematically underestimating tournament favorite
-win probability and generating NO signals on favorites that then win
-comfortably. This is a calibration problem, not a scoring bug.
-
-**Action for J@rv!s:**
-- WC_GAME remains CALIBRATION ONLY
-- DO NOT allow portfolio_manager_sede.py to trade WC_GAME signals
-  until WR recovers above 55% with 30+ signals
-- Investigate: are lambda values underweighting strong favorites?
-  The Spain/Cape Verde problem pattern may be recurring
-- June 26 group stage checkpoint is now a model review, not just
-  a sample size check
+Bankroll: $994.17 (started $1,000, one early-exit close at -$5.83). No wins/losses recorded yet — all 8 still open, no new entries since early Aug (nothing new has cleared the 6-gate entry criteria since).
 
 ---
 
-## OPEN POSITIONS
+## GATE 1 / VALIDATION STATUS (unchanged since Sept 8 checkpoint — no new resolution tonight)
 
-| # | Description | Entry | Status |
-|---|-------------|-------|--------|
-| 8 | Fed 1x cut YES | 21c | HOLD -- thesis dead, documented loss |
-| 12 | GDP >2.5% YES | 40c | GDPNow 3.04%, buffer +54bps, HOLD |
-| 13 | GDP >2.0% YES | 60c | GDPNow 3.04%, comfortable, HOLD |
+Project-wide Gate 1 remains **provisionally suspended** (since Aug 11, pending the bid/ask-spread stress test). The Sept 8 checkpoint's own real recommendation was to **extend** the suspension, not resolve it — no model had both a real deduplicated sample near the n>=30 floor and enough spread data to stress-test it. Real trigger set for the next checkpoint: GDP's Q3 2026 markets resolving Oct 30, or MLB_GAME accumulating n>=15-20 spread-tagged signals — whichever comes first. Nothing in tonight's session changes this; flagging that the project instructions' "Checkpoint: September 8, 2026" line is now stale by a week and should probably be updated to reflect "extended, next real trigger Oct 30 or MLB_GAME spread accumulation" rather than a passed date.
 
----
-
-## SEDE PORTFOLIO STATUS (new tonight)
-
-Bankroll: $1,000.00 | Trades: 0 | Status: paper
-No auto-entries yet -- portfolio manager needs tickers from models
-to fire. First real entries expected on tomorrow's pipeline run.
+| Model | Status |
+|---|---|
+| JOBS | NOT validated (real n=6, ~2 independent events — reverses the earlier "corroborated" call) |
+| GDP | Has real spread data, no real resolved sample yet before Oct 30 |
+| MLB_GAME | n=109 resolved, 62.4% WR, Brier 0.2305 (fails 0.20 bar narrowly); only 4 real spread-tagged signals |
+| MLS_GAME | RETIRED from further live development (Sept 3 verdict, confirmed fail) |
+| CLAIMS | Suspended, gate bug fixed Sept 3 |
+| NFL_GAME / NFL_SPREAD | Suspended pending real 2026 signal accumulation |
+| **EPL_GAME** | **NEW tonight — suspended pending validation, zero signal history** |
 
 ---
 
-## COMMIT LOG (tonight)
+## TONIGHT'S WORK ORDER FOR J@RV1S / NEXT SESSION
 
-| Commit | Description |
-|--------|-------------|
-| c01c465 | Build sede_portfolio.json + portfolio_manager_sede.py |
-| 88f6bb4 | Fix signal_scorer.py Unicode/emoji crash (CP1252) |
-| ef3ef3e | Suppress Fed cuts 0x NO in hike-bias environment |
-| 2e5f18d | WC Elo post Round 1 + England/France scored |
-| 762744d | Merge: Oracle pipeline data |
-
-Oracle: run `sede-pull` to sync all tonight's commits.
+1. Decide `nightly_summary.md` vs `nightly_summary_latest.md` as the one real target going forward (gap above) — cheap fix, just needs a decision.
+2. EPL_GAME's first real signals will start accumulating now that it's wired into the daily pipeline — worth a look at whether `KXEPLGAME` markets are actually showing up in tomorrow's run.
+3. The Sept 8 Gate 1 checkpoint text in the project's own standing instructions is stale (says "Checkpoint: September 8, 2026" with no note that it was extended) — worth a cleanup pass whenever convenient, not urgent.
+4. No open action from tonight's EPL FORGE exchange — both items are genuinely closed, not deferred.
 
 ---
 
-## SYSTEM STATUS
+## SPORTS MONITORING
 
-| Component | Status |
-|-----------|--------|
-| Oracle SSH | ✅ Fixed (key permissions) |
-| Oracle sync | ✅ sede-pull confirmed clean before dinner |
-| sede_portfolio.json | ✅ BUILT -- $1,000 bankroll, 0 trades |
-| portfolio_manager_sede.py | ✅ Built and wired into daily_runner |
-| FedWatch data | ✅ Post-FOMC, cuts_0=60.7% |
-| Fed cuts 0x NO | ✅ Suppressed in hike-bias environment |
-| GDPNow | ✅ 3.04%, next update Jun 25 |
-| GDP trades | ✅ Both healthy |
-| Trade #8 Fed | ⚠️ Documented loss, HOLD |
-| MLB_GAME | ✅ 65.4% WR all-time, 100% post-fix (n=7) |
-| WC_GAME | ⚠️ 44% WR (18 signals) -- MODEL FLAG |
-| WC Elo | ✅ Updated post Round 1 |
-| signal_scorer.py | ✅ Unicode crash fixed, runs clean |
-| JOBS | ✅ Go-live eligible |
-| Claims | SUSPENDED -- holiday test passed |
-| sede-pull alias | ✅ Live on Oracle |
+No live in-progress games at session end. EPL's first tracked fixture (Leeds vs Newcastle, KXEPLGAME-26SEP14LEENEW) kicks off 19:00 UTC today — first real test of the SharpAPI-only schedule-blackout check (no ESPN live-state fallback for EPL, see Section 1). Nothing else currently open in-game per the portfolio snapshot above (all 8 open positions are GDP/BTC, not live-game markets).
 
 ---
 
-## J@rv1s MORNING ACTIONS (ordered)
+## ORACLE CLOUD STATUS
 
-1. **Oracle sede-pull** -- sync tonight's commits (c01c465 through 762744d)
-
-2. **WC_GAME model flag** -- 44% WR on 18 signals. Pattern is systematic:
-   model underestimates strong favorites, generates losing NO signals.
-   Flag for dedicated investigation before June 26 checkpoint.
-   Do NOT allow portfolio_manager_sede.py to trade WC_GAME signals.
-
-3. **Portfolio manager first run** -- check daily_report for "SEDE PORTFOLIO
-   MANAGER" section. Were any signals passed with valid tickers? If zero
-   entries, the ticker lookup is the gap -- flag for Archie.
-
-4. **sede_portfolio.json** -- now public on dashboard. Confirm file is
-   visible at github.com/logain1964/KalshiBot-Dashboard
-
-5. **WC results backfill** -- Several Round 1 results not yet in
-   RESOLVED_MARKETS (NED 2-2 JPN, GER 7-1 CUW, IVC 1-0 ECU, USA 4-1 PAR,
-   BEL vs IRN, AUS 2-0 TUR). Verify Kalshi market name strings in
-   signals_log.csv before adding -- wrong name = wrong score.
-
-6. **Today's June 18 results** -- Switzerland vs Bosnia, Canada vs Qatar,
-   Mexico vs South Korea, Czechia vs South Africa all played today.
-   Add to RESOLVED_MARKETS once Kalshi market strings confirmed.
+Not directly checked tonight (Archie doesn't run commands on Oracle). Indirect signal is positive: `sede_portfolio.json`, `brier_dashboard.json`, `signals_log.csv`, and `signal_genealogy.json` all show fresh commits pulled from origin tonight (most recent `sede_portfolio.json` update: 2026-09-14 11:20 CT) — the daily pipeline is actively running and pushing data. No confirmed issue.
 
 ---
 
-## VALIDATION TRACKER
-
-| Model | Status | Gate 1 Progress |
-|-------|--------|-----------------|
-| JOBS | ✅ GO-LIVE ELIGIBLE | n=73, 58.9%, Brier 0.134 |
-| GDP | Active | 3 open positions, Jul 30 |
-| CPI | Active | Accumulating monthly |
-| Claims | SUSPENDED | Holiday test passed |
-| MLB_GAME YES | Active | 65.4% WR, 7/7 post-fix |
-| WC_GAME | ⚠️ CALIBRATION -- MODEL FLAG | 44% WR (18), below random |
-| Fed | Active | Trade #8 = documented loss |
-| SEDE Portfolio | ✅ BUILT | $1,000 starting bankroll |
-
----
-
-## KEY DATES
-
-| Date | Event |
-|------|-------|
-| Jun 19 | Juneteenth -- federal holiday |
-| Jun 25 | GDPNow next update |
-| Jun 25-27 | Kalshi opens June unemployment markets |
-| Jun 26 | WC group stage ends -- WC_GAME model review |
-| Jul 1 | NFL build window opens |
-| Jul 2 | Jobs report 8:30 AM CT |
-| Jul 30 | Q2 2026 GDP advance estimate |
-| Aug 2 | Vegas -- 8rain demo (Anthony) |
-| Sep 3 | NFL season opens |
-
----
-
-*Session | Model: Sonnet 4.6 | Identity: Archie*
-*sede_portfolio.json exists. Anthony has something to see in 45 days.*
-*WC_GAME at 44% WR is a real flag -- don't paper over it.*
-*sede-pull alias live on Oracle. No more manual conflict resolution.*
-*Papa Ralph standard. If it's worth doing it's worth doing right.*
+Archie | Papa Ralph standard — full session record in `claude/epl_build_20260914.md`, `claude/epl_open_items_referral_20260914.md`, `claude/epl_open_items_resolution_20260914.md`, `claude/epl_taper_derivation_20260914.md`.
