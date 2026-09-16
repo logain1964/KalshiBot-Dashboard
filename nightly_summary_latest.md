@@ -1,108 +1,150 @@
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Last updated:** 2026-09-14 | **Session end:** ~10:45 PM CT
+**Last updated:** 2026-09-15 | **Session end:** ~11:04 PM CT
 **Prepared by:** Archie (Claude Desktop)
 
 ---
 
 ## TONIGHT IN ONE SENTENCE
 
-EPL_GAME model built end-to-end (Poisson + carryover blend, football-data.co.uk, since ESPN's eng.1 is confirmed dead too) and shipped track-only; both open design questions sent to J@rv1s, answered, and closed out for real tonight — the taper formula independently re-derived and confirmed, and the Gate 1 "beats_random" question resolved with a correction to J@rv1s's own cited base rate along the way. One real housekeeping gap found and flagged below: this exact file has been serving J@rv1s stale June content for months, now fixed.
+Found and fixed a real bug silently skipping DEN/KC/DAL/NYG from every
+NFL_GAME/NFL_SPREAD market since the Sept 14 Elo rebuild, deployed the
+fix to Oracle and confirmed it live; verified all four of this
+morning's briefing findings against the actual reports (three held up
+with corrections, one -- EPL_GAME missing -- did not); and picked up a
+full FORGE handoff on a sede_portfolio.json concentration cap, queued
+as tomorrow's first priority.
 
 ---
 
-## 1. EPL_GAME MODEL — BUILT, TESTED, SHIPPED (commit 88f377c)
+## 1. NFL_GAME/NFL_SPREAD -- REAL BUG, ROOT-CAUSED, FIXED, LIVE ON ORACLE
 
-Rus explicitly authorized building EPL now rather than waiting on the stalled Sept 8 Gate 1 checkpoint, and explicitly chose football-data.co.uk over football-data.org as the data source.
+Every NFL market involving Denver, Kansas City, Dallas, or the Giants
+was silently SKIPped in both of today's reports. Root cause: the Elo
+cache rebuilt 2026-09-14 filtered "which teams are in the league this
+season" using only *resolved* games -- and Week 1's Monday-night games
+(Broncos@Chiefs, Cowboys@Giants) hadn't posted final scores in
+nflverse's feed yet at that exact build moment, so all four teams got
+silently dropped despite already having valid Elo ratings computed.
 
-**Before writing any code**, re-verified live (not assumed from the Aug 22/23 design docs) whether ESPN's `eng.1/standings` and `eng.1/scoreboard` still worked. They don't — 403, same Akamai block that's hit every other sport since Aug 9. So unlike MLS, EPL has **zero ESPN fallback at all**, live or standings.
-
-**What got built:**
-- `game_status.py`: SharpAPI league code `"EPL"` confirmed live (108 real rows). Added `epl` to `SHARPAPI_LEAGUE`/`BLACKOUT_BUFFER_HOURS` (2.5h, same as MLS).
-- `models/soccer_game_model.py`: `FD_TO_KALSHI_EPL` alias table, verified against real live `KXEPLGAME` tickers (all 20 current clubs) — caught two real mismatches: Chelsea is `CFC` not `CHE`, Liverpool is `LFC` not `LIV`. Carryover-blend taper implemented per the locked Aug 23 FORGE spec. Promoted-club floor applied (loudly logged, not silent) for Coventry/Hull/Ipswich — all three genuinely newly promoted for 2026-27, confirmed against real data, not an error. `run_epl_game_model()` mirrors `run_mls_game_model()`'s structure.
-- **Deliberately did NOT port** MLS's `MLS_DISAGREEMENT_PRICE_FLOOR`/`MLS_EXTREME_CONFIDENCE_GATE` hard-exclusion filter — that was earned from a real n=49 MLS backtest; EPL has zero signal history to justify an equivalent yet.
-- `market_scanner.py`: `KXEPLGAME` wired into `TRACKED_SERIES`.
-- `daily_runner.py`: full pipeline wiring, `SEDE_RELIABILITY["EPL_GAME"]=0.55`, added to `MODELS_SUSPENDED_FROM_TRADING` (track-only). **Found and fixed a real bug along the way**: EPL signal labels are textually identical to MLS_GAME's (`"X vs Y -- Z wins"`) — `detect_signal_model()` would have silently misattributed every EPL signal to MLS_GAME. Fixed by disambiguating on the real Kalshi team-abbreviation set (verified zero overlap with MLS's live codes).
-
-**Verified live**, not synthetic: full run against real `KXEPLGAME` markets — 10 games, 7 signals flagged. Full writeup: `claude/epl_build_20260914.md`.
-
-**Real caution, not a green light**: several flagged edges were 15-22c on a model with zero backtesting history (e.g. Brentford over Chelsea at 54.2% model vs 32c market). That's more likely a sign of model error than confirmed market inefficiency at this stage. Logged directly in the `MODELS_SUSPENDED_FROM_TRADING["EPL_GAME"]` entry so it can't get quietly forgotten before real Gate 1 data exists. **Suspended from trading. Track-only.**
-
----
-
-## 2. EPL TWO OPEN ITEMS — SENT TO J@RV1S, ANSWERED, CLOSED
-
-Full referral: `claude/epl_open_items_referral_20260914.md`. J@rv1s's full FORGE response is in the conversation record; both items now have real, grounded resolutions (`claude/epl_open_items_resolution_20260914.md`, `claude/epl_taper_derivation_20260914.md`).
-
-**Item 1 — the missing taper-derivation doc.** `claude/epl_taper_derivation_20260823.md` (meant to hold the taper formula's full derivation) doesn't exist — confirmed missing. Per J@rv1s's recommendation, re-derived it for real tonight: pulled 7 real football-data.co.uk seasons (2019-20 through 2025-26), walked matches chronologically with no lookahead, grid-searched against real outcomes. **The locked asymptote (0.70) came back exact in every configuration**, with or without the 2020-21 no-fans season. Slope/crossing differ slightly from locked but the real performance difference is 0.2% — noise for the size of grid searched. **No code change made.** The formula is now independently verified, not just trusted.
-
-**Item 2 — the Gate 1 "beats_random" bar.** Turned out simpler than either of us first thought. Read the actual scoring code (not just the one verdict doc): `beats_random` is a fixed, uniform `Brier < 0.25` check (coin-flip baseline) applied identically to every model — and since 0.25 > 0.20, **it's mathematically implied by passing Gate 1's own Brier<=0.20 criterion**. There's no 3-way-vs-binary adjustment to make because it was never a 3-way check at all. The real place a base-rate question lives is the 55% win-rate threshold — same mechanism as every other binary-leg model in this project, and the same class of risk `MLS_DISAGREEMENT_PRICE_FLOOR` already guards against for MLS_GAME. **No EPL-specific bar adjustment recommended.**
-
-**One correction on the way through, flagged plainly rather than let stand**: J@rv1s cited a "real current" home/draw/away rate of 42/27/31. Pulled it directly from the same football-data.co.uk seasons everyone's using (last 4 complete seasons, n=1520 real matches): **44.5% home / 24.1% draw / 31.4% away** — closer to my original estimate than to J@rv1s's correction. Noted in the resolution doc so it doesn't quietly stand uncontested.
+Fixed `build_elo_ratings()` (`models/nfl_model.py`) to snapshot the
+season's real team roster from the full schedule before dropping
+unresolved rows -- team existence can no longer depend on how many of
+that team's games happen to have resolved yet. Rebuilt the cache
+(confirmed 32/32 teams), committed, pushed, and Rus pulled it directly
+on Oracle tonight -- fast-forward, clean, confirmed live.
 
 ---
 
-## 3. ONE REAL HOUSEKEEPING GAP FOUND — FLAGGED AND FIXED
+## 2. THIS MORNING'S FOUR FINDINGS -- CHECKED AGAINST THE REAL REPORTS
 
-**This exact file has been serving J@rv1s stale content.** `nightly_summary.md` (the literal filename J@rv1s's morning routine fetches from `raw.githubusercontent.com/.../main/nightly_summary.md`) was last meaningfully updated June 18 — every real nightly summary since (Sept 2 through tonight) has actually been going into `nightly_summary_latest.md` instead, committed by Rus by hand. Tonight's push updates **both** files with identical current content so J@rv1s's actual automated fetch target stops serving June data. Worth deciding going forward whether `nightly_summary.md` or `nightly_summary_latest.md` is the one true target — right now there are two files and only one was being kept current by habit.
-
-(A second suspected gap — `sede_portfolio.json` looking 5 days stale — turned out to be my own mistake: I'd read it before pulling latest from origin. After `git pull`, `last_updated` is `2026-09-14T11:20:04` — today, confirmed. The daily pipeline is actively running; no real gap there. Correcting this here rather than letting a false alarm stand, since the whole point of flagging things is that the flags be real.)
-
----
-
-## OPEN POSITIONS (per `sede_portfolio.json`, confirmed current as of today's 11:20 CT pipeline run)
-
-| # | Description | Entry | Current (Sept 14) |
-|---|---|---|---|
-| 1 | BTC<$50k Dec31, NO | 43.5c | 83.5c |
-| 3 | GDP>1.5% (Oct30), YES | 70.5c | 77.5c |
-| 4 | GDP>1.5% (Jan28), YES | 74.5c | 66.0c |
-| 5 | GDP>2.5% (Oct30), YES | 58.0c | 50.5c |
-| 6 | GDP>1.0% (Jan28), YES | 78.0c | 77.5c |
-| 7 | GDP>2.0% (Apr29), YES | 50.5c | 52.5c |
-| 8 | GDP>4.0% (Oct30), YES | 18.5c | 17.0c |
-| 9 | GDP>1.5% (Jul29), YES | 59.5c | 62.5c |
-
-Bankroll: $994.17 (started $1,000, one early-exit close at -$5.83). No wins/losses recorded yet — all 8 still open, no new entries since early Aug (nothing new has cleared the 6-gate entry criteria since).
+1. **CLAIMS "named outcome" placeholder** -- real, but broader than it
+   looked. Every model except GDP shows this generic text (NFP,
+   Unemployment, CLAIMS, NFL_GAME, MLS_GAME, EPL_GAME all do). Not a
+   CLAIMS-specific regression from the Sept 1 GDP fix -- GDP looks
+   like the only model that ever got real-label treatment. Real gap,
+   just a general one, not a CLAIMS-only one.
+2. **MLS_GAME still signaling** -- confirmed working as designed.
+   Commit `14bbff5` (2026-09-14) is the real retirement decision; every
+   MLS_GAME row in both reports is correctly tagged
+   [TRACK ONLY -- SUSPENDED].
+3. **EPL_GAME "missing from report"** -- not true. Both today's reports
+   show EPL_GAME running cleanly, 7 signals each run, real flagged
+   edges (BRE vs CFC, NFO vs COV, POR vs ATL, etc.), all correctly
+   suspended. The stale-MODELS-EVALUATED-list lean was the right one.
+4. **+58c CLAIMS edge** -- real and persistent all day (57.5c -> ~58c
+   -> 57.0c, model steady at 66.0% vs Kalshi 8-9c). No live exposure
+   either way -- track-only/suspended.
 
 ---
 
-## GATE 1 / VALIDATION STATUS (unchanged since Sept 8 checkpoint — no new resolution tonight)
+## 3. HOUSEKEEPING: nightly_summary_latest.md IS NOW THE PERMANENT TARGET
 
-Project-wide Gate 1 remains **provisionally suspended** (since Aug 11, pending the bid/ask-spread stress test). The Sept 8 checkpoint's own real recommendation was to **extend** the suspension, not resolve it — no model had both a real deduplicated sample near the n>=30 floor and enough spread data to stress-test it. Real trigger set for the next checkpoint: GDP's Q3 2026 markets resolving Oct 30, or MLB_GAME accumulating n>=15-20 spread-tagged signals — whichever comes first. Nothing in tonight's session changes this; flagging that the project instructions' "Checkpoint: September 8, 2026" line is now stale by a week and should probably be updated to reflect "extended, next real trigger Oct 30 or MLB_GAME spread accumulation" rather than a passed date.
+Rus's explicit decision tonight, closing the open item from two nights
+ago. `nightly_summary.md` is retired by design starting now -- only
+this file gets written and pushed going forward.
 
-| Model | Status |
-|---|---|
-| JOBS | NOT validated (real n=6, ~2 independent events — reverses the earlier "corroborated" call) |
-| GDP | Has real spread data, no real resolved sample yet before Oct 30 |
-| MLB_GAME | n=109 resolved, 62.4% WR, Brier 0.2305 (fails 0.20 bar narrowly); only 4 real spread-tagged signals |
-| MLS_GAME | RETIRED from further live development (Sept 3 verdict, confirmed fail) |
-| CLAIMS | Suspended, gate bug fixed Sept 3 |
-| NFL_GAME / NFL_SPREAD | Suspended pending real 2026 signal accumulation |
-| **EPL_GAME** | **NEW tonight — suspended pending validation, zero signal history** |
+Separately, flagging honestly rather than burying it: this is the
+second time in a row real session work (Sept 13-15) happened without a
+same-night archive file in `C:\Claude AI\session archive\`, after the
+exact same gap was flagged "fixed" two nights ago. Nothing was
+actually lost -- it's all in git and in this file -- but the local
+handoff record has slipped twice now. Worth a real structural fix if
+it happens a third time.
+
+---
+
+## 4. J@RV1S FORGE -- sede_portfolio.json CONCENTRATION CAP -- QUEUED FOR TOMORROW
+
+Full FORGE received tonight on capping open positions by resolution-
+date cluster rather than model identity, and diagnosing why the
+original Gate 4c cap (built Aug 30-31) didn't survive two sessions
+before rebuilding anything. Rus's explicit direction: this is
+**tomorrow's first priority**, starting with work-order item 1 (real
+git archaeology on why Gate 4c disappeared).
+
+Real lead, not yet verified: this project's own `safe_stash.ps1`
+history documents a genuine 2026-08-31 stash incident that silently
+swept `paper_trades.json` and a shadow-log file into an unrelated
+stash -- the exact same window Gate 4c was built, and exactly the
+class of failure (a file quietly reverted, nobody watching) that would
+explain a cap vanishing without anyone deciding to remove it.
+
+Ownership split agreed with Rus: real git/reflog archaeology needs
+Desktop Commander + Oracle git access, which is Archie's toolset, not
+something runnable from J@rv1s's side directly. J@rv1s should
+prioritize and frame this in tomorrow's briefing; the next Archie
+session runs the actual diagnostic, starting from the stash-incident
+lead above -- not a fresh rebuild until that's answered.
+
+---
+
+## GATE 1 / VALIDATION STATUS (unchanged -- no new resolution tonight)
+
+Still provisionally suspended since Aug 11, pending the bid/ask-spread
+stress test. Next real trigger: GDP's Q3 2026 markets resolving Oct 30,
+or MLB_GAME reaching n>=15-20 spread-tagged signals, whichever comes
+first. Nothing tonight changes this.
+
+---
+
+## OPEN POSITIONS (per sede_portfolio.json, verified intact after
+## tonight's git operations)
+
+8 open positions (7 GDP thresholds + BTC<$50k), bankroll $994.17.
+No new entries -- nothing has cleared the 6-gate entry criteria since
+early August.
 
 ---
 
 ## TONIGHT'S WORK ORDER FOR J@RV1S / NEXT SESSION
 
-1. Decide `nightly_summary.md` vs `nightly_summary_latest.md` as the one real target going forward (gap above) — cheap fix, just needs a decision.
-2. EPL_GAME's first real signals will start accumulating now that it's wired into the daily pipeline — worth a look at whether `KXEPLGAME` markets are actually showing up in tomorrow's run.
-3. The Sept 8 Gate 1 checkpoint text in the project's own standing instructions is stale (says "Checkpoint: September 8, 2026" with no note that it was extended) — worth a cleanup pass whenever convenient, not urgent.
-4. No open action from tonight's EPL FORGE exchange — both items are genuinely closed, not deferred.
+1. **FORGE item 1 (Rus's top priority for tomorrow):** diagnose why
+   Gate 4c didn't persist. Start from the 2026-08-31 stash-incident
+   lead above. Needs an Archie session (Desktop Commander + Oracle git
+   access) to actually execute.
+2. Fix the general "named outcome" label gap across NFP/Unemployment/
+   CLAIMS/NFL_GAME/MLS_GAME/EPL_GAME (item 1 above) -- not started,
+   no urgency assigned yet.
+3. Decide whether the NFL Elo fix tonight warrants its own `claude/`
+   doc for consistency with this project's usual finding-writeup
+   pattern -- not done tonight, fix is fully described here instead.
 
 ---
 
 ## SPORTS MONITORING
 
-No live in-progress games at session end. EPL's first tracked fixture (Leeds vs Newcastle, KXEPLGAME-26SEP14LEENEW) kicks off 19:00 UTC today — first real test of the SharpAPI-only schedule-blackout check (no ESPN live-state fallback for EPL, see Section 1). Nothing else currently open in-game per the portfolio snapshot above (all 8 open positions are GDP/BTC, not live-game markets).
+No live in-progress games at session end.
 
 ---
 
 ## ORACLE CLOUD STATUS
 
-Not directly checked tonight (Archie doesn't run commands on Oracle). Indirect signal is positive: `sede_portfolio.json`, `brier_dashboard.json`, `signals_log.csv`, and `signal_genealogy.json` all show fresh commits pulled from origin tonight (most recent `sede_portfolio.json` update: 2026-09-14 11:20 CT) — the daily pipeline is actively running and pushing data. No confirmed issue.
+Confirmed directly tonight (not just indirect signal): Rus pulled the
+NFL fix on Oracle himself, fast-forward, exactly the 2 expected files
+changed, no conflicts. Pipeline healthy.
 
 ---
 
-Archie | Papa Ralph standard — full session record in `claude/epl_build_20260914.md`, `claude/epl_open_items_referral_20260914.md`, `claude/epl_open_items_resolution_20260914.md`, `claude/epl_taper_derivation_20260914.md`.
+Archie | Papa Ralph standard.
