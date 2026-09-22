@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-20T16:20:51.361047",
-  "total_resolved": 540,
+  "generated_at": "2026-09-22T02:05:32.540680",
+  "total_resolved": 754,
   "by_model": {
     "MLS_GAME": {
       "n": 49,
@@ -9,16 +9,22 @@
       "avg_brier": 0.2586,
       "avg_logloss": 0.7248,
       "avg_edge": 15.1,
-      "beats_random": false
+      "beats_random": false,
+      "n_events": 29,
+      "correlated_events": 18,
+      "gate1_n_ok": false
     },
     "MLB_GAME": {
-      "n": 134,
+      "n": 135,
       "correct": 84,
-      "acc_pct": 62.7,
-      "avg_brier": 0.229,
-      "avg_logloss": 0.6476,
+      "acc_pct": 62.2,
+      "avg_brier": 0.2299,
+      "avg_logloss": 0.6495,
       "avg_edge": 13.3,
-      "beats_random": true
+      "beats_random": true,
+      "n_events": 134,
+      "correlated_events": 1,
+      "gate1_n_ok": true
     },
     "WC_GAME": {
       "n": 70,
@@ -27,7 +33,10 @@
       "avg_brier": 0.1698,
       "avg_logloss": 0.5131,
       "avg_edge": 11.7,
-      "beats_random": true
+      "beats_random": true,
+      "n_events": 70,
+      "correlated_events": 0,
+      "gate1_n_ok": true
     },
     "GDP": {
       "n": 6,
@@ -36,7 +45,10 @@
       "avg_brier": 0.1698,
       "avg_logloss": 0.523,
       "avg_edge": -14.1,
-      "beats_random": true
+      "beats_random": true,
+      "n_events": 6,
+      "correlated_events": 0,
+      "gate1_n_ok": false
     },
     "JOBS": {
       "n": 6,
@@ -45,7 +57,10 @@
       "avg_brier": 0.121,
       "avg_logloss": 0.4125,
       "avg_edge": 15.7,
-      "beats_random": true
+      "beats_random": true,
+      "n_events": 6,
+      "correlated_events": 0,
+      "gate1_n_ok": false
     },
     "SOCCER_GAME": {
       "n": 49,
@@ -54,25 +69,34 @@
       "avg_brier": 0.1626,
       "avg_logloss": 0.4975,
       "avg_edge": 12.4,
-      "beats_random": true
+      "beats_random": true,
+      "n_events": 49,
+      "correlated_events": 0,
+      "gate1_n_ok": true
     },
     "NFL_GAME": {
-      "n": 11,
-      "correct": 3,
-      "acc_pct": 27.3,
-      "avg_brier": 0.2509,
-      "avg_logloss": 0.6974,
-      "avg_edge": 13.3,
-      "beats_random": false
+      "n": 31,
+      "correct": 11,
+      "acc_pct": 35.5,
+      "avg_brier": 0.2393,
+      "avg_logloss": 0.6703,
+      "avg_edge": 12.3,
+      "beats_random": true,
+      "n_events": 25,
+      "correlated_events": 6,
+      "gate1_n_ok": false
     },
     "NFL_SPREAD": {
-      "n": 210,
-      "correct": 64,
-      "acc_pct": 30.5,
-      "avg_brier": 0.2345,
-      "avg_logloss": 0.6684,
-      "avg_edge": 11.7,
-      "beats_random": true
+      "n": 403,
+      "correct": 143,
+      "acc_pct": 35.5,
+      "avg_brier": 0.2235,
+      "avg_logloss": 0.6388,
+      "avg_edge": 11.9,
+      "beats_random": true,
+      "n_events": 30,
+      "correlated_events": 29,
+      "gate1_n_ok": true
     },
     "CLAIMS": {
       "n": 5,
@@ -81,7 +105,10 @@
       "avg_brier": 0.1898,
       "avg_logloss": 0.5166,
       "avg_edge": 39.5,
-      "beats_random": true
+      "beats_random": true,
+      "n_events": 1,
+      "correlated_events": 1,
+      "gate1_n_ok": false
     }
   },
   "edge_buckets": {},
