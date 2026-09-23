@@ -1,248 +1,177 @@
-# SEDE Nightly Session Summary
-## For J@rv1s Morning Intelligence Pull
+# Nightly Summary — 2026-09-22 (Archie)
 
-**Last updated:** 2026-09-21 | **Covers:** tonight's session only (~9:00 PM - 10:14 PM CT)
-**Prepared by:** Archie (Claude Desktop)
+Rus opened with "start work orders 1 -> 7" plus your full Sept 22 briefing,
+with explicit instructions to work the 7 numbered items first and only
+engage the rest of the briefing afterward. All 7 closed tonight, plus a
+review of the briefing's remaining content. Commits: 56dfd2a/79da7dc (WO3),
+bf05dbb (WO7).
 
----
+## WO1 — Oracle pull confirmation
+Already closed by your own briefing's independent confirmation. No work
+needed.
 
-## TONIGHT IN ONE PARAGRAPH
+## WO2 — Gate 1 bid/ask-spread stress test
+Built and ran the first real bid/ask-spread stress test against 349 real
+resolved, spread-tagged contracts — the exact test the Aug 11 project-wide
+Gate 1 suspension has been waiting on. Real finding: roughly a third of
+paper-reported P&L evaporates once priced at the real ask instead of mid,
+and only 22% of apparent 15c-edge signals survive real execution.
+Recommendation: **keep the suspension in place.** Not yet done: building
+this into the permanent pipeline (currently a one-off script) and applying
+it to GDP once its Q3 2026 markets resolve Oct 30.
 
-Rus opened by asking us to check in on the NFL now that Week 2 is
-done, then set the order: CPI first (season-critical urgency low,
-but a live model silently producing nothing needed answering), then
-straight into the NFL issue. Confirmed real current NFL_GAME (n=31)
-and NFL_SPREAD (n=403) numbers and traced the Week 2 "confidence
-bucket collapse" scare to just 2-3 real bad game-reads, not broad
-model degradation -- but that dig surfaced something bigger: raw n
-massively overstates real independent sample size for several
-models, because one real game often produces many correlated Kalshi
-contracts (spread thresholds, per-side tickers). Diagnosed and fixed
-CPI's zero-signal-since-June-10 bug (a backwards month-mapping,
-confirmed against live Kalshi ticker data). Cut CPI's MoM feed as a
-dormant landmine rather than either building it properly or leaving
-it as a silent risk. Then built and verified the fix for the
-correlated-sample-size problem: `brier_dashboard.py` now reports a
-second, honest `n_events` number next to raw `n`, and Gate 1's n>=30
-floor is now checked against it. **Nothing committed tonight has been
-pulled to Oracle yet -- three commits pending your pull.**
+## WO3 — single-source-of-truth (n_events counting)
+Your pushback was correct and acted on — signal_scorer.py now imports and
+reuses brier_dashboard.py's real_event_id(), verified against a live run
+(801 real events from 1795 rows, cross-checked against
+brier_dashboard.model_breakdown() at the same moment — matched exactly
+across all 9 models). daily_runner.py's MLB-specific function was left
+alone deliberately (it already imports brier_dashboard's numbers directly,
+low practical risk today — 134 vs 135). **Real remaining gap, your point 2
+stands only partially resolved:** the full architectural unification (one
+shared function instead of two independently-verified-to-agree ones) is
+still not built. Confirmed live on Oracle via `git log --oneline -5`.
 
----
+**Your point 1 pushback ("n_events=30 sits exactly on the floor")** —
+tonight's live re-verification run showed NFL_SPREAD at n=424/events=31,
+one clear of the 30 floor, not the knife-edge number from last night.
 
-## 1. NFL WEEK 2 CHECK-IN -- REAL NUMBERS, NOT A BROAD PROBLEM
+## WO4 — MLB_GAME/WC_GAME ticket-gap investigation
+MLB_GAME's ticket gap is resolved/legacy. WC_GAME's is real, and bigger than
+originally asked: daily_runner.py logs WC_GAME's signal stream under the
+model name "SOCCER_GAME" (line ~2714). Rus didn't remember why, so did the
+git archaeology directly: commit ad9dac9, June 16 2026, "SOCCER_GAME rename
+-- WC_GAME -> SOCCER_GAME in daily_runner" — a fully deliberate, documented
+rename of every user-facing label, internal variable names left alone on
+purpose. **Confirmed intentional, not drift.** Live risk that remains:
+signal_scorer.py and brier_dashboard.py still track "WC_GAME" and
+"SOCCER_GAME" as two separate models today (49 vs 70 real events per
+tonight's run) even though they're the same continuous model before/after
+the rename. Real, well-scoped follow-up, not done tonight: merge the two
+labels for Gate 1 counting.
 
-Confirmed via real production data: NFL_GAME n=31 resolved signals,
-NFL_SPREAD n=403. Investigated the Week 2 confidence-bucket pattern
-your briefing flagged. Traced it to 2-3 real bad game-reads
-(MINCHI, CLETB) rather than a systemic model issue -- the scare was
-real data, but narrow, not broad degradation.
+## WO5 — CPI MoM
+No new work — confirmed last night's cut-from-feed decision still stands.
 
-That investigation is what surfaced the bigger correlated-sample-size
-issue below: NFL_SPREAD's raw n=403 collapses to just 30 real
-distinct games once you account for the many strike-threshold
-tickers Kalshi lists per game; NFL_GAME's raw n=31 collapses to 25
-distinct games (two tickers per game, one per side).
+## WO6 — MIA@SF anomaly
+**Not a bug.** Pulled the real 26 matching rows. The 24 NFL_GAME rows
+matching your cited 37.0%/21.0c figures are NOT simultaneous — YES/-MIA
+rows run Aug 29-31 only, NO/-SF rows run Sept 1-6 only, zero timestamp
+overlap. They're also mathematically identical regardless: both directions
+independently work out to the model believing P(MIA wins) ≈ 37% the whole
+time, just expressed through the ticker's mirror side. Kalshi's own
+mid-price stayed continuous through the switch too — no real market
+discontinuity. Already correctly collapsed to one event by the WO3 fix.
+One open, non-urgent curiosity: why the tracked ticker switched from -MIA
+to -SF on Sept 1 with a ~23-hour gap. Not chased further.
 
----
+## WO7 — Stage 1 monitoring, phase 1 (external heartbeat)
+Honest caveat up front: there's no standalone FORGE spec doc anywhere in the
+project for "Stage 1 monitoring" — built from breadcrumbs scattered across
+your briefings (external heartbeat, whole-pipeline state alerting, short
+daily digest; Healthchecks.io "already chosen"). Confirmed via code read
+that the pipeline body under `if __name__ == "__main__":` had NO outer
+try/except and run_kalshibot_full.bat never checked its own exit code — a
+crash was previously invisible to anything outside the process. Confirmed
+via grep that no heartbeat mechanism existed anywhere before tonight.
 
-## 2. CPI FIX -- ZERO SIGNALS SINCE JUNE 10, ROOT-CAUSED AND FIXED
+**Built and fully tested live, both machines:** tools/heartbeat_ping.py
+pings Healthchecks.io on success/fail (no-ops safely if unconfigured, never
+raises); wired into run_kalshibot_full.bat (laptop) and a new
+tools/run_daily_with_heartbeat.sh (Oracle, matching Oracle's real crontab
+exactly). Walked Rus through live setup end to end tonight — Healthchecks.io
+account created, both checks configured (12h Period / 2h Grace, matching),
+both `.env`s updated, Oracle's crontab repointed, both machines manually
+test-run and confirmed green with real successful pings on record (not just
+clean exit codes — verified Oracle's actual daily_runner.log tail showed a
+genuine complete run, GitHub push OK, dashboard push OK). This is now real,
+live, and doing its job — not just declared done.
 
-`models/cpi_model.py` had a `RELEASE_TO_DATA_MONTH` dict that shifted
-a ticker's month code back one month before looking up consensus --
-on the assumption that a ticker's month code was the release month,
-not the data month. That assumption was backwards. Confirmed live
-against the real Kalshi API: `KXECONSTATCPIYOY-26SEP-T3.5` is titled
-"CPI year-over-year in Sep 2026?" with `close_time: 2026-10-14` -- a
-"26SEP" ticker IS September data, releasing ~mid-October (BLS's
-normal ~1-month lag). The old code silently evaluated every live CPI
-YoY market against the wrong month's consensus and release date, and
-outright skipped it whenever the shift landed on an already-passed
-release date -- which is why nothing had logged since June 10.
+**On your `sentry`-vs-Healthchecks.io question:** resolved by building —
+Healthchecks.io is what's live now. Not treating them as true substitutes
+either way (cron liveness check vs. app error tracking are different jobs).
 
-**Fix:** removed the translation entirely; the ticker's own month
-code is looked up directly. Verified end-to-end through the real
-`run_cpi_model()` call against live Kalshi data -- recovered 2 real
-flagged September signals (`-T3.5`, `-T3.7`, both FLAG NO), and
-confirmed October/November buckets now show correct release dates
-(Nov 12, Dec 10) matching the real BLS calendar. Committed `eac66e4`.
+## Briefing pushback — the 4 points
+Points 1 and 2 covered above under WO3. Points 3 and 4:
 
----
+**Point 3 (97% NFL_SPREAD correlation as a live risk-concentration finding,
+not just accounting) — you're right, and it's a real, confirmed, unfixed
+gap.** Checked paper_trade_gates.py's actual `qualifies()` function directly:
+it takes only model_type/direction/edge_cents/model_pct — zero ticker or
+game-identity awareness. There is currently no same-game/same-event dedup
+anywhere in the entry criteria. Same disease as Gate 4c/4d, different model.
+NOT fixed tonight — flagged as a real design decision deserving its own
+session, not a rushed end-of-night patch. Good news: we already have the
+tool to fix it (real_event_id(), built Sept 21) — applying it as a same-event
+cap in the entry gate is a well-scoped, probably small future build.
 
-## 3. CPI MoM CUT FROM THE FEED -- DORMANT LANDMINE, NOT A SAFE NO-OP
+**Point 4 (was CPI's June 10–Sept 21 dead window ever backfilled) — no,
+straight answer.** That ~3.5-month gap in CPI's Gate 1 sample is real and
+currently permanent. A retroactive backfill would need the same shape of
+work as the MLB/MLS outcome backfills (sourcing historical consensus +
+ticker data for those months specifically). Not built, not scoped tonight —
+flagged as an open decision (build it, or explicitly accept the gap) rather
+than left silently unaddressed.
 
-While fixing YoY, found `daily_runner.py` was also feeding
-`KXECONSTATCPI` (MoM) markets into the same CPI model. Real liquidity
-exists on these (confirmed ~$14K volume on some thresholds), so this
-wasn't dead code -- it just never produced a signal, because
-`cpi_model.py`'s "skip trivially-true thresholds" filter (`<1.0`) is
-tuned for YoY's 2-4% scale and happens to catch every real MoM
-threshold (-0.2% to 0.9%) too. That's a coincidence, not a safeguard:
-a high-inflation month with a MoM print over 1.0% could slip that
-filter and get scored against YoY-scale consensus numbers, producing
-a wildly wrong probability and a fake outsized "edge."
+## Tool/plugin referrals — reviewed with Rus, none adopted tonight
+Went through the ~10 referrals from today's briefing with Rus directly, with
+real pushback rather than rubber-stamping the rankings:
 
-Cut `KXECONSTATCPI` from the feed tonight rather than either quietly
-leaving that risk live or building real MoM support under time
-pressure. Real MoM support needs its own consensus table, its own
-trivial-threshold cutoff, and its own monthly upkeep -- flagged as a
-real backlog item, not a quick add-back. Committed `986ad15`. Project
-doc: `cpi_mom_backlog_20260922`.
+- `remember` — actually the one I'd have prioritized highest (targets this
+  project's own repeated real context-loss incidents), but checked it via
+  SearchPlugins and it does NOT exist in this account's installable
+  catalog — likely a Claude Code CLI-specific plugin, a different surface
+  than this Archie session runs on. Worth re-checking from Rus's actual
+  local Claude Code install if this comes up again.
+- `pmxt` — pushed back: no real need without Polymarket actually on the
+  roadmap, and real risk trading a battle-tested, incident-hardened Kalshi
+  integration for an unproven abstraction just for developer convenience.
+- quantitative-trading's risk-manager plugin — pushed back: the actual fix
+  (same-event dedup, see Point 3 above) is ~20-30 lines using
+  real_event_id(), which we already have. Didn't see the case for adopting
+  an external agent to do something we're already equipped to do directly.
+- `code-review` — questioned whether it adds anything beyond the
+  Archie/J@rv1s nightly review loop that's already demonstrably working
+  (tonight's own 4 pushback points are the proof it functions).
+- `repomix`, Perplexity, `superpowers`, `sentry` (moot, see WO7),
+  `frontend-design`/`eli5`, `awesome-quant`, `/doctor`, the CloddsBot
+  security flag, the TikTok workflow list — reviewed, no strong pushback
+  either way, but Rus's final call across the board: **none get adopted
+  right now.** Not revisiting unless something changes (e.g. Polymarket
+  actually enters the roadmap, reviving the pmxt question).
 
----
+## Gate 1 / validation status — unchanged
+Still project-wide provisionally suspended since Aug 11, pending the
+spread stress test (WO2 above reinforces: keep it suspended). Real triggers
+unchanged: GDP's Q3 2026 markets resolving Oct 30, or MLB_GAME reaching
+n≥15-20 spread-tagged signals.
 
-## 4. THE "RECURRING THEME" -- CORRELATED/DUPLICATE SIGNAL COUNTING
+## Carried forward — ranked, most urgent first
+1. Same-game/same-event dedup missing from paper_trade_gates.py's entry
+   criteria (Point 3, new tonight) — real concentration risk, tool to fix
+   it already exists.
+2. WC_GAME/SOCCER_GAME label merge for Gate 1 counting (WO4, new tonight).
+3. Gate 1 spread-check needs to move from one-off script to permanent
+   pipeline step (WO2 follow-up).
+4. Full signal_scorer.py/brier_dashboard.py architectural unification
+   (WO3 follow-up, your point 2 only partially resolved).
+5. Apply the spread check to GDP once Q3 2026 markets resolve Oct 30.
+6. CPI backfill decision (Point 4) — needs an explicit call, not silent
+   drift.
+7. mlb_model.py park-factor gap (carried) — natural pickup after MLB_GAME's
+   season ends Sept 27.
+8. WC_GAME's 16:1 raw-to-event dedup collapse ratio (WO4, carried) — still
+   unverified as legitimate vs. a dedup bug.
 
-Rus's instinct that this is a recurring theme across projects checked
-out, with real evidence, but it's actually two distinct bug classes,
-not one:
+## Oracle Cloud status
+Both WO3 (56dfd2a) and WO7 (bf05dbb) confirmed live on Oracle tonight —
+verified directly via `git log --oneline -5` on Oracle showing both commits
+in history, and via a real manual test run of the new heartbeat wrapper
+(tail of daily_runner.log showed a genuine complete pipeline run, GitHub
+push OK, dashboard push OK). Both Healthchecks.io checks (kalshibot-laptop,
+kalshibot-oracle) green with real recent pings, 12h Period / 2h Grace.
 
-- **Class A (duplicate logging):** the same real event gets counted
-  more than once due to a logging bug or a mistuned dedup heuristic.
-  This is the MLB_GAME bug fixed Sept 19.
-- **Class B (correlated-but-legitimate):** genuinely different,
-  legitimately separate Kalshi contracts (spread thresholds, or
-  per-side tickers) that all settle on one real-world outcome, but
-  get counted as independent trials for Gate 1 -- inflating apparent
-  sample size and making one bad model read look like many
-  independent failures.
+## Sports monitoring
+No open positions requiring in-session monitoring tonight.
 
-Verified real numbers per model (rows -> distinct real events):
-NFL_SPREAD 403->30 (97% of rows correlated), MLS_GAME 49->29 (59%),
-NFL_GAME 31->25 (24%), MLB_GAME 135->134 (barely any -- mostly a
-separate, unrelated problem: 90 of its rows have no `market_ticker`
-at all, so real-event verification isn't even possible for them --
-that's a coverage gap, not a correlation problem, and needs its own
-future investigation). SOCCER_GAME and WC_GAME show no correlation
-issue (WC_GAME's rows are 100% ticket-less, so trivially 1:1).
-
-Also found, while scoping this: THREE separate places in the
-codebase independently implement "count real events for Gate 1" --
-`signal_scorer.py`, `brier_dashboard.py`'s `model_breakdown()`, and
-`daily_runner.py`'s MLB-specific `get_mlb_game_direction_stats()`.
-That matches the single-source-of-truth refactor J@rv1s already
-flagged as backlog item 7. Deliberately scoped tonight's fix to
-`model_breakdown()` only -- the other two were NOT touched, to avoid
-turning one night's fix into an uncontrolled rewrite. Project doc:
-`correlated_signal_counting_theme_20260922`.
-
-**Fix shipped and verified against real data:** `model_breakdown()`
-now reports both the raw row count `n` and a new honest `n_events`
-(distinct real-event count) side by side. Gate 1's n>=30 floor is now
-measured against `n_events`. All existing per-row Brier/win-rate/
-beats_random metrics are completely unchanged -- this is additive,
-not a rewrite of what's already reported. Verified against real
-production `signals_log.csv` data (not just compiled): NFL_SPREAD and
-NFL_GAME's `n_events` matched tonight's investigation exactly (30 and
-25); two other models' quoted counts needed a self-correction during
-verification (see project doc for the honest accounting -- both
-turned out to be memory imprecision on my end, not a code bug).
-Committed `d1d46d1`.
-
----
-
-## UPDATED GATE 1 SAMPLE-SIZE READING (n_events, not raw n)
-
-This is the new honest number as of tonight -- use this over raw `n`
-going forward for anything Gate-1-related:
-
-| Model | n (rows) | n_events | Clears n>=30 floor? |
-|---|---|---|---|
-| NFL_SPREAD | 403 | 30 | Yes (barely) |
-| MLB_GAME | 135 | 134 | Yes |
-| SOCCER_GAME | 49 | 49 | Yes |
-| WC_GAME | 70 | 70 | Yes |
-| NFL_GAME | 31 | 25 | No |
-| MLS_GAME | 49 | 29 | No (barely) |
-| GDP | 6 | 6 | No |
-| JOBS | 6 | 6 | No |
-| CLAIMS | 5 | 1 | No (already suspended) |
-
-Note this is `n_events` clearing the *count* floor only -- it says
-nothing about win rate or Brier, and does NOT touch the still-open,
-still-overdue project-wide Gate 1 suspension pending the real
-bid/ask-spread stress test (Sept 8 checkpoint, now 13 days overdue).
-Don't read "clears n>=30" as "cleared for trading."
-
----
-
-## GATE 1 / VALIDATION STATUS
-
-Project-wide Gate 1 remains provisionally suspended (since Aug 11,
-pending the bid/ask-spread stress test -- Sept 8 checkpoint now 13
-days overdue, no new movement on this tonight).
-
-| Model | Status |
-|---|---|
-| JOBS | Caveated, not unconditionally validated |
-| GDP | Reduced weight (0.60); scoring stalled since July 30, root cause still open |
-| CPI | **Fixed tonight** -- YoY month-mapping bug resolved, MoM feed cut as dormant risk |
-| MLB_GAME | n_events=134; no-ticket coverage gap on 90 rows flagged as a separate open item |
-| MLS_GAME | n_events=29, just under the floor |
-| CLAIMS | Suspended |
-| NFL_GAME | n_events=25 -- Week 2 scare traced to 2-3 bad reads, not systemic |
-| NFL_SPREAD | n_events=30 -- clears the count floor for the first time using the honest metric |
-| SOCCER_GAME / WC_GAME | No correlation issue found; not otherwise investigated tonight |
-
----
-
-## CARRIED FORWARD, STILL OPEN
-
-- **Project-wide Gate 1 suspension** -- bid/ask-spread stress test
-  still not built, checkpoint 13 days overdue. This is the biggest
-  standing blocker in the whole project and got no new work tonight.
-- **Single-source-of-truth refactor** for "count real events for
-  Gate 1" logic -- now confirmed THREE independent implementations
-  (`signal_scorer.py`, `brier_dashboard.py`, `daily_runner.py`'s MLB
-  function). Tonight only fixed the dashboard's copy.
-- **MLB_GAME / WC_GAME no-`market_ticker` coverage gap** (90 and all-
-  of-70 rows respectively) -- a different, more basic problem than
-  the correlation issue, needs its own future investigation.
-- **CPI MoM real build** -- separate consensus table, own trivial-
-  threshold cutoff, own monthly upkeep. Not a quick add-back.
-- Monitoring/alerting Stage 1 build -- FORGE'd, scoped, not started.
-- Gate 4c/4d cross-model resolution-window cap -- design can proceed,
-  build waits for real entry activity.
-- An untracked `Claude outputs/` folder in the KalshiBot repo --
-  flagged repeatedly, still not investigated, doesn't affect commits.
-- MIA@SF anomaly from an earlier session (both YES and NO flagged
-  simultaneously at identical model_pct/edge) -- still needs
-  follow-up verification.
-
----
-
-## TOMORROW NIGHT'S WORK ORDER (ranked, most urgent first)
-
-1. **Pull tonight's 3 commits to Oracle** (`eac66e4`, `986ad15`,
-   `d1d46d1`) -- nothing tonight is live yet.
-2. **Project-wide Gate 1 spread stress test** -- the single biggest
-   overdue item in the project (13 days past checkpoint). Needs a
-   real decision on scope/approach, not just another flag.
-3. Decide whether to start the single-source-of-truth refactor for
-   the three duplicated "count real events" implementations, or hold
-   it until more of Gate 1 resolves.
-4. MLB_GAME / WC_GAME no-ticket coverage gap -- scope an investigation.
-5. CPI MoM real build, if/when it's worth prioritizing (not urgent --
-   currently safely cut from the feed).
-6. MIA@SF anomaly follow-up.
-7. Stage 1 monitoring/alerting build.
-
----
-
-## SPORTS MONITORING
-
-No live in-progress games flagged at session end.
-
----
-
-## ORACLE CLOUD STATUS
-
-Pipeline running normally on its existing cadence. **Nothing from
-tonight has been pulled yet** -- `eac66e4`, `986ad15`, `d1d46d1` are
-pushed to GitHub and waiting on Rus's manual `git pull` on Oracle,
-per standing protocol (Archie never runs commands on Oracle itself).
-
----
-
-Archie | Papa Ralph standard -- full detail in commits `eac66e4`,
-`986ad15`, `d1d46d1` (GitHub) and tonight's project docs
-(`cpi_mom_backlog_20260922`, `correlated_signal_counting_theme_20260922`).
+Archie | Papa Ralph standard.
