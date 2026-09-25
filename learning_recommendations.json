@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-25T02:05:58.686184",
+  "generated_at": "2026-09-25T12:03:06.586833",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -32,6 +32,20 @@
       "brier_above": 0.235933,
       "brier_below": 0.001764,
       "reason": []
+    },
+    {
+      "model": "CPI",
+      "current_threshold": 8,
+      "suggested_threshold": 7,
+      "action": "LOWER",
+      "confidence": "LOW",
+      "n_above": 94,
+      "n_below": 19,
+      "brier_above": 0.121442,
+      "brier_below": 0.213409,
+      "reason": [
+        "Sub-threshold signals winning: Brier=0.2134 (26.3% acc, n=19)"
+      ]
     },
     {
       "model": "GDP",
@@ -111,18 +125,6 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 0,
-      "n_below": 0,
-      "brier_above": null,
-      "brier_below": null,
-      "reason": []
-    },
-    {
-      "model": "WC_GAME",
-      "current_threshold": 8,
-      "suggested_threshold": 8,
-      "action": "HOLD",
-      "confidence": "LOW",
       "n_above": 1304,
       "n_below": 0,
       "brier_above": 0.177252,
@@ -164,10 +166,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n": 0,
-      "brier": null,
+      "n": 5,
+      "brier": 0.1892,
       "reason": [
-        "Need 20 more resolved signals (have 0)"
+        "Need 15 more resolved signals (have 5)"
       ]
     },
     {
@@ -242,10 +244,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 49,
-      "brier": 0.2586,
+      "n": 75,
+      "brier": 0.2727,
       "reason": [
-        "Below random: Brier=0.2586 (random=0.25) (n=49)"
+        "Below random: Brier=0.2727 (random=0.25) (n=75)"
       ]
     },
     {
@@ -329,14 +331,14 @@
     {
       "model": "WC_GAME",
       "current_weight": 0.6,
-      "suggested_weight": 0.62,
-      "delta": 0.02,
-      "action": "RAISE",
-      "confidence": "MEDIUM",
-      "n": 70,
-      "brier": 0.1698,
+      "suggested_weight": 0.6,
+      "delta": 0.0,
+      "action": "HOLD",
+      "confidence": "INSUFFICIENT_DATA",
+      "n": 0,
+      "brier": null,
       "reason": [
-        "Good calibration: Brier=0.1698 (n=70)"
+        "Need 20 more resolved signals (have 0)"
       ]
     },
     {
