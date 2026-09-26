@@ -1,7 +1,19 @@
 {
-  "generated_at": "2026-09-25T16:21:02.824781",
-  "total_resolved": 820,
+  "generated_at": "2026-09-26T02:06:10.292703",
+  "total_resolved": 839,
   "by_model": {
+    "CPI": {
+      "n": 24,
+      "correct": 21,
+      "acc_pct": 87.5,
+      "avg_brier": 0.1312,
+      "avg_logloss": 0.362,
+      "avg_edge": 52.9,
+      "beats_random": true,
+      "n_events": 24,
+      "correlated_events": 0,
+      "gate1_n_ok": false
+    },
     "MLS_GAME": {
       "n": 75,
       "correct": 29,
@@ -13,18 +25,6 @@
       "n_events": 49,
       "correlated_events": 24,
       "gate1_n_ok": true
-    },
-    "CPI": {
-      "n": 5,
-      "correct": 4,
-      "acc_pct": 80.0,
-      "avg_brier": 0.1892,
-      "avg_logloss": 0.5387,
-      "avg_edge": 18.9,
-      "beats_random": true,
-      "n_events": 5,
-      "correlated_events": 0,
-      "gate1_n_ok": false
     },
     "MLB_GAME": {
       "n": 137,
@@ -153,5 +153,87 @@
       "rows_clear_15c_mid": 105,
       "rows_clear_15c_real": 74
     }
+  },
+  "staleness": {
+    "BTC": {
+      "status": "NEVER_RESOLVED",
+      "days_since": null,
+      "last_resolved": null
+    },
+    "CLAIMS": {
+      "status": "OK",
+      "days_since": 17,
+      "last_resolved": "2026-09-09"
+    },
+    "CPI": {
+      "status": "STALE",
+      "days_since": 108,
+      "last_resolved": "2026-06-10"
+    },
+    "EPL_GAME": {
+      "status": "NEVER_RESOLVED",
+      "days_since": null,
+      "last_resolved": null
+    },
+    "FED": {
+      "status": "NEVER_RESOLVED",
+      "days_since": null,
+      "last_resolved": null
+    },
+    "GDP": {
+      "status": "STALE",
+      "days_since": 58,
+      "last_resolved": "2026-07-30"
+    },
+    "JOBS": {
+      "status": "STALE",
+      "days_since": 102,
+      "last_resolved": "2026-06-16"
+    },
+    "MLB_GAME": {
+      "status": "OK",
+      "days_since": 2,
+      "last_resolved": "2026-09-24"
+    },
+    "MLS_GAME": {
+      "status": "OK",
+      "days_since": 6,
+      "last_resolved": "2026-09-20"
+    },
+    "NBA_CHAMP": {
+      "status": "NEVER_RESOLVED",
+      "days_since": null,
+      "last_resolved": null
+    },
+    "NFL_GAME": {
+      "status": "OK",
+      "days_since": 2,
+      "last_resolved": "2026-09-24"
+    },
+    "NFL_SPREAD": {
+      "status": "OK",
+      "days_since": 2,
+      "last_resolved": "2026-09-24"
+    },
+    "NHL_CHAMP": {
+      "status": "NEVER_RESOLVED",
+      "days_since": null,
+      "last_resolved": null
+    },
+    "SEEDS_MLB": {
+      "status": "NEVER_RESOLVED",
+      "days_since": null,
+      "last_resolved": null
+    },
+    "SOCCER_GAME": {
+      "status": "STALE",
+      "days_since": 88,
+      "last_resolved": "2026-06-30"
+    }
+  },
+  "scorer_crosscheck": {
+    "has_reference": true,
+    "mismatches": [],
+    "stale_only": []
   }
 }
