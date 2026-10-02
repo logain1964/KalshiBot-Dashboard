@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-02T12:05:07.723900",
+  "generated_at": "2026-10-02T16:20:07.612550",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -67,13 +67,11 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 208,
-      "n_below": 73,
-      "brier_above": 0.286647,
-      "brier_below": 0.318496,
-      "reason": [
-        "Both above and below threshold underperforming -- model logic issue, not threshold"
-      ]
+      "n_above": 687,
+      "n_below": 187,
+      "brier_above": 0.224138,
+      "brier_below": 0.274266,
+      "reason": []
     },
     {
       "model": "MLB_GAME",
@@ -208,11 +206,11 @@
       "suggested_weight": 0.87,
       "delta": 0.0,
       "action": "HOLD",
-      "confidence": "LOW",
-      "n": 26,
-      "brier": 0.2028,
+      "confidence": "MEDIUM",
+      "n": 45,
+      "brier": 0.181,
       "reason": [
-        "Fair calibration: Brier=0.2028 -- marginal, hold for more data"
+        "Fair calibration: Brier=0.1810 -- marginal, hold for more data"
       ]
     },
     {
