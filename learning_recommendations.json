@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-01T16:23:25.518445",
+  "generated_at": "2026-10-02T02:08:21.303191",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -24,14 +24,16 @@
     {
       "model": "CLAIMS",
       "current_threshold": 8,
-      "suggested_threshold": 8,
+      "suggested_threshold": 9,
       "action": "HOLD",
-      "confidence": "LOW",
-      "n_above": 28,
-      "n_below": 3,
-      "brier_above": 0.235933,
-      "brier_below": 0.001764,
-      "reason": []
+      "confidence": "INSUFFICIENT_DATA",
+      "n_above": 77,
+      "n_below": 8,
+      "brier_above": 0.481002,
+      "brier_below": 0.000664,
+      "reason": [
+        "Need 30 more resolved signals"
+      ]
     },
     {
       "model": "CPI",
@@ -53,9 +55,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 207,
+      "n_above": 381,
       "n_below": 0,
-      "brier_above": 0.160787,
+      "brier_above": 0.155843,
       "brier_below": null,
       "reason": []
     },
@@ -65,11 +67,13 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 63,
-      "n_below": 0,
-      "brier_above": 0.133718,
-      "brier_below": null,
-      "reason": []
+      "n_above": 208,
+      "n_below": 73,
+      "brier_above": 0.286647,
+      "brier_below": 0.318496,
+      "reason": [
+        "Both above and below threshold underperforming -- model logic issue, not threshold"
+      ]
     },
     {
       "model": "MLB_GAME",
@@ -153,10 +157,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n": 5,
-      "brier": 0.1898,
+      "n": 0,
+      "brier": null,
       "reason": [
-        "Need 15 more resolved signals (have 5)"
+        "Need 20 more resolved signals (have 0)"
       ]
     },
     {
@@ -192,10 +196,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n": 6,
-      "brier": 0.1698,
+      "n": 9,
+      "brier": 0.0815,
       "reason": [
-        "Need 14 more resolved signals (have 6)"
+        "Need 11 more resolved signals (have 9)"
       ]
     },
     {
@@ -204,11 +208,11 @@
       "suggested_weight": 0.87,
       "delta": 0.0,
       "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n": 6,
-      "brier": 0.121,
+      "confidence": "LOW",
+      "n": 26,
+      "brier": 0.2028,
       "reason": [
-        "Need 14 more resolved signals (have 6)"
+        "Fair calibration: Brier=0.2028 -- marginal, hold for more data"
       ]
     },
     {
@@ -244,10 +248,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 75,
-      "brier": 0.2727,
+      "n": 83,
+      "brier": 0.2757,
       "reason": [
-        "Below random: Brier=0.2727 (random=0.25) (n=75)"
+        "Below random: Brier=0.2757 (random=0.25) (n=83)"
       ]
     },
     {
