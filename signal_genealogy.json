@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-03T12:05:20.193371",
-  "total_signals": 1454,
+  "generated_at": "2026-10-03T16:23:20.892712",
+  "total_signals": 1455,
   "signals_with_stats": 267,
   "min_resolved_required": 5,
   "signals": {
@@ -26172,6 +26172,24 @@
       "avg_edge_cents": 6.1,
       "avg_kalshi_cents": 60.5,
       "avg_model_pct": 66.6,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-10-03",
+      "has_stats": false
+    },
+    "BUF >4.5 [THIN MARKET]|NO|NFL_SPREAD": {
+      "market": "BUF >4.5 [THIN MARKET]",
+      "direction": "NO",
+      "model": "NFL_SPREAD",
+      "market_type": "NFL_SPREAD",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 11.8,
+      "avg_kalshi_cents": 41.5,
+      "avg_model_pct": 53.3,
       "confidence": "INSUFFICIENT_DATA",
       "last_fired": "2026-10-03",
       "has_stats": false
