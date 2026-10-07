@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-07T02:08:03.153087",
+  "generated_at": "2026-10-07T12:05:18.458565",
   "total_resolved": 1316,
   "by_model": {
     "GDP": {
@@ -114,6 +114,9 @@
       "event_acc_pct": 36.6,
       "event_avg_brier": 0.2114
     }
+  },
+  "unverified_models": {
+    "MLB_GAME": "All figures unverified: outcome-convention defect (repaired Oct 3) and game-date backfill defect (repair and independent 230-row audit scheduled week of Nov 2, 2026). Model fully suspended."
   },
   "edge_buckets": {},
   "signal_dist": {},
