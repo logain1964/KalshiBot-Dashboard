@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T12:05:09.082662",
+  "generated_at": "2026-10-08T16:23:16.403745",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -25,14 +25,14 @@
       "model": "CLAIMS",
       "current_threshold": 8,
       "suggested_threshold": 9,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n_above": 77,
-      "n_below": 8,
-      "brier_above": 0.481002,
-      "brier_below": 0.000664,
+      "action": "RAISE",
+      "confidence": "MEDIUM",
+      "n_above": 79,
+      "n_below": 11,
+      "brier_above": 0.473435,
+      "brier_below": 0.015599,
       "reason": [
-        "Need 30 more resolved signals"
+        "Above-threshold signals underperforming: Brier=0.4734 (n=79)"
       ]
     },
     {
@@ -155,10 +155,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n": 0,
-      "brier": null,
+      "n": 5,
+      "brier": 0.1061,
       "reason": [
-        "Need 20 more resolved signals (have 0)"
+        "Need 15 more resolved signals (have 5)"
       ]
     },
     {

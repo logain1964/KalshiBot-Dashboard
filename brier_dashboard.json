@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-08T12:05:09.074546",
-  "total_resolved": 1318,
+  "generated_at": "2026-10-08T16:23:16.395964",
+  "total_resolved": 1323,
   "by_model": {
     "GDP": {
       "n": 9,
@@ -113,6 +113,20 @@
       "gate1_n_ok": true,
       "event_acc_pct": 36.6,
       "event_avg_brier": 0.2114
+    },
+    "CLAIMS": {
+      "n": 5,
+      "correct": 2,
+      "acc_pct": 40.0,
+      "avg_brier": 0.1061,
+      "avg_logloss": 0.3712,
+      "avg_edge": 8.0,
+      "beats_random": true,
+      "n_events": 1,
+      "correlated_events": 1,
+      "gate1_n_ok": false,
+      "event_acc_pct": 40.0,
+      "event_avg_brier": 0.1061
     }
   },
   "unverified_models": {
@@ -184,6 +198,22 @@
       "rows_clear_8c_real": 0,
       "rows_clear_15c_mid": 0,
       "rows_clear_15c_real": 0
+    },
+    "CLAIMS": {
+      "n": 5,
+      "n_events": 1,
+      "win_rate_pct": 40.0,
+      "mid_pnl_cents": 59.0,
+      "real_pnl_cents": 32.0,
+      "fees_cents": 9.0,
+      "event_mean_real_pnl_cents": 32.0,
+      "event_pnl_t_stat": null,
+      "events_pnl_positive": 1,
+      "pct_pnl_survives": 54.2,
+      "rows_clear_8c_mid": 2,
+      "rows_clear_8c_real": 0,
+      "rows_clear_15c_mid": 0,
+      "rows_clear_15c_real": 0
     }
   },
   "spread_stress_fee_mode": "round1",
@@ -194,9 +224,9 @@
       "last_resolved": null
     },
     "CLAIMS": {
-      "status": "NEVER_RESOLVED",
-      "days_since": null,
-      "last_resolved": null
+      "status": "OK",
+      "days_since": 0,
+      "last_resolved": "2026-10-08"
     },
     "CPI": {
       "status": "STALE",
@@ -267,6 +297,12 @@
   "scorer_crosscheck": {
     "has_reference": true,
     "mismatches": [],
-    "stale_only": []
+    "stale_only": [
+      {
+        "model": "CLAIMS",
+        "dashboard_n": 5,
+        "scorer_n": 23
+      }
+    ]
   }
 }
