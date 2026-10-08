@@ -1,72 +1,76 @@
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Covers:** Tue Oct 6 (afternoon) through early Wed Oct 7, 2026 | **Session end:** about 6:00 AM CT, Oct 7 (laptop clock)
+**Covers:** Wed Oct 7 (evening) into early Thu Oct 8, 2026 | **Written:** about 10 PM CT Oct 7 (laptop clock); the session ran late, so the file date is Oct 8. Oracle commit timestamps are UTC (the 21:00 CT run shows as 02:08 on Oct 8).
 **Prepared by:** Archie (Claude Desktop)
-**Replaces** the Oct 5 - Oct 6 version of `nightly_summary.md` and `nightly_summary_latest.md` (identical content pushed to both). That version is in git history and in the project as `claude/nightly_summary_latest_20261006.md`; everything in it that still stands is carried forward below. **One line in that version is wrong and is withdrawn:** it said a public calibration file with one packet row was "held and not pushed". That was a mistake of mine; the nightly sync had already published the file. See section 4.
+**Replaces** the Oct 6-7 version of `nightly_summary.md` and `nightly_summary_latest.md` (identical content pushed to both). That version is in git history and in the project as `claude/nightly_summary_latest_20261007.md`; everything in it that still stands is carried forward below.
 
 ---
 
 ## THE NIGHT IN ONE PARAGRAPH
 
-Tonight turned the NFL_GAME Phase 2 pre-registration from v0.1 to v0.3 and shipped the one piece of machinery J@rv1s required before the lock: a per-run version manifest. The manifest is committed, tested and pushed, and because **Oracle auto-pulls the private repo at the start of every run, it deploys at the Oct 7 07:00 CT run** (first line expected then; Rus confirms). MLB_GAME is now fully suspended in both directions with every figure labelled unverified (J@rv1s's ruling). The analysis script gained the pre-specified secondary run, a tolerance count and a stale-settlement listing. One public-publishing process failure was found and is being contained (section 4). **Nothing changed in any signal, model or trading rule tonight.** The NFL_GAME model files are unchanged since Sept 15 and I am treating them as frozen.
+Two real bugs were found and fixed tonight, and Oracle's own output already confirms both fixes ran. The CLAIMS model was mapping a Thursday release to the wrong FRED week (release date plus 2 days instead of minus 5), so the Oct 8 release would have been skipped as a "Columbus Day" holiday week. The run manifest was writing two lines per run instead of one. Both are fixed, pushed and deployed (commits 35542be and d886afb). **Nothing changed in any signal, model weight or trading rule**, and the NFL_GAME call-site weight line is still 0.55 in every manifest line. The project instructions were revised and pasted by Rus tonight and the stored text was read back and verified.
 
 ---
 
-## 1. PRE-REGISTRATION v0.3 (draft, not locked; project doc `claude/preregistration_nfl_game_phase2_DRAFT_v03_20261007.md`)
+## 1. VERIFIED FROM ORACLE'S REAL OUTPUT (21:00 CT run, commit 61f8f1e)
 
-- **Design (all ruled by J@rv1s):** NFL_GAME is the only confirmatory model. Two arms, each passing only if its 90% event-bootstrap CI lower bound is above zero: **arm I** the paired Brier gain of the model over the market mid; **arm P** net cents per contract per event at the real ask after the round1 fee, one position per event (earliest row). Both pass = demonstrated; one = partial/unresolved; neither = unresolved. Minimum 30 events (below that, counts and points only). Regular-season games only; confirmatory games are those dated after the lock date; one verdict at the end of the season; a "demonstrated" result triggers a FORGE referral, never automatic trading.
-- **Stated up front: the likeliest outcome is "unresolved" on both arms.** Design data (42 events, not confirmatory): arm I -0.0086 CI [-0.0422, +0.0272]; arm P +3.64c CI [-8.17, +15.93]; unresolved; w* 0.23 [0.00, 1.00].
-- **Concentration is two separate statements.** (a) By outcome: the four best events by P&L contribute +294c against a +153c total; the other 38 average -3.71c. (b) By structure: the model backed both teams at different times in 4 of 42 events (+119c); the other 38 total +34c (+0.89c each). My v0.2 conflated the two sets; corrected. Also corrects an earlier count: "12 of 41 NFL_GAME events have both directions logged" was labels, not opposing bets; the real figure is 4 of 42.
-- **Settlement edge cases:** outcomes come from Kalshi settlement; voided or cancelled markets are excluded by status and listed; ties as Kalshi settled; nothing else is excluded. The settlement lookup cannot tell void from "not yet settled", so any event more than 3 days past its game date and still unsettled is listed as STALE and checked by hand.
-- **Lock Oct 13** (hard stop Oct 20), and it waits for one full day of manifest lines by Oct 12. Cost of Oct 13 vs Oct 10: 15 flagged events dated Oct 8-12 fall into design data, about 14% of the projected sample.
-- **Nov 1 is a checkpoint only** (about 30 events at most): points and counts, no verdict.
+- **Manifest is live.** `data/run_manifest.jsonl` has 5 lines: Oct 7 07:00:03, 07:05:19, 11:15:02, 11:23:13 and 21:00:02 CT. The first two pairs are the double-line bug (two lines per run); **the 21:00 run wrote exactly one line**, so the guard (d886afb) works. Each line records the pipeline commit; the 21:00 line shows 35542be, so **Oracle ran the CLAIMS fix**. `nfl_game_weight_lines` is `"NFL_GAME": 0.55` in all five; fee mode `round1`; 99 packages recorded; no tracked file dirty.
+- **MLB label emits.** `unverified_models` is present in `brier_dashboard.json` in both the private `data/` copy and the public dashboard copy (J@rv1s's MLB condition 1 is confirmed on Oracle's real output).
+- **CLAIMS fix reached its model.** The 21:00 report prints the CLAIMS section with the suspension notice and "Release day... no CLAIMS signals this run"; there is no HOLIDAY WEEK skip line. The last CLAIMS row in the signals log is Oct 1, so no CLAIMS rows were logged Oct 2-7 (consistent with the bug: the next release mapped onto the Columbus Day key). **The first real post-fix emission is the Oct 8 07:00 CT run.**
+- **Observation, not yet diagnosed:** the 21:00 CT report treated Oct 7 as "release day" for the Oct 8 print, which suggests Oracle's date is UTC at that hour. Rus to confirm `date` on Oracle; matters for any date-keyed logic near the cron times.
+- **Not mine:** the 21:00 auto-update also includes an edit to `models/fed_model.py` (the Fed consensus table refreshed, consensus date Oct 4 to Oct 7), made on Oracle and committed by its auto-update. NFL files unchanged.
 
-## 2. VERSION FREEZE AND THE MANIFEST (commit 7e29a4d, pushed)
+## 2. CLAIMS WEEK-MAPPING FIX (commit 35542be, pushed)
 
-- `run_manifest.py` appends one JSON line per run to `data/run_manifest.jsonl` (Oracle only): CT time, pipeline commit, SHA-256 of the NFL model files, `daily_runner.py`, `brier_dashboard.py` and `model_suspension.py`, the NFL_GAME call-site hash and weight line, fee mode, a hash of all package versions (nfl_data_py 0.3.3, pandas 2.2.1, numpy 1.26.4, requests 2.31.0, pytz), and the feed hosts (ESPN site and core APIs). **Fail-open:** it cannot stop a run or change a signal; tested with bad paths. Oracle only because an untracked data file on the laptop would block the laptop's auto-pull.
-- **Version history, Oct 7 (git):** `nfl_model.py` last changed Sept 15 (6620452); `nfl_inactives_check.py` Aug 10 (d7383c1). `daily_runner.py` changed since Sept 29 only by three unrelated commits (JOBS text Oct 5, MLB label Oct 6, manifest call Oct 7); **the NFL_GAME call-site hash and weight line (0.55) are identical across all of them and the last commit before Sept 29.** Before the first manifest line, "Oracle ran that code" rests on the auto-pull design and Oracle's own reports, not a per-run record; the manifest closes that from its first line.
-- Limit, stated: the manifest records code, packages and feed identity, not what a feed returned.
+- A Thursday release covers the week that ended the preceding Saturday, so `fred_week_ending = release_date - 5 days`, not `+ 2`. Arithmetic and comment only; holiday tables untouched. Offline check: Oct 8 maps to Oct 3 (normal), Oct 15 to Oct 10 (holiday), Oct 22 to Oct 17 (aftermath). CLAIMS stays suspended; no trading change.
+- **Open ruling for J@rv1s, before the Oct 15 release:** under the corrected mapping, the Oct 15 release is skipped as "Columbus Day" although Columbus Day (Mon Oct 12) falls in the week ending Oct 17 (released Oct 22, labelled "aftermath"). Should Monday holidays key to the preceding Saturday week, or to the week containing the holiday?
 
-## 3. MLB_GAME (J@rv1s ruling, four conditions)
+## 3. ENTRY-EDGE WIRING (J@rv1s's question, answered)
 
-- **Fully suspended, both directions** (f3ec5ad; `MLB_GAME_YES_EXPERIMENTAL = False`); NFL_GAME behaviour unchanged.
-- **Every MLB_GAME win-rate, P&L and bucket figure is labelled UNVERIFIED** in the daily report and, as an additive top-level key `unverified_models`, in `brier_dashboard.json` (b12e305). Oracle's emission is confirmed only after its Oct 7 07:00 run.
-- The backfill game-date fix and the independent MLB Stats API audit of the 230 MLB_GAME rows are deferred to the offseason under the Sept 26 MLB hold (`areas/mlb-game-offseason-backlog`): **week of Nov 2**, with a scheduled reminder set. The Oct 3 outcome-convention repair stands; the game-date defect is still open.
+**The Oct 1 shrinkage decision (CI-lower-bound weight) is not wired into the live gate.** `paper_trade_gates.py` uses a raw 15c minimum edge; SEDE portfolio admission uses a raw 20c minimum; neither applies a shrinkage weight. Every model the finding matters for is trade-suspended, so there is no live consequence today. Recommended: wire it as a small separate commit after the Phase 2 lock. Full reply in the project: `claude/archie_to_jarvls_wiring_claims_20261007.md`.
 
-## 4. PUBLIC-PUBLISHING PROCESS FINDING (details in private project docs)
+## 4. STALE CONSENSUS VALUES (the "Manual update required" line)
 
-The nightly sync copies ten named data files from the private repo to this public repo every run, overwriting the public copy. A manual hold I placed on some calibration rows on Oct 4 lived only in the public file, so the first nightly copy erased it (Oct 5, about 02:07 CT). That is a process failure of mine: I did not check the sync path when I set the hold. What was done: a private-only calibration file now exists for any row that must not publish (never in the sync list); nothing already public was edited or rewritten, because deleting rows from a public track record is itself a red flag; the audit of all ten synced files found one file with such rows. **Hand-pasted files in this repo are published too** (the dashboard update uses `git add -A`), and no gate covers them. A fail-visible sync gate that holds a file and prints a loud line is designed and goes in as a small separate commit before the matcher (J@rv1s's window). Outside-review exposure checks are not finished; two need Rus.
+- **CPI (`models/cpi_model.py`)**: the September entry (3.7%, std 0.40) dates from Sept 26 and needs a refresh before the Oct 14 release; the hard block falls Oct 17. Reference points found Oct 8: Cleveland Fed nowcast 3.60% (updated 10/06), Kalshi year-over-year market median about 3.6% (84% for above 3.5%, 42% for above 3.6%), one forecaster at 3.7%. No sourced Street survey figure found. Rus to read the consensus from an economic calendar around Oct 10-12; Archie then edits the `'SEP'` entry and the `CONSENSUS_LAST_UPDATED` date and pushes before Oct 14. The October placeholder (2.8%) is a 0.9-point drop from September and is not sensible; fix by about Nov 2.
+- **NFP / JOBS (`models/jobs_model.py`)**: still the September setup (interim 70K estimate from Sept 7, not a survey; report date Oct 2). JOBS is blocked by the freshness gate. Leave it blocked until a real survey exists (about Nov 2-3 for the Nov 6 print); refreshing the date with a guess would only defeat the gate. Possible design gap, unverified: the freshness check reads only the date in the file, so a live feed value may not clear the block. Check before November.
 
-## 5. SCRIPT AND CALIBRATION
+## 5. PROJECT INSTRUCTIONS (Rus pasted tonight; verified by read-back)
 
-- `tools/phase2_nfl_game_analysis.py` (commits 5204beb, 557e3d5, 9649241): outcomes from settlement with every mismatch listed (0 on the design data), mid-in-[bid, ask] integrity stop with a printed count of rows relying on the 0.5c tolerance (0), minimum-30 rule, `--through`, secondary descriptive `--row-rule last` ("counts for nothing"), STALE listing, both concentration statements.
-- Calibration: J@rv1s's Oct 6 predictions logged and one scored (public file: the git-log prediction FALSE on the freeze-set reading, reading flagged for J@rv1s to confirm; matcher-by-Oct-19 PENDING). The earlier fail-closed-audit prediction scored TRUE (Brier 0.4225).
+Revised: Phase 2 bullet (NFL_GAME sole primary, two arms, Oct 13 lock, Oct 20 hard stop, Nov 1 checkpoint only, "unresolved" the likeliest outcome and not the same as "no edge"); NFL_GAME line refreshed to the 42-event figures; shrinkage bullet notes it is not yet wired; MLB_GAME fully suspended in both directions (condition 1 now also confirmed on Oracle's output, see section 1); CLAIMS fix and pending holiday ruling; NHL_GAME/NBA_GAME matcher window Oct 14-19; JOBS stale-consensus note; the one-in-one-out admission rule added. The Oct 4 power sentence (8-19% at 27 events) was not restored: those figures described the old w* test, not the two arms now in force.
+
+## 6. J@RV1S'S OCT 7 BRIEFING, STATUS
+
+- **One-in-one-out admission rule** (ratified Oct 7): in the instructions now. Weather-market and crypto-threshold work stay scoping-only until a slot opens (earliest about Oct 19-20, only one of the two).
+- **Weather-market work order:** needs Rus to provide read-only Kalshi API access; it stays scoping-only regardless of what it finds. The Oct 2 doc's "free, no auth" claim for Kalshi's series endpoints was reported wrong by J@rv1s (401 without a key); correction to that doc is open.
+- **Housekeeping:** one private item for Rus, details kept in a private project doc, not here.
+
+## 7. NFL_GAME PHASE 2 / PRE-REGISTRATION (v0.3, draft)
+
+Unchanged tonight apart from the manifest now confirmed live. Design data (42 events, not confirmatory): Arm I -0.0086 CI [-0.0422, +0.0272]; Arm P +3.64c per contract CI [-8.17, +15.93]; unresolved; w* 0.23 [0.00, 1.00]. **For the Oct 9 final**, J@rv1s's addition to the lock checklist (section 13): the calibration leak was found and closed before the lock (private-file fix abd5139; exposure-check resolution 882b06d). Lock target Oct 13 (needs one full day of manifest lines by Oct 12: the 07:00, 11:15 and 21:00 CT runs of one date; Oct 8 will be the first full day of single lines); hard stop Oct 20.
 
 ---
 
-## OPEN POSITIONS (`sede_portfolio.json`)
+## OPEN POSITIONS
 
-8 open (BTC<$50k NO; seven GDP YES positions on the Oct 30, Jan 28, Apr 29 and Jul 29 prints), bankroll $994.17, no wins or losses recorded, one early exit at -$5.83. No new entries; nothing has cleared the entry criteria. Marks were not re-pulled tonight. GDP stays at reduced weight with n=1 real resolved event.
+`sede_portfolio.json` (per the Oct 6-7 read): 8 open (BTC<$50k NO; seven GDP YES on the Oct 30, Jan 28, Apr 29 and Jul 29 prints), bankroll $994.17, one early exit at -$5.83. `paper_trades.json` (J@rv1s, Oct 7): 1 open, Trade #25, GDP >T3.5 YES; the two sources disagree as before (see the Sept 25 `manual_trading_stall_investigation`). Both files were re-written by the 21:00 auto-update; marks not re-pulled tonight. No new entries; nothing cleared the entry criteria. GDP stays at reduced weight (n=1 real event; next print Oct 30).
 
 ## GATE 1 / VALIDATION STATUS (carried forward)
 
-- Project-wide Gate 1 remains **provisionally suspended**; checkpoints Oct 30 (GDP) and the Nov 1 Phase 2 checkpoint (report only). Phase 2 threshold is written in the pre-registration and locked about Oct 13, hard stop Oct 20, before Phase 2 data is examined.
-- **NFL_GAME: no demonstrated edge, entry weight 0 (trade at market).** Latest (Oct 6, real-ask, 42 events): arm I -0.0086, arm P +3.64c per contract on one row per event, both far from passing; w* 0.23 [0.00, 1.00] (entry weight is the lower bound, zero). One event moved the one-row mean from +2.27c to +3.64c. The project-instructions NFL_GAME paragraph quotes older figures; Rus pastes the replacement.
-- NFL_SPREAD, MLS_GAME, SOCCER_GAME: tail finding stands. **MLB_GAME: fully suspended, all figures unverified.** JOBS: n=4 verifiable events, unproven. GDP: n=1. CLAIMS: suspended; fix shipped Oct 1, first real test Oct 7-8 (reminder set for about noon CT Oct 7).
-- Win-rate, P&L and bucket figures for NFL_GAME, NFL_SPREAD, MLS_GAME and MLB_GAME computed Sept 24 - Oct 3 remain suspect; decision-impact audit pending.
+Project-wide Gate 1 provisionally suspended; checkpoints Oct 30 (GDP) and Nov 1 (Phase 2 checkpoint, report only). NFL_GAME: no demonstrated edge, entry weight 0. NFL_SPREAD, MLS_GAME, SOCCER_GAME: tail finding stands. MLB_GAME: fully suspended, all figures unverified. JOBS: n=4 verifiable events, unproven. GDP: n=1. CLAIMS: suspended; fix now deployed, first real emission Oct 8. Win-rate, P&L and bucket figures computed Sept 24 - Oct 3 for NFL_GAME, NFL_SPREAD, MLS_GAME and MLB_GAME remain suspect; decision-impact audit pending.
 
 ## WORK AHEAD (dated order)
 
-- **Wed Oct 7:** CLAIMS first-emission check (about noon CT); check Oracle's 07:00 and 11:15 runs: manifest line present, `unverified_models` in the public JSON, no manifest error line (scheduled check about 12:45 CT).
-- **Thu Oct 8:** recheck the Oct 2 JOBS ticker gap. **Fri Oct 9:** pre-registration final to J@rv1s after his answers.
-- **By Oct 12:** one full day of manifest lines. **Oct 13:** lock target. **Oct 14:** CPI. **Oct 14-17:** tickerless random-sample audit. **Oct 14-19:** matcher (not before Oct 14, ship by Oct 19 or slip) with the sync gate before it. **Oct 19-23:** decision-impact audit. **Oct 20:** hard stop for the lock; NBA opener. **Oct 30:** GDP print. **Nov 1:** Phase 2 checkpoint. **Week of Nov 2:** MLB backfill game-date fix and 230-row audit.
-- **Rus:** (1) after 07:00 CT, confirm the manifest line and the MLB label on Oracle's output; (2) answer the two open exposure checks (reviewer reply times against Oct 5 02:07 CT; whether any reviewer chat had browsing or search on); (3) paste the Phase 2 bullet and NFL_GAME line replacements into the project instructions, and the MLB line after the four MLB conditions are seen done; (4) one-minute public lock-timestamp line at the lock; (5) note J@rv1s's Oct 5 briefing in this repo is public.
-- Standing: four laptop stashes exist (data churn), do not drop them; Auto Monitor stop-loss alerts still laptop-only; wire the outcome invariant into publication.
+- **Thu Oct 8:** CLAIMS first real emission at the 07:00 CT run; recheck the Oct 2 JOBS ticker gap.
+- **Fri Oct 9:** pre-registration final to J@rv1s (with the leak-closed line above).
+- **Oct 10-12:** CPI consensus read and edit; by Oct 12 one full day of manifest lines (Oct 8 qualifies if all three runs write one line each).
+- **Oct 13:** lock target. **Oct 14:** CPI release; tickerless random-sample audit starts. **Oct 14-19:** sync-gate commit, then the matcher (ship by Oct 19 or slip). **Oct 19-23:** decision-impact audit. **Oct 20:** hard stop for the lock. **Oct 30:** GDP print. **Nov 1:** Phase 2 checkpoint. **Week of Nov 2:** MLB backfill game-date fix and 230-row audit.
+- **Rus:** (1) confirm CLAIMS output after the Oct 8 07:00 run; (2) confirm Oracle's `date` and timezone (observation in section 1); (3) CPI consensus number around Oct 10-12; (4) the private housekeeping item; (5) read-only Kalshi key for the weather work order, when a slot opens; (6) one-minute public lock-timestamp line at the lock.
+- Not done: sync denylist gate, D4 join, tickerless audit, decision-impact audit, matcher. Standing: four laptop stashes exist (data churn), do not drop them; Auto Monitor stop-loss alerts still laptop-only; session-opener items (live trade health check, `auto_monitor.py` check on the laptop, session-archive read) not run tonight.
 
 ## ORACLE / SPORTS MONITORING
 
-Oracle: sole pipeline runner; auto-pulls the private repo (fast-forward only) at the start of every run and re-executes on the new code, so tonight's pushes (head 9649241 plus the calibration commit) are picked up at the Oct 7 07:00 CT run. Last verified Oracle auto-update before tonight: Oct 5 21:00 CT. Sports monitoring: no open sports positions.
+Oracle: sole pipeline runner; auto-pulls the private repo (fast-forward only) at the start of every run. Verified Oct 7: 07:00, 11:15 and 21:00 CT auto-updates all present; the 21:00 run executed commit 35542be. Sports monitoring: no open sports positions.
 
 ---
 
