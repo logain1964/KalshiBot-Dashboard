@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-14T12:05:01.227002",
-  "total_resolved": 1554,
+  "generated_at": "2026-10-14T16:22:57.497821",
+  "total_resolved": 1559,
   "by_model": {
     "GDP": {
       "n": 9,
@@ -17,18 +17,18 @@
       "event_avg_brier": 0.0815
     },
     "CPI": {
-      "n": 24,
-      "correct": 21,
-      "acc_pct": 87.5,
-      "avg_brier": 0.1312,
-      "avg_logloss": 0.362,
-      "avg_edge": 52.9,
+      "n": 29,
+      "correct": 22,
+      "acc_pct": 75.9,
+      "avg_brier": 0.1722,
+      "avg_logloss": 0.4643,
+      "avg_edge": 50.4,
       "beats_random": true,
-      "n_events": 24,
-      "correlated_events": 0,
+      "n_events": 25,
+      "correlated_events": 1,
       "gate1_n_ok": false,
-      "event_acc_pct": 87.5,
-      "event_avg_brier": 0.1312
+      "event_acc_pct": 84.8,
+      "event_avg_brier": 0.1407
     },
     "MLS_GAME": {
       "n": 90,
@@ -229,9 +229,9 @@
       "last_resolved": "2026-10-08"
     },
     "CPI": {
-      "status": "STALE",
-      "days_since": 126,
-      "last_resolved": "2026-06-10"
+      "status": "OK",
+      "days_since": 12,
+      "last_resolved": "2026-10-02"
     },
     "EPL_GAME": {
       "status": "NEVER_RESOLVED",

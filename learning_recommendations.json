@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-14T12:05:01.235606",
+  "generated_at": "2026-10-14T16:22:57.505241",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -38,15 +38,16 @@
     {
       "model": "CPI",
       "current_threshold": 8,
-      "suggested_threshold": 7,
-      "action": "LOWER",
-      "confidence": "LOW",
-      "n_above": 99,
-      "n_below": 19,
-      "brier_above": 0.145322,
-      "brier_below": 0.213409,
+      "suggested_threshold": 9,
+      "action": "RAISE",
+      "confidence": "MEDIUM",
+      "n_above": 367,
+      "n_below": 20,
+      "brier_above": 0.297509,
+      "brier_below": 0.215239,
       "reason": [
-        "Sub-threshold signals winning: Brier=0.2134 (26.3% acc, n=19)"
+        "Sub-threshold signals winning: Brier=0.2152 (30.0% acc, n=20)",
+        "Above-threshold signals underperforming: Brier=0.2975 (n=367)"
       ]
     },
     {
@@ -168,10 +169,10 @@
       "delta": 0.02,
       "action": "RAISE",
       "confidence": "LOW",
-      "n": 24,
-      "brier": 0.1312,
+      "n": 29,
+      "brier": 0.1722,
       "reason": [
-        "Good calibration: Brier=0.1312 (n=24)"
+        "Good calibration: Brier=0.1722 (n=29)"
       ]
     },
     {
