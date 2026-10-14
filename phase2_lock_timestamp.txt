@@ -1,0 +1,1 @@
+   2026-10-14 18:32:39 CT | Phase 2 pre-registration (NFL_GAME market-relative test, v1.2) locked | SHA-256 70c11c7b59df7f16f804c5613760e0d65e9ef4cb3e27b2f0261548c2eaf323b9
