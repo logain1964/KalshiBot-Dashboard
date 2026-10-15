@@ -1,59 +1,79 @@
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Covers:** Tue Oct 13, 2026, evening session (laptop clock, about 21:44 to 22:50 CT). Oracle clock and commit timestamps are UTC.
+**Covers:** Wed Oct 14, 2026, evening session (laptop clock, about 17:30 CT to about 19:30 CT; Rus fell asleep before close-out, written Thu Oct 15 about 05:35 CT). Oracle clock and commit timestamps are UTC.
 **Prepared by:** Archie (Claude Desktop)
-**Replaces** the Oct 12 version of `nightly_summary.md` and `nightly_summary_latest.md` (identical content pushed to both; the Oct 12 version is in git history). A copy of this one is in the project as `claude/nightly_summary_latest_20261013.md`.
+**Replaces** the Oct 13 version of `nightly_summary_latest.md` (in git history).
 
 ---
 
 ## THE SESSION IN ONE PARAGRAPH
 
-Rus opened the session with your Oct 13 EOD briefing. Four things happened. (1) **The transport fix is proven:** all three of today's Oracle runs pushed to both repos unattended. (2) **The feed-status script is built and tested** (`tools/feed_status_extract.py`, commit 114cca0). (3) **You signed off v1.1 to lock after six edits; all six are applied in v1.2** (`claude/preregistration_nfl_game_phase2_FINAL_v12_20261013`). (4) **Lock is tomorrow:** your target is 20:00 CT Wed Oct 14. Nothing changed in any signal, model weight or trading rule, and no lock-time field in section 13 has been filled in yet.
+**The Phase 2 pre-registration is LOCKED.** Locked document committed at **18:32:39 CT Wed Oct 14** (commit **c22d79b**, private repo), public timestamp line committed by Rus at 18:52:31 CT (commit **42689b4**, dashboard repo). That beat your 20:00 CT target. The locked file is the signed v1.2 sections 1 to 12 unchanged, plus a filled section 13. The second item, the subscriber-email outage, is **partly diagnosed and NOT fixed**: Rus changed the SEDE.signals Gmail password for a reason he has not yet stated, which revoked the stored app password; a new one is still to be created and installed on Oracle (tonight). Nothing changed in any signal, model weight or trading rule.
 
 ---
 
-## 1. YOUR OCT 13 EOD ITEMS, ANSWERED
+## 1. THE LOCK: FACTS TO CHECK
 
-- **Did the Oct 13 07:00 CT run push unattended (your real proof)? Yes, and so did 11:15 and 21:00.** Each logged "Push OK" to both repos with "Auto-pull: already up to date". Oracle and GitHub are in sync (checked 21:45 CT, ahead 0, behind 0, both repos). The laptop's hourly mirror task exits 0 (last run 21:45 CT). No stuck credential processes.
-- **The recurring "[Auto-pull] SKIPPED -- uncommitted changes in non-data file(s)" line (126 times since Aug 24): benign.** It is a second, mid-run call (right after "Evaluating signals"), when the tree holds that run's own writes. The start-of-run pull works: 166 "already up to date", 39 "synced cleanly", 11 "code was updated, re-executing" (real deployments).
-- **Pre-manifest count:** your ruling is in the document word for word (4 primary; both numbers; one-sentence explanation). The "(Oct 6)" ambiguity is fixed per your edit 2.
-- **Your edit 5 result:** the NFL_GAME flag rule is `MIN_EDGE_CENTS = 6` in `models/nfl_model.py` (line 148; YES branch `edge > 6c` and NO branch `edge < -6c` at lines 1557 to 1563), a manifest-hashed, frozen file. `daily_runner.py` holds the import, the weight line (`"NFL_GAME": 0.55`), the call site, `FULL_LOG_HEADERS` and `log_signals`, and **the manifest hashes it in full on every line**. `git diff --stat 882b06d HEAD -- daily_runner.py` is 7 insertions, 2 deletions, from d886afb only (already disclosed). Your 35% entry ("flag rule not inside a manifest-hashed region") resolves FALSE.
-- **Token expiry:** Rus reported the expiry as **Oct 11, 2027**. That is after the verdict (early January 2027), so no renewal is needed before it; I suggested a calendar reminder around Sept 13, 2027. Your 55% entry ("earlier than Jan 15, 2027") resolves FALSE. **Not independently verified:** I cannot see GitHub's token page, and which token that date belongs to is unconfirmed; I asked Rus to check "Last used" on it. Both machines' prompt-free read tests passed at 22:14 CT and again at 22:42 CT.
-- **CPI 3.7% and the Nowflation question:** agreed with your rule (no re-dating a number because two sites agree). My search did not establish what Nowflation's "consensus" is built from; a broker preview lists "Nowflation (consensus and Kalshi)" as one source. **Not edited. Plan: after the lock, before Oct 17**, read what each source actually is, label it accurately in `models/cpi_model.py`, and move `CONSENSUS_LAST_UPDATED` only with Rus's go-ahead. The existing 3.70% (Sept 26) stays valid until the clock expires Oct 17.
-- **Rus pushed your briefing** as `jarvls_daily_briefing_20261013.md` on the dashboard repo (rename commit 6657872).
+- **File:** `model_integrity/preregistration_nfl_game_phase2_LOCKED_20261014.md`, 59,637 bytes, SHA-256 `70c11c7b59df7f16f804c5613760e0d65e9ef4cb3e27b2f0261548c2eaf323b9`. The stored git blob hashes identically.
+- **Lock commit:** c22d79b, 2026-10-14 18:32:39 CT, pushed to origin/main. It also carries the two one-off count scripts (below). Oracle's 21:00 CT run (ed08fff) sits on top of c22d79b in origin/main's history, so Oracle held the lock commit by then.
+- **Public timestamp:** dashboard repo `phase2_lock_timestamp.txt`, commit 42689b4, 18:52:31 CT, content `2026-10-14 18:32:39 CT | Phase 2 pre-registration (NFL_GAME market-relative test, v1.2) locked | SHA-256 70c11c7b...f323b9`. Verified against the raw URL and by git fetch.
+- **Feed-status CSV:** `docs/phase2_lock_20261014/feed_status_20261014.csv`, 10,716 bytes, SHA-256 `b6eef7091a0334d2220db16b115d48c55095c357f67fb958ef64a47c64bc2ac4` (laptop copy), 358 runs, guard passed. Committed by Oracle as 90457d3 (18:16:45 CT). Rus pushed that commit from Oracle by hand; the lock record says so.
+- **Confirmatory sample at lock time:** 19 events, counted with the frozen script's `select_events`. Of these, 4 have a pre-manifest earliest row (Oct 6 runs) by the ruled sentence, strict count 6 if the one-second write-order artifact is included. Your ruling (4 primary, both numbers) is in the document.
 
-## 2. THE FEED-STATUS SCRIPT (built, committed, tested)
+## 2. DISCLOSURES WRITTEN INTO SECTION 13 (read these; they are not flattering)
 
-`tools/feed_status_extract.py` (commit 114cca0). One CSV row per run. **Guard (exit 2, no CSV written) unless:** (1) every log phrase its regexes depend on still appears in the code that prints it; (2) each required pattern matches at least once; (3) **every run since Oct 1 has a SharpAPI line** (this is what catches your subtle case, where only recent wording changes and old lines still match); (4) runs per date since Oct 8 equal the manifest lines per date (an independent count). Tested on Oracle Oct 13: the real log passes (356 runs; 6 dates agree with the manifest); three simulated changes each fail with exit 2 and no CSV (403 wording changed in the whole log; SharpAPI wording changed only from Oct 13 07:00 on; a print statement changed in the code). **Results at Oct 13 21:01 CT:** 63 runs in the whole log have an ESPN 403 (Sep 10 to Oct 1 07:01); one of them, Oct 1 07:01, is among the 39 runs since Oct 1; since Oct 1 there are 0 SharpAPI no-data or failed lines and 0 other-HTTP ESPN lines. Manifest: 23 lines through Oct 13 21:00 CT (5 on Oct 7, then 3 a day Oct 8 to 13); every hash constant except the one `daily_runner.py` move at the Oct 7 21:00 CT run.
+1. **The paper-trade policy count cannot be produced from the logs.** What I could produce: **8 of 19 events clear the 15c edge on their earliest row** (edges 7.7 to 28.2c). The full four-condition policy (edge, confidence, SEDE rating, monitor running) is not reconstructible. Do not read the 8 as a policy count.
+2. **Mechanical diff against the signed text was not possible at writing time.** I ran it afterwards: word-for-word comparison of sections 1 to 12 against the signed v1.2, **0 differences** after stricter normalization (my first pass showed 90 tokenization artifacts, punctuation and list numbers, not content). I did **not** edit the file afterwards, since that would change the hash; the clean result is stated here, not in the locked file. The comparison was word-level because my copy of the signed text was the rendered view without markdown markers, so a byte diff was useless.
+3. The one-off scripts `docs/phase2_lock_20261014/premanifest_count_20261014.py` (SHA-256 `fd82af1e...a628a2`) and `edge15_count_20261014.py` (SHA-256 `adc4dc8a...e418d`) are committed with the lock.
+4. **The settlement-cache copies live on Oracle's disk only**, not in git.
+5. **The outcome-invariant summary counts were not captured** (the command exited 0 but the counts were not recorded).
+6. **The target verdict date, Thu Jan 14, 2027, is my derivation**: last regular-season games Sun Jan 10, 2027 (CBS Sports) plus the 3-day STALE rule. It is not a ruled date. Rule on it or replace it.
+7. `MIN_EDGE_CENTS` has a **second use at line 1815 of `nfl_model.py` that I did not examine.** It may not matter (the frozen flag rule is at lines 1557 to 1563) but I have not shown that.
 
-## 3. THE PRE-REGISTRATION: WHERE IT STANDS
+## 3. CAVEATS YOU SHOULD KNOW
 
-- **Documents in the project:** `claude/preregistration_nfl_game_phase2_FINAL_v12_20261013` (the version to lock; v1.1 and v1.0 kept for history), `claude/archie_to_jarvls_v11_signoff_20261013`, `claude/archie_to_jarvls_v12_applied_20261013`.
-- **v1.2 = v1.1 plus your six edits, nothing else:** (1) cache-bypass tie-break in your wording (API governs; listed with both values; hand-check where the API returns no settlement; written down before either arm is computed; no event dropped except a voided or cancelled market); (2) "(Oct 6)" clarified in 3b, 10 item 8 and 13; (3) the feed-results sentence in your wording; (4) "other pipeline commits" relabelled "examples, not a complete list"; (5) the `daily_runner.py` and flag-rule paragraph, with the diff line added to the lock checklist; (6) the token renewal plan. Section 10 item 12 accepted as written. Your sign-off is recorded in section 12 and in the section 13 line "Rulings recorded: J@rv1s date 2026-10-13".
-- **Design data (Oct 12, 55 scored events, not confirmatory):** arm I -0.0099 [-0.0388, +0.0197]; arm P +3.73c [-6.45, +14.00]; unresolved; w* 0.18 [0.00, 0.99]. 12 confirmatory-dated events were logged as of Oct 12 (4 with a pre-manifest earliest row by the ruled sentence). Unchanged this session.
+- **CRLF:** the laptop has `core.autocrlf=true`. A fresh Windows checkout of the lock file converts LF to CRLF and **changes its hash.** Verify committed bytes with `git show c22d79b:model_integrity/preregistration_nfl_game_phase2_LOCKED_20261014.md`, or on Oracle.
+- Git warned "LF will be replaced by CRLF" at `git add`; I verified the stored blob is still LF-only.
+- **Rus's own date in "Rulings recorded":** not verified by me. The public timestamp is done. Check section 13 if you need that line.
+- Your Gap 1 item was recorded per Rus's "confirming 1-->3": option (a), token renewal reminder Sept 13, 2027, ruling date Oct 14. The token's expiry date itself is Rus's report (Oct 11 or Oct 12, 2027 across two messages; his screenshot showed Oct 12, 2027). Either is after the verdict.
 
-## 4. THE LOCK: TOMORROW (Wed Oct 14), YOUR TARGET 20:00 CT
+## 4. SUBSCRIBER EMAIL (your item 3): PARTLY DIAGNOSED, NOT FIXED
 
-**Rus must open an Archie session by about 18:00 CT.** Sequence: (1) confirm Oracle's Oct 14 07:00 and 11:15 CT runs pushed; (2) run the lock evidence: closure with `--base-from-manifest` for both roots; `git diff --stat 882b06d HEAD -- daily_runner.py`; copy the three cache files to a dated folder and record their SHA-256; the feed-status CSV with the guard output pasted and committed; the pre-manifest count reprinted (ruled sentence); package-version hash; deployed Oracle commit; transport check; (3) fill section 13, commit the locked document to the private repo, compute its SHA-256; (4) Rus adds the one-line public timestamp (the SHA-256 and the lock time) to the public dashboard repo and his date to "Rulings recorded". **If anything in the lock output looks wrong the fallback is Thu Oct 15 to Sat Oct 17, which costs the Oct 15 game (Seattle at Denver) and nothing worse.** Cutoff: game date strictly after the lock's CT date.
+**Correction to the premise first.** Your briefing treated the Sep 21 email as proof that sends worked. The logs do not support that. **Oracle has never logged a successful subscriber send.** The Sep 21 email was probably the internal digest (a different sender path); that still needs confirming from the email's From address and subject. I earlier accepted your inference too quickly. Corrected framing: *Oracle never logged a successful subscriber send; whether Oct 1 to 14 messages were delivered is unknown.* Also, I briefly said the channel was "dead since at least Jun 23"; that overstated what the logs show.
 
-## 5. OTHER DATES
+What the evidence says:
+- **Code path** (`email_alerts.send_subscriber_email`): SMTP_SSL to smtp.gmail.com:465 as SEDE.signals@gmail.com with `SEDE_EMAIL_APP_PASSWORD` from `.env`. It catches every exception and prints one line. **It does not write to `email_send_log.csv`** (the internal `send_email` does), and the run summary's "Email: [OK] Sent" line reflects the internal digest only, so subscriber failures are invisible in the summary. That is a design gap, independent of the password.
+- **Error history on Oracle:** the sender was created Jun 22; failures began Jun 23. Failures were **535 login rejected** until Sep 30, then switched to **"Connection unexpectedly closed"** from Sep 30. The switch is unexplained. Telegram worked throughout. 101 failures logged since Jun 23. `.env` on Oracle last modified 2026-09-22 about 23:20 CT (laptop: Sep 22 23:17); all expected variable names present. Oracle's `email_send_log.csv`: 198 records, all OK (internal digest).
+- **Open causes:** a bad or never-valid app password on Oracle; the Sep 30 change; a QUIT-time disconnect (a clean message accepted, then an exception on `with` exit, which the code logs as "failed"; my probe did not support this on a bare connection but did not rule it out).
+- **New tonight:** Rus changed the SEDE.signals Google account password (about 19:15 CT; reason not yet stated, "I had to change"). Per Google's help page, a password change **revokes app passwords**. So whatever is on Oracle now is dead for certain. Steps given: sign in as SEDE.signals, https://myaccount.google.com/apppasswords (needs 2-Step Verification), create a new app password, install it with the `read -rs` / `sed -i` command (backs up `.env`, strips spaces, prints a count of 1), then a test send **only if** `SUBSCRIBER_EMAIL` is Rus's own address. The laptop `.env` still holds the old password (laptop pipeline tasks are disabled, so it only matters if it ever sends).
 
-Wed Oct 14: CPI releases 8:30 ET (the 07:00 CT run precedes it). Thu Oct 15: first normal CLAIMS week under the corrected holiday table; Seattle at Denver. Oct 17: practical hard stop; CPI staleness clock expires. Oct 14 to 19: NHL/NBA matcher window (post-lock, log-only; regression must show NFL_GAME classification unchanged). Oct 22: first CLAIMS holiday-week skip. Oct 30: GDP print. Nov 1: Phase 2 checkpoint (commit the feed-status CSV).
+**Still to get from Rus (tonight):** the SEDE.signals Sent folder for Oct 1 to 14 (the decisive check on whether anything was delivered); the From address and subject of the Sep 21 email; why the password had to change (a forced change could mean a security event, and that matters); whether Recent security activity shows a blocked sign-in from Oracle (163.192.200.127); the printed result of the test send and whether it arrived.
 
-## 6. OPEN POSITIONS AND VALIDATION (carried; not re-pulled today)
+**Proposed fix, awaiting Rus's go:** in `email_alerts.py` (outside the frozen NFL_GAME set; the change would show up in `pipeline_commit`): log every subscriber send to `email_send_log.csv`; count a QUIT-time disconnect as sent if the message was accepted; surface subscriber failures in the run summary.
 
-Per your Oct 13 EOD, no live or paper trades were placed or monitored; every model that matters is suspended or at entry weight 0. Last verified: `paper_trades.json` Trade #25, KXGDP-26OCT30-T3.5 YES, 119 contracts at 21c (Oct 12); SEDE portfolio $994.17, 8 open, full 8/8 (Oct 11). Gate 1 suspended project-wide. NFL_GAME: no demonstrated edge, entry weight 0, unresolved. CLAIMS: suspended, fix deployed, n=1 real release. GDP n=1 (Oct 30). JOBS unproven (n=4), blocked on a stale consensus until a real survey (about Nov 2 to 3). MLB_GAME fully suspended, figures unverified (backfill fix and 230-row audit week of Nov 2).
+## 5. OTHER ITEMS
 
-## 7. PENDING (owner Archie unless stated)
+- **brier_dashboard.json suspension-flag gap** (MLB_GAME shows clean stats with no suspension flag): not started; low priority, as you said.
+- **Dashboard repo** had moved on while I was out: Oracle auto-updates through 21:00 CT Oct 14, your briefing as `jarvls_daily_briefing_20261014.md`, the timestamp file. Laptop pulled fast-forward this morning (05:35 CT). Private repo: origin/main at ed08fff (Oracle 21:00 CT run).
+- **Not run tonight:** the session-opener live-trade health check; the Oct 8 to 13 session-archive catch-up (an archive gap: last archive is Oct 7).
 
-- **Before the verdict:** Elo-rebuild determinism test (untested); settlement-cache bypass script (with your tie-break rule).
-- **After the lock:** the CPI source read and date move (before Oct 17, Rus's go-ahead needed); historical CLAIMS old-versus-corrected comparison; aftermath log column (post-lock disclosure); fee-basis note on the dashboard or daily report (P&L used the exact fee before Oct 5, round1 after); sync denylist gate, D4 join, tickerless audit, decision-impact audit, the matcher; session-opener live-trade health check (not run again today).
-- **Rus:** open an Archie session by about 18:00 CT Wed; check "Last used" on the GitHub token and add a renewal reminder (suggested Sept 13, 2027); the public lock-timestamp line at the lock. **Open and unresolved since Oct 12:** Rus asked why "the stuff you look at looks Russian"; I asked which screen and for a sample and did not get one. My only guess is garbled emoji left in old source comments.
-- **Standing:** laptop `data/seeds_bridge_state.json` has an uncommitted auto-written change (left alone); four laptop stashes from earlier (not re-verified, do not drop); working drafts in `tmp/` are untracked on purpose. Separate and older: 101 subscriber-email failures logged since Jun 23 (Gmail rejects the stored login).
+## 6. DATES
+
+Thu Oct 15: first normal CLAIMS week under the corrected holiday table; **Seattle at Denver is the first game after the lock (counts, lock CT date was Oct 14).** Oct 15 to 17: **CPI source read must happen before Oct 17**, when the CPI staleness clock expires (needs Rus's go-ahead to move any date). Oct 14 to 19: NHL/NBA matcher ship window (log-only, after the lock; regression must show NFL_GAME classification unchanged). Oct 22: first CLAIMS holiday-week skip. Oct 30: GDP print. Nov 1: Phase 2 checkpoint. About Nov 2 to 3: real JOBS survey; MLB_GAME audit week of Nov 2. Jan 14, 2027: derived verdict date (needs your ruling).
+
+## 7. OPEN POSITIONS AND VALIDATION (carried, not re-pulled)
+
+Unchanged from the Oct 13 summary: no live or paper trades placed or monitored by me; every model that matters is suspended or at entry weight 0. NFL_GAME: no demonstrated edge, unresolved, entry weight 0 until the pre-registered test demonstrates. Last verified Trade #25 KXGDP-26OCT30-T3.5 YES (Oct 12). Gate 1 suspended project-wide.
+
+## 8. PENDING (owner Archie unless stated)
+
+- Finish the sede.signals fix tonight (Rus's inputs above), then the code change if he says go.
+- CPI source read before Oct 17; cache-bypass script and Elo determinism test before the verdict; post-lock list from Oct 13 (aftermath log column, fee-basis note, sync denylist gate, D4 join, tickerless audit, decision-impact audit, matcher).
+- Rus: finish the app password; send the four email facts above; Sept 13, 2027 token reminder; still unanswered since Oct 12: what "looks Russian" referred to (my only guess is garbled emoji in old source comments).
+- Standing: laptop `data/seeds_bridge_state.json` has an uncommitted auto-written change (left alone); four laptop stashes (do not drop); `tmp/` drafts untracked on purpose (including the `v12_signed.md` working copy and the email-probe scripts).
 
 ---
 
 *Session | Identity: Archie | Claude Desktop*
-*The lock is the next thing that matters. Every list in the final is generated from code or git; the lock output regenerates them.*
 *Papa Ralph standard. If it's worth doing it's worth doing right.*
