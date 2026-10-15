@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-15T12:04:46.277748",
-  "total_resolved": 1561,
+  "generated_at": "2026-10-15T16:22:59.931834",
+  "total_resolved": 1569,
   "by_model": {
     "GDP": {
       "n": 9,
@@ -31,18 +31,18 @@
       "event_avg_brier": 0.1407
     },
     "MLS_GAME": {
-      "n": 92,
-      "correct": 47,
-      "acc_pct": 51.1,
-      "avg_brier": 0.2698,
-      "avg_logloss": 0.7537,
-      "avg_edge": 13.7,
+      "n": 96,
+      "correct": 50,
+      "acc_pct": 52.1,
+      "avg_brier": 0.2664,
+      "avg_logloss": 0.7452,
+      "avg_edge": 13.6,
       "beats_random": false,
-      "n_events": 62,
+      "n_events": 66,
       "correlated_events": 28,
       "gate1_n_ok": true,
-      "event_acc_pct": 48.9,
-      "event_avg_brier": 0.2746
+      "event_acc_pct": 50.5,
+      "event_avg_brier": 0.2695
     },
     "MLB_GAME": {
       "n": 138,
@@ -115,18 +115,18 @@
       "event_avg_brier": 0.2059
     },
     "CLAIMS": {
-      "n": 5,
-      "correct": 2,
-      "acc_pct": 40.0,
-      "avg_brier": 0.1061,
-      "avg_logloss": 0.3712,
-      "avg_edge": 8.0,
+      "n": 9,
+      "correct": 4,
+      "acc_pct": 44.4,
+      "avg_brier": 0.1135,
+      "avg_logloss": 0.3951,
+      "avg_edge": 13.8,
       "beats_random": true,
-      "n_events": 1,
-      "correlated_events": 1,
+      "n_events": 2,
+      "correlated_events": 2,
       "gate1_n_ok": false,
-      "event_acc_pct": 40.0,
-      "event_avg_brier": 0.1061
+      "event_acc_pct": 45.0,
+      "event_avg_brier": 0.1144
     }
   },
   "unverified_models": {
@@ -200,20 +200,20 @@
       "rows_clear_15c_real": 0
     },
     "CLAIMS": {
-      "n": 5,
-      "n_events": 1,
-      "win_rate_pct": 40.0,
-      "mid_pnl_cents": 59.0,
-      "real_pnl_cents": 32.0,
-      "fees_cents": 9.0,
-      "event_mean_real_pnl_cents": 32.0,
-      "event_pnl_t_stat": null,
-      "events_pnl_positive": 1,
-      "pct_pnl_survives": 54.2,
-      "rows_clear_8c_mid": 2,
-      "rows_clear_8c_real": 0,
-      "rows_clear_15c_mid": 0,
-      "rows_clear_15c_real": 0
+      "n": 9,
+      "n_events": 2,
+      "win_rate_pct": 44.4,
+      "mid_pnl_cents": 137.0,
+      "real_pnl_cents": 95.0,
+      "fees_cents": 16.0,
+      "event_mean_real_pnl_cents": 47.5,
+      "event_pnl_t_stat": 3.06,
+      "events_pnl_positive": 2,
+      "pct_pnl_survives": 69.3,
+      "rows_clear_8c_mid": 6,
+      "rows_clear_8c_real": 4,
+      "rows_clear_15c_mid": 4,
+      "rows_clear_15c_real": 3
     }
   },
   "spread_stress_fee_mode": "round1",
@@ -225,8 +225,8 @@
     },
     "CLAIMS": {
       "status": "OK",
-      "days_since": 7,
-      "last_resolved": "2026-10-08"
+      "days_since": 0,
+      "last_resolved": "2026-10-15"
     },
     "CPI": {
       "status": "OK",
@@ -260,8 +260,8 @@
     },
     "MLS_GAME": {
       "status": "OK",
-      "days_since": 2,
-      "last_resolved": "2026-10-13"
+      "days_since": 1,
+      "last_resolved": "2026-10-14"
     },
     "NBA_CHAMP": {
       "status": "NEVER_RESOLVED",
@@ -300,8 +300,8 @@
     "stale_only": [
       {
         "model": "CLAIMS",
-        "dashboard_n": 5,
-        "scorer_n": 23
+        "dashboard_n": 9,
+        "scorer_n": 27
       }
     ]
   }
