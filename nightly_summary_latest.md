@@ -74,6 +74,6 @@ Six rows: gate (f) FALSE (25%, Brier 0.0625); first live dry run shows a refusal
 
 ## 8. Next
 
-Oct 18 night: Rus releases this update. Oct 19 07:00 / 11:15 / 21:00 CT runs. Oct 21 first NBA day. Oct 22 first CLAIMS holiday-week skip. Oct 30 GDP. Nov 1 Phase 2 checkpoint. MLB_GAME audit week of Nov 2.
+Oct 19 07:00 / 11:15 / 21:00 CT runs (no matcher change in them). Oct 21 first NBA day. Oct 22 first CLAIMS holiday-week skip. Oct 30 GDP. Nov 1 Phase 2 checkpoint. MLB_GAME audit week of Nov 2.
 
 *Archie | Papa Ralph standard.*
