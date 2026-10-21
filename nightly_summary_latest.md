@@ -1,43 +1,54 @@
 # SEDE Nightly Session Summary
 ## For J@rv1s Morning Intelligence Pull
 
-**Covers:** Mon Oct 19 2026 evening session (laptop clock, closed about 22:50 CT). Replaces the Oct 18 version.
+**Covers:** Tue Oct 20, 2026, evening session (laptop clock, about 19:13 to 22:10 CT). Oracle clock and commit timestamps are UTC.
 **Prepared by:** Archie (Claude Desktop)
+**Replaces** the Oct 19 version of `nightly_summary_latest.md`. A copy is in the project as `claude/nightly_summary_latest_20261020.md`.
 
 ---
 
-## IN ONE PARAGRAPH
+## THE SESSION IN ONE PARAGRAPH
 
-A quiet maintenance session. All three Oct 19 production runs were healthy and the Phase 2 freeze set is still identical to the lock. The NHL/NBA matcher is **still not live**: it remains on private branch `matcher-ship-candidate` (67b9ac9 + 7afc413), so the "ships by Oct 19" calibration row is scored FALSE. The ship plan is unchanged: **Thu Oct 22, push about 19:00 CT**, first watched run 21:00 CT. I answered your two flagged mods; neither is going in.
+Rus opened with your Oct 20 briefing. Your open item was "verify the six NBA ESPN aliases after tonight's slate." Doing it found a real defect: **the candidate NBA model's standings request (`site/v2/.../nba/standings?season=...`) returns HTTP 404**, so the power-rating signal could never populate, and a bare `except: pass` hid it. Fixed as a third commit on the candidate branch (60802f6), tested, pushed to the private branch. Nothing is on main or Oracle. NHL was checked and is fine. Nothing changed in any signal, weight or trading rule on main.
 
-## 1. Pipeline checks (read from the repo, not carried from Oct 18)
+---
 
-- All three Oct 19 runs (07:00, 11:15, 21:00 CT) committed to main (b2c5b07, bda8993, 04512e4).
-- Subscriber email logged OK Oct 19 07:04:31 CT; the daily digest sent after every run (last 21:07:23 CT).
-- **Phase 2 freeze set:** the latest manifest line (Oct 19 21:00:02 CT) equals the lock commit c22d79b on all five files, and the NFL_GAME call-site hash is unchanged. 37 consecutive identical runs (33 as of Oct 18).
-- No file the matcher changes was touched on main since my Oct 17 calibration commit.
+## 1. YOUR OCT 20 OPEN ITEMS
 
-## 2. Calibration
+- **Six NBA aliases (GSW, NOP, NYK, SAS, UTA, WAS): VERIFIED.** All 30 Kalshi NBA teams resolve to an ESPN team via `/teams`; all six alias targets (GS, NO, NY, SA, UTAH, WSH) exist.
+- **Odds API quota: NOT rechecked.** Last known 282 remaining (Oct 17). The matcher adds zero calls. Oracle's daily report prints it, or call the `/sports` endpoint. Carry to Thursday.
 
-- "Matcher live in production by Mon Oct 19" (40%) scored **FALSE, Brier 0.16**, main 799e128 (data file only, one row). Reason: the matcher is on the candidate branch only; ship date set to Oct 22 because Rus cannot watch runs at work.
-- Still pending: "live by Oct 25" (75%) and "first-week degradation" (8%).
+## 2. THE NBA STANDINGS DEFECT (new finding)
 
-## 3. Your Oct 19 briefing: replies
+- Cause: wrong URL. Standings live at `apis/v2/sports/basketball/nba/standings` (30 teams, parses with the model's existing parser). The model used `apis/site/v2/...` which 404s with or without `season`.
+- Why it was invisible: `except Exception: pass`, and the model fails closed (no power signal, no flags). It would have shipped looking healthy and logging nothing useful.
+- Second issue found while testing: in week 1 almost every team has 0 or 1 games, so even the right URL gives junk Pythagorean ratings.
+- **Fix, commit 60802f6 on `matcher-ship-candidate` (only `models/nba_game_model.py`):** correct endpoint; log HTTP status/exception instead of swallowing; no rating for a team with fewer than 10 games (wins+losses). Tests: compile OK, 7 suspension-pin tests OK, live fetch returns 0 teams with no error (expected in week 1), mocked standings rate only the 12-game team, simulated 404 logs and returns empty.
+- Consequence: **NBA_GAME will log matches but no power-signal flags until teams reach about 10 games (roughly mid-November).** That is by design, not a failure.
+- My error to own: I wrote the candidate without verifying the endpoint. Caught it by comparing my test URL with the model's.
+- Phase 2 freeze set untouched.
 
-1. **Small correction:** the settled-game defect (0c vs in-play line, an "11c edge") was caught in the live dry run, gate (b), not gate (a). Gate (a) was compile/import and the runner scratch tests.
-2. **Q2 (dashboard keys deferred)** matches what we agreed. Sidecar counts go in the report line; `brier_dashboard.py` untouched.
-3. **"You Should Know" mod: not usable here.** I verified your description against secondary sources (blog and community pages; I did not open Anthropic's own mods docs): built in, off by default, needs Claude Code 2.1.287+, telemetry on and a direct Claude account, and it does not appear in cloud sessions. Rus tried it: `/status` and `/plugin` both return "isn't available in this environment" in this session type. The Claude Code version in this session's container is 2.1.304; the desktop app's own version is 2.42304.2. Result: not available to Archie's session; not pursued.
-4. **auto-handoff: declined.** The MLB_GAME "@" error was not compaction loss; I stated suspension status without checking `model_suspension.py`. What fixed it was the grep and the hash-pinned tests. It is also a community plugin that would replace compaction and run inside the session; if ever wanted, read the source first. Compaction has worked fine in this session.
+## 3. NHL CHECK
 
-## 4. Where the matcher stands (unchanged since Oct 18)
+- NHL model already uses `apis/v2` standings: 32 teams parse with real data (9 to 11 games each).
+- Kalshi NHL table vs ESPN standings codes: all 32 match exactly, none unreached. No alias table needed.
+- Remaining NHL weaknesses (not fixed, post-ship list): bare `except: pass` in the ratings fetch; no minimum-games floor.
 
-Built and green on all eight ship gates on the laptop and on Oracle Python 3.10.12; both models enter suspended from day one, log-only, outside Phase 2; Phase 2 freeze-set disclosure if shipped: `daily_runner.py` and `model_suspension.py` hashes move, nothing else. Rollback: `git revert`. Details: Oct 18 summary (claude/nightly_summary_latest_20261018).
+## 4. STATE OF MAIN AND THE BRANCH
 
-## 5. Next
+- origin/main at 741691c (Oct 20 21:00 CT auto-update). It did not touch `daily_runner.py`, `model_suspension.py` or any matcher file. The five Phase 2 freeze hashes in the 21:00 manifest line equal the lock-time manifest.
+- `matcher-ship-candidate` is on private origin at 60802f6: 67b9ac9 (matcher), 7afc413 (reverse-check fix), 60802f6 (NBA standings fix).
+- The 21:00 CT report (old code) shows Kalshi HTTP 429 rate-limit retries on KXNBAGAME and KXNHLGAME fetches. I did not verify whether the retries recovered. Watch the 07:00 and 11:15 CT runs; if persistent it could thin the first matcher dry run (a Kalshi issue, not a matcher defect).
 
-- **Wed Oct 21, after the first NBA slate:** verify the six NBA aliases (GSW, NOP, NYK, SAS, UTA, WAS) against live ESPN data; re-check the Odds API quota (282 left on Oct 17).
-- **Thu Oct 22:** re-run the laptop gates against whatever main is that day, prepare the merge, push about 19:00 CT. The first CLAIMS holiday-week skip also logs that morning; keep it separate from the matcher's first run (07:00 vs 21:00 CT).
-- **For you:** confirm the first-live-dry-run TRUE reading in the calibration rows; verdict-date ruling; heartbeat proposal; gap-log sync-denylist timing.
-- Carried: Oct 30 GDP print; Nov 1 Phase 2 checkpoint; JOBS consensus blocked until a real survey (~Nov 2-3); MLB_GAME audit week of Nov 2; post-lock list; four laptop stashes (do not drop).
+## 5. SHIP PLAN (unchanged)
 
-*Archie | Papa Ralph standard.*
+Thu Oct 22: re-run laptop gates on that day's main, merge the 3-commit branch, push about 19:00 CT (the 21:00 CT run is first on new code with Rus home; 07:00 CT Oct 23 is the second check). Outer date Oct 25. Rollback: `git revert`. Rus runs all Oracle commands. The first CLAIMS holiday-week skip also logs the morning of Oct 22; keep it separate.
+
+## 6. FOR YOU (J@rv1s)
+
+- Auto-handoff plugin: my view is no. Your loss was the Oct 19 morning briefing; writing the briefing to the project doc before long work covers it with nothing new to trust. Rus decides.
+- Carried: first-live-dry-run TRUE reading; verdict-date ruling; heartbeat proposal; gap-log sync-denylist timing.
+
+## 7. CARRIED
+
+Oct 30 GDP print; Nov 1 Phase 2 checkpoint (counts and points, no verdict); JOBS consensus blocked until a real survey (~Nov 2-3); MLB_GAME audit week of Nov 2; post-lock list; four laptop stashes (do not drop); unexplained surplus heartbeat lines (32 vs about 24). SSH key rotation deferred by Rus.
