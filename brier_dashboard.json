@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-26T12:03:56.979626",
-  "total_resolved": 1789,
+  "generated_at": "2026-10-26T16:21:59.195503",
+  "total_resolved": 1928,
   "by_model": {
     "GDP": {
       "n": 9,
@@ -87,32 +87,32 @@
       "event_avg_brier": 0.1325
     },
     "NFL_GAME": {
-      "n": 107,
-      "correct": 42,
-      "acc_pct": 39.3,
-      "avg_brier": 0.242,
-      "avg_logloss": 0.6769,
-      "avg_edge": 12.0,
+      "n": 118,
+      "correct": 47,
+      "acc_pct": 39.8,
+      "avg_brier": 0.2416,
+      "avg_logloss": 0.6761,
+      "avg_edge": 12.1,
       "beats_random": true,
-      "n_events": 84,
+      "n_events": 95,
       "correlated_events": 23,
       "gate1_n_ok": true,
-      "event_acc_pct": 40.5,
-      "event_avg_brier": 0.2512
+      "event_acc_pct": 41.1,
+      "event_avg_brier": 0.2497
     },
     "NFL_SPREAD": {
-      "n": 1253,
-      "correct": 476,
-      "acc_pct": 38.0,
-      "avg_brier": 0.198,
-      "avg_logloss": 0.5794,
+      "n": 1381,
+      "correct": 515,
+      "acc_pct": 37.3,
+      "avg_brier": 0.1983,
+      "avg_logloss": 0.5801,
       "avg_edge": 11.9,
       "beats_random": true,
-      "n_events": 93,
-      "correlated_events": 92,
+      "n_events": 105,
+      "correlated_events": 104,
       "gate1_n_ok": true,
-      "event_acc_pct": 37.1,
-      "event_avg_brier": 0.2044
+      "event_acc_pct": 36.2,
+      "event_avg_brier": 0.2047
     },
     "CLAIMS": {
       "n": 9,
@@ -136,20 +136,20 @@
   "signal_dist": {},
   "spread_stress": {
     "NFL_GAME": {
-      "n": 87,
-      "n_events": 70,
-      "win_rate_pct": 41.4,
-      "mid_pnl_cents": 189.5,
-      "real_pnl_cents": -54.0,
-      "fees_cents": 171.0,
-      "event_mean_real_pnl_cents": -0.8,
+      "n": 98,
+      "n_events": 81,
+      "win_rate_pct": 41.8,
+      "mid_pnl_cents": 215.5,
+      "real_pnl_cents": -58.0,
+      "fees_cents": 193.0,
+      "event_mean_real_pnl_cents": -0.7,
       "event_pnl_t_stat": -0.11,
-      "events_pnl_positive": 30,
-      "pct_pnl_survives": -28.5,
-      "rows_clear_8c_mid": 60,
-      "rows_clear_8c_real": 40,
-      "rows_clear_15c_mid": 22,
-      "rows_clear_15c_real": 12
+      "events_pnl_positive": 35,
+      "pct_pnl_survives": -26.9,
+      "rows_clear_8c_mid": 68,
+      "rows_clear_8c_real": 44,
+      "rows_clear_15c_mid": 26,
+      "rows_clear_15c_real": 15
     },
     "MLB_GAME": {
       "n": 15,
@@ -168,20 +168,20 @@
       "rows_clear_15c_real": 2
     },
     "NFL_SPREAD": {
-      "n": 1147,
-      "n_events": 91,
-      "win_rate_pct": 38.4,
-      "mid_pnl_cents": 2994.0,
-      "real_pnl_cents": -241.0,
-      "fees_cents": 1968.0,
-      "event_mean_real_pnl_cents": -2.6,
-      "event_pnl_t_stat": -0.06,
-      "events_pnl_positive": 41,
-      "pct_pnl_survives": -8.0,
-      "rows_clear_8c_mid": 817,
-      "rows_clear_8c_real": 558,
-      "rows_clear_15c_mid": 280,
-      "rows_clear_15c_real": 164
+      "n": 1275,
+      "n_events": 103,
+      "win_rate_pct": 37.6,
+      "mid_pnl_cents": 2442.0,
+      "real_pnl_cents": -1096.0,
+      "fees_cents": 2201.0,
+      "event_mean_real_pnl_cents": -10.6,
+      "event_pnl_t_stat": -0.25,
+      "events_pnl_positive": 45,
+      "pct_pnl_survives": -44.9,
+      "rows_clear_8c_mid": 907,
+      "rows_clear_8c_real": 622,
+      "rows_clear_15c_mid": 310,
+      "rows_clear_15c_real": 190
     },
     "JOBS": {
       "n": 1,
@@ -275,13 +275,13 @@
     },
     "NFL_GAME": {
       "status": "OK",
-      "days_since": 13,
-      "last_resolved": "2026-10-13"
+      "days_since": 5,
+      "last_resolved": "2026-10-21"
     },
     "NFL_SPREAD": {
       "status": "OK",
-      "days_since": 4,
-      "last_resolved": "2026-10-22"
+      "days_since": 1,
+      "last_resolved": "2026-10-25"
     },
     "NHL_CHAMP": {
       "status": "NEVER_RESOLVED",
