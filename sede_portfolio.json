@@ -7,7 +7,7 @@
     "current_bankroll": 994.17,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-10-29T07:04:50"
+    "last_updated": "2026-10-29T11:20:09"
   },
   "config": {
     "sizing": {
@@ -68,8 +68,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 91.5,
-      "last_checked": "2026-10-29 07:04 CT"
+      "current_price_cents": 92.5,
+      "last_checked": "2026-10-29 11:20 CT"
     },
     {
       "id": 3,
@@ -93,8 +93,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 97.0,
-      "last_checked": "2026-10-29 07:04 CT"
+      "current_price_cents": 100.0,
+      "last_checked": "2026-10-29 11:20 CT"
     },
     {
       "id": 4,
@@ -118,8 +118,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 69.0,
-      "last_checked": "2026-10-29 07:04 CT"
+      "current_price_cents": 71.0,
+      "last_checked": "2026-10-29 11:20 CT"
     },
     {
       "id": 5,
@@ -143,8 +143,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 79.0,
-      "last_checked": "2026-10-29 07:04 CT"
+      "current_price_cents": 100.0,
+      "last_checked": "2026-10-29 11:20 CT"
     },
     {
       "id": 6,
@@ -168,8 +168,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 78.0,
-      "last_checked": "2026-10-29 07:04 CT"
+      "current_price_cents": 81.0,
+      "last_checked": "2026-10-29 11:20 CT"
     },
     {
       "id": 7,
@@ -194,7 +194,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 52.0,
-      "last_checked": "2026-10-29 07:04 CT"
+      "last_checked": "2026-10-29 11:20 CT"
     },
     {
       "id": 8,
@@ -218,8 +218,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 6.0,
-      "last_checked": "2026-10-29 07:04 CT"
+      "current_price_cents": 100.0,
+      "last_checked": "2026-10-29 11:20 CT"
     },
     {
       "id": 9,
@@ -244,7 +244,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 63.0,
-      "last_checked": "2026-10-29 07:04 CT"
+      "last_checked": "2026-10-29 11:20 CT"
     }
   ],
   "closed_positions": [

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-29T12:04:49.520419",
+  "generated_at": "2026-10-29T16:20:08.501226",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -27,12 +27,12 @@
       "suggested_threshold": 9,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n_above": 86,
-      "n_below": 11,
-      "brier_above": 0.443345,
-      "brier_below": 0.015599,
+      "n_above": 106,
+      "n_below": 12,
+      "brier_above": 0.395045,
+      "brier_below": 0.023485,
       "reason": [
-        "Above-threshold signals underperforming: Brier=0.4433 (n=86)"
+        "Above-threshold signals underperforming: Brier=0.3950 (n=106)"
       ]
     },
     {
@@ -56,9 +56,9 @@
       "suggested_threshold": 8,
       "action": "HOLD",
       "confidence": "LOW",
-      "n_above": 381,
+      "n_above": 1462,
       "n_below": 0,
-      "brier_above": 0.155843,
+      "brier_above": 0.201463,
       "brier_below": null,
       "reason": []
     },
@@ -156,10 +156,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n": 9,
-      "brier": 0.1135,
+      "n": 14,
+      "brier": 0.1285,
       "reason": [
-        "Need 11 more resolved signals (have 9)"
+        "Need 6 more resolved signals (have 14)"
       ]
     },
     {
@@ -195,10 +195,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n": 9,
-      "brier": 0.0815,
+      "n": 16,
+      "brier": 0.1749,
       "reason": [
-        "Need 11 more resolved signals (have 9)"
+        "Need 4 more resolved signals (have 16)"
       ]
     },
     {
@@ -247,10 +247,10 @@
       "delta": -0.05,
       "action": "LOWER",
       "confidence": "MEDIUM",
-      "n": 103,
-      "brier": 0.2666,
+      "n": 113,
+      "brier": 0.2649,
       "reason": [
-        "Below random: Brier=0.2666 (random=0.25) (n=103)"
+        "Below random: Brier=0.2649 (random=0.25) (n=113)"
       ]
     },
     {
