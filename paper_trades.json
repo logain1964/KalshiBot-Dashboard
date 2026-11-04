@@ -577,7 +577,7 @@
     "exit_date": "2026-10-29 07:34 CT",
     "pnl_dollars": -17.85,
     "result": "EARLY_EXIT",
-    "close_note": "AUTO_STOP_LOSS: loss $18.45 exceeded $15.00 limit at 6c",
+    "close_note": "AUTO_STOP_LOSS: loss $17.85 exceeded $15.00 limit at 6c",
     "exit_subtype": "DISCRETIONARY_EXIT"
   }
 ]
