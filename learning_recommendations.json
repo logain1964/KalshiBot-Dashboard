@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-05T12:04:29.512240",
+  "generated_at": "2026-11-05T16:19:28.385907",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -27,12 +27,13 @@
       "suggested_threshold": 9,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n_above": 106,
-      "n_below": 12,
-      "brier_above": 0.395045,
-      "brier_below": 0.023485,
+      "n_above": 129,
+      "n_below": 20,
+      "brier_above": 0.351404,
+      "brier_below": 0.068911,
       "reason": [
-        "Above-threshold signals underperforming: Brier=0.3950 (n=106)"
+        "Sub-threshold signals winning: Brier=0.0689 (45.0% acc, n=20)",
+        "Above-threshold signals underperforming: Brier=0.3514 (n=129)"
       ]
     },
     {
@@ -156,10 +157,10 @@
       "delta": 0.0,
       "action": "HOLD",
       "confidence": "INSUFFICIENT_DATA",
-      "n": 14,
-      "brier": 0.1285,
+      "n": 18,
+      "brier": 0.1297,
       "reason": [
-        "Need 6 more resolved signals (have 14)"
+        "Need 2 more resolved signals (have 18)"
       ]
     },
     {
