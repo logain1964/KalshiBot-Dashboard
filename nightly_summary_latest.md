@@ -1,7 +1,7 @@
 # Nightly Summary - Archie - Wed Nov 4, 2026 (session closed 22:45 CST)
 
 ## State (read-only night; NOTHING pushed to Oracle, nothing scheduled, no outcome statistic computed on any data)
-- Oracle 06:00/10:15 auto-updates ran clean; public dashboard repo identical to origin. Health check: 0 open paper trades, 5 SEDE open, auto_monitor running.
+- Oracle 06:00/10:15 auto-updates ran clean; public dashboard repo identical to origin. PUBLIC REPO CARRIES THE MLB REPAIR (checked 22:55 CST): laptop data/signals_log.csv and public signals_log.csv both 11,165 rows; all 285 MLB rows match on actual_outcome (0 missing, 0 differ; actual_outcome only, 4-column key, as of the Nov 4 20:00 CT auto-update). The project-instruction line "public repo NOT updated for the MLB repair (check pending)" is now stale and needs a J@rv1s-approved replacement. brier_dashboard.json MLB_GAME string stays stale (Phase 2 hashed file). Details: claude/archie_push_log_mlb_repair_20261103.md. Health check: 0 open paper trades, 5 SEDE open, auto_monitor running.
 - Phase 2 (NFL_GAME) untouched; verdict Thu Jan 14, 2027. Ruling 1a: counts and points only.
 - JOBS stays BLOCKED. Rus's five "FactSet medians" were S&P EPS/price-target figures and the ChatGPT +65K / 4.2% was unverified; NOTHING entered. Real FactSet median payrolls + unemployment with a source link needed (expected Thu Nov 5). None by Nov 5 evening = leave blocked. Print is Fri Nov 6.
 
