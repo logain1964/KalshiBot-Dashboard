@@ -1,53 +1,36 @@
-# Nightly Summary - Archie - Thu Nov 5 into Fri Nov 6, 2026 (closed 00:15 CST; replaces the earlier Nov 5 version)
+# Nightly summary: Archie, Sat Nov 7, 2026 (closed 16:30 CST, clock from system tool)
+Replaces the Nov 5/6 version. Date note: this is the overdue Nov 6 close-out, written Nov 7.
 
-Read-only on production except two laptop-repo commits (JOBS constants bdd1b64; paper_trade_nightly.py 2a78c94). Nothing run on Oracle. No outcome statistic computed on any data; weather work is prices only, outcomes sealed and never opened.
+## NEEDS ATTENTION
+RUS
+1. Yes/no: drop the Brier from the Telegram digest header (raw all-model row average, includes unverified rows, reads as a skill claim). Patch A waits on this.
+2. Is the daily "SEDE DATA UPDATE REQUIRED" MLB Telegram actually arriving? Yes/no on muting `mlb_schedule` only until 2027-03-01 with a visible digest note.
+3. Cloud task "Paper Trade Candidates": it ran cloud-only at 8:30 PM CST Nov 6 and reported FAILED (no laptop access; same failure as Oct 27). Nothing reached Telegram. Its cron also shifted an hour at the DST change. The Nov 13 "3 matching nights" comparison cannot work unless "Require this computer" is on for that task. Your call.
+4. Real October CPI consensus with a source link around Mon Nov 9 (I open the link, quote the page, then enter it; never a guess).
+5. Optional: read the Kalshi fee PDF rounding paragraph and paste it ("centicent" vs round1).
+6. Veto, if any, of the all-cells ruling before J@rv1s's v0.3 draft (Sun Nov 8). Protocol edit when ready.
+J@RV1S
+- Review final A/B/email patch diffs when built; weather items before the Wed Nov 11 lock; Judge-line review Thu Nov 19.
 
-## NEEDS ATTENTION IN THE MORNING
+## DONE TODAY (Judge evidence)
+- Calibration CSV: 3 PENDING rows scored in place, 2 rows appended; 85 lines, CRLF, no BOM, SHA256 274CE98648ED36EEF5587D06B8DEC031A42F34F046980A436D29DFE49FB6450A. Counts in lines 60-85: 10 TRUE, 2 FALSE, 2 VOID, 12 PENDING. Dashboard commits f8e97ec, ab244ab pushed; J@rv1s verified the published copy.
+- Alert chain: telegram_alerts.py, data_freshness.py, email_alerts.py are not manifest-hashed. Patch A and B diffs exist as drafts only; real files unchanged (telegram_alerts.py SHA256 CC7AF3E9...6917). Nothing pushed.
+- Weather: provisional run, cell trace, 17-ticker blank-field check, compare and rules re-runs with hashes, fee citation, pool hashes re-verified (history_panel_20261104 unchanged).
+- Next CPI date found.
 
-### Rus
-1. JOBS print is Fri Nov 6, 7:30 a.m. CST (8:30 ET). After the 06:00 CT Oracle auto-update, confirm Oracle has the new consensus (you run it; read-only; J@rv1s asked for this, order 1c). In the Oracle SSH session, from ~/KalshiBot: `git log --oneline -3` (expect bdd1b64 or newer, plus 2a78c94) and `python3 -c "import data_freshness as d; print(d.check_nfp_consensus())"` (use your venv python if you normally do; expect a small age in hours, date 2026-11-05, no stale flag). Paste me the output.
-2. Weather veto decision (default stands unless you veto): J@rv1s ruled the Stage 1 primary sample is era-restricted (2025Q3 onward, about 491 dates), not pooled. My view: do not veto. Pooled makes the run less able to find a tradeable gap in today's books (2025H1 books cost 6.5-10.5c to cross). My one add, for J@rv1s: the 4.0c cutoff sits exactly on 2025Q3's median spread (4c), the borderline quarter; add a descriptive, no-label 2025Q4-onward sensitivity (about 400 dates). His call.
-3. Telegram: the first scheduled Paper_Trade_Nightly message should arrive about 20:35 CT Fri Nov 6. None by 20:45 means tell me. (LastTaskResult 267011 = never yet run by its own schedule; Nov 5 messages were manual tests.)
-4. Retire the cloud Paper Trade Candidates task (trig_017NKayNhm4FvGPRCpZ3q5sc) after a few nights of matching output; a desktop-app action only you can do. Until then it stays as a cross-check. The "Require this computer" toggle is optional/moot once it is retired.
-5. SEEDS decisions stay yours (stop tracking seeds_bridge_state.json; the SEEDS "unvalidated" label). Not touched.
-6. Both project edits are DONE and read back (see below). The header stamps still say Nov 4; bump them whenever you like.
+## WEATHER (KXHIGHLAX, lock Wed Nov 11)
+Winner cell D+0 07:00 PT, n about 667, cost 3.45c. Pool frozen at history_panel_20261104; sealed outcomes never opened. Owed before lock: DST-awareness statement (provisional script used America/Los_Angeles, so DST-aware; to be confirmed), 17-ticker sensitivity counts, centicent vs round1 row, pool re-hash Nov 10 and Nov 11, B=5000 rehearsal on lock day.
 
-### J@rv1s
-1. Read this together with claude/archie_to_jarvls_era_audit_sims_cost_20261105.md and your rulings in claude/jarvls_era_audit_rulings_20261105.md. All your rulings are accepted and scheduled; nothing contested.
-2. CORRECTION to my own earlier summary: I wrote that the public-repo MLB comparison was "as of Nov 4 20:00 CT". My Nov 4 archive says it was run at 22:55 CST. Your item 9 text (22:55 CST) is right; my 20:00 was wrong. Fixed here.
-3. FILE OWNERSHIP CONFLICT: your work order 6 has me appending calibration rows to jarvls_calibration.csv, but the Protocol's File Ownership says J@rv1s owns that file and Archie does not touch it. I have NOT written any calibration rows. Tell me which rule governs (I can append only on your explicit okay), and I still have not seen the CSV schema.
-4. Timing note for v0.3: the pool freezes at events dated through Tue Nov 10 that have settled, so the FINAL cell, mean C and rehearsal can only be computed on lock day Wed Nov 11. For your Sun Nov 8 draft I can give a PROVISIONAL run on the current pool (668 events) with your final rules (D01:00 by rule, primary = 2025Q3 onward, mean C, same seed). The pool change is about 7 dates (about 1%). Say if you want that tomorrow.
-5. Suggestion (see Rus item 2): descriptive 2025Q4-onward sensitivity, no label.
-6. Judge: line trial: tonight's evidence is below under "Judge evidence". First formal review is Thu Nov 19.
+## ENTRY CRITERIA NOTE (criterion 4)
+auto_monitor.py covers only paper_trades.json (0 open). It does NOT cover the five sede_portfolio.json positions (1 BTC, 4 GDP). Criterion 4 is therefore true only for the paper_trades book.
 
-## DONE TONIGHT (Judge evidence)
+## NOT DONE (carried)
+Final patch diffs plus before/after digest test and five-file hash table (earliest push Mon Nov 9 after the 10:15 run, only if Rus can pull on Oracle in the window); RESOLVED_MARKETS audit; direction sample; id-3 greps; silent-fetch-error check; MLS Oct 25 trace; 285 vs 230 MLB reconcile; Jan 14 hash-file list; Protocol rebuild (stray first line, cron 12:00/16:15/02:00 UTC, session-history line, calibration-append line with exception clause).
 
-1. JOBS entered (order 2). Evidence: I opened the FactSet page in the built-in browser and quoted it: "Total Nonfarm Payrolls for October 2026 Are Projected to Rise By 65,000", John Butters, Nov 5 2026; NFP median 65,000 (24 estimates, range 50,000-125,000); unemployment median 4.2% (25 estimates, range 4.1%-4.3%). Commit bdd1b64, pushed to origin/main 23:01:59 CST, one file models/jobs_model.py (+9/-18). Diff: NFP_CONSENSUS 70_000 -> 65_000; UNEMP_CONSENSUS 4.1 -> 4.2; REPORT_MONTH "September 2026" -> "October 2026"; REPORT_DATE 2026-10-02 -> 2026-11-06; CONSENSUS_LAST_UPDATED 2026-09-07 -> 2026-11-05; source URL and "opened and read by Archie Nov 5 2026" in comments. Your gap (b): `git log origin/main` shows bdd1b64 directly on top of 17d01e7 (Auto-update 2026-11-05 20:00 CT), and `git rev-parse bdd1b64^` equals `origin/main~1` (17d01e70...), so no feature-branch commit rode along. Freshness check on the edited file returned 10.99 hours, no stale flag. Gap (c), Oracle confirmation after the 06:00 run: still open (Rus item 1). JOBS stays UNPROVEN, n=4.
-2. Opener proof and the 3 questions answered in chat and in the project doc.
-3. Paper_Trade_Nightly (your conditions): built and scheduled at Rus's explicit go, daily 20:35 CT, wake-to-run. Committed 2a78c94, pushed 23:50 CST (bdd1b64..2a78c94), one file, SHA256 of the committed text 9D04014E...8AD7 (git will convert line endings to CRLF on checkout). (1) Suspended filter: lives in paper_trade_gates.is_suspended, inherited via paper_trade_candidates.qualifies() (gates.py line 117); I ran it live: suspended both directions are CLAIMS, MLB_GAME, NHL_GAME, NBA_GAME (also NFL_GAME, NFL_SPREAD, MLS_GAME, SOCCER_GAME, EPL_GAME, WC_GAME, WC_WINNER, MLB_CHAMP). JOBS and GDP are NOT suspended at the gate, so the message now carries a JOBS/GDP unproven line. (2) Header fixed: the Nov 5 live-test header lacked "UNVALIDATED" (your condition failed); now "PAPER, UNVALIDATED -- TRADE CANDIDATES ... Not a signal; no model is demonstrated." Old live-test text is in logs\paper_trade_nightly.log (23:12, 23:16). (3) grep: paper_trades.json appears only in the docstring (line 5) and a message string (line 48); the only file write is the append to its own log (lines 51-52). (4) Committed with a hash (above).
-4. Project edits, both DONE and read back from the live project by me: Protocol step 0 now reads "session_state.md (C:\KalshiBot\session_state.md)" (doc is now Archie_Session_Protocol.md; old duplicate gone); the stale public-repo sentence is replaced by your item 9 text. Compared by reading, not byte-diff.
-5. Public repo: 285 of 285 MLB rows match on actual_outcome (checked Nov 4 22:55 CST; actual_outcome only, 4-column key; brier_score/log_loss not checked; 285 vs the 230 audited rows still unreconciled).
-
-## WEATHER (option a), prices only. Detail and hashes: claude/archie_to_jarvls_era_audit_sims_cost_20261105.md
-- Panel: 4,008 markets, 668 events, 147,036 candle rows, 0 fetch failures; panel_prices.csv has no outcome column; sealed outcomes read-only, never opened (SHA256SUMS.txt has full hashes).
-- Era audit: 668 events = 668 consecutive dates 2025-01-05 to 2026-11-03, no gaps (your 70% claim TRUE; calibration row "0.09 Brier" is yours to log). Early books thin: D05:00 nearest-bracket spread median 16c/17c in 2025Q1/Q2, then 4, 2, 2, 2, 1, 1c.
-- Full-pool cells: D01:00 392 dates in the 40-60c band (97.9% usable) beats D05:00 386 (95.1%); D03:00/D04:00 fail the 75% line (69.6%/71.3%).
-- Measured C by era: 2025H1 10.5c (D05) / 6.5c (D01), 2025H2 3.5c, 2026 2.5c; pooled median 3.0c / 3.5c; MEAN D05:00 5.64c, D01:00 4.63c.
-- Rehearsal (old rules, 1,000 runs, seed 20261105): calibrated market reads MISCALIBRATED 0.0-0.5%, GAP BELOW COST 8-10%; true 5c gap reads MISCALIBRATED about 36-40% at C=2.5c and 17-27% at the measured C; true 8c about 76-91%; half-width about 3.2c at n of about 640.
-- YOUR RULINGS (accepted): (3) cell by the rule alone = D01:00 PT; pool frozen to events dated through Nov 10 that have settled and have candles; recompute outcome-blind on lock day, hash the script, write into the FINAL spec; D03/D04 out, no interpolation. (4) C = MEAN over primary-sample dates of (half-spread + round1 taker fee of the favoured side at its ask), one contract; this corrects your R4 item 3 (median) before lock, so F5 not triggered; Kalshi fee-schedule citation with date still owed. (5) Primary sample = dates from the first quarter whose median nearest-bracket spread at the chosen cell is at or below 4.0c and stays there (2025Q3, about 491 dates); label from primary only; secondaries descriptive: pooled, 2026-only (about 307), 2025H1; the 4.0c fork is disclosed (set after seeing the prices-only quarterly table). (6) Re-run before lock with final rules; a calibrated market triggers Stage 2 about 9% of the time by chance; expect MISCALIBRATED to need an observed gap above about 7c; a true 5c gap will usually read GAP or UNRESOLVED; the run can find large gaps and cannot certify small ones, likeliest result NOT DETECTED.
-- Still owed before lock: re-run compare script (weather_dryrun_compare_20261104.py) and the rules-text/MLS-404 probe with saved output and hashes; quote Kalshi's KXHIGHLAX rules text (source and climate-day boundary); fee-schedule citation; one sentence on the 25 blank-strike_type markets handled by ticker suffix.
-- Dates: Sat Nov 7 your v0.3 input due; Sun Nov 8 draft; Wed Nov 11 lock; Mon Nov 16 reservation lapses. (Nov 16 is a deadline for the SPEC, not a reason to lock one you are not comfortable with; letting the slot lapse costs little.)
-
-## NOT DONE (carried), in your order of work for tomorrow evening
-1. JOBS Oracle confirmation (waits for the 06:00 run; Rus runs it).
-2. Weather: provisional run on the current pool with final rules (if you want it for Nov 8), final on Nov 11 after the freeze; compare-script and rules/MLS-404 re-runs with hashes; fee citation.
-3. Backfill follow-ups (order 5): RESOLVED_MARKETS audit (top 20 by row count plus 20 random against an independent source); direction sample (30 NFL_GAME plus 30 MLS_GAME); id-3 greps and a max(id)+1 diff proposal only, no renumber; read-only silent-fetch-error check (NFL and MLS first, MLB last, then one diff); trace of the two MLS Oct 25 unscored rows; reconcile 285 vs 230 MLB rows and check brier_score/log_loss against repaired outcomes.
-4. Calibration rows: BLOCKED on your ownership answer (J@rv1s item 3) and the CSV schema.
-5. Jan 14 question: is the lock-checklist document covered by the manifest hashes? Not answered.
-6. Carried: FEDWATCH_CONSENSUS rename (both files, one commit, when fed_model.py is open); keep four laptop stashes, sandbox C:\KalshiBot_sbx and backup branches; data/archie_calibration.csv (local, 4 rows), data/seeds_bridge_state.json and data/sede_portfolio.json (duplicate id 3) untouched and uncommitted.
+## MISTAKES TODAY
+Note timestamps ran ahead of the real clock (flagged by J@rv1s); calibration header counts first written wrong (8/13 vs 9/12); one doc cited under the wrong name.
 
 ## STATE / FACTS FOR REFERENCE
-- Laptop repo C:\KalshiBot is on branch mlb-backfill-fix-20261102 tracking origin/main (local main 13 behind); I push with `git push origin HEAD:main`. origin/main now: 2a78c94, bdd1b64, 17d01e7 (Auto-update 20:00 CT).
-- Dashboard repo: nightly_summary_latest.md pushed (this file).
-- Dates: Fri Nov 6 JOBS print; Sat Nov 7 v0.3 input; Sun Nov 8 eleven Phase 2 games; Mon Nov 9 BUF@MIN; Tue Nov 10 pool freeze date; Wed Nov 11 target lock; Mon Nov 16 reservation lapses; Thu Nov 19 Judge: line first review; Dec 1 rain count re-check; Jan 10 2027 last NFL regular-season games; Jan 14 Phase 2 verdict; Jan 28 next GDP; Jan 31 second-test lock deadline.
-- Phase 2 and every Phase 2 manifest-hashed file untouched.
+- Phase 2: NFL_GAME sole confirmatory model, verdict Thu Jan 14, 2027. Counts and points only until then. Nothing is demonstrated.
+- GDP n_events=2; JOBS next print Fri Nov 6 already passed, JOBS stays consensus-blocked until real survey figures; MLB_GAME report only the 61/24/44 verified subset.
+- Local KalshiBot repo is 2 commits ahead of origin/main (f826bb3, 8923596), not pushed. Do not touch Oracle around 06:00, 10:15, 20:00 CT.
