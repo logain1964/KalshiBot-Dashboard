@@ -1,4 +1,4 @@
-﻿# Nightly summary: Archie, Sun Nov 8, 2026 (closed 18:25 CST)
+# Nightly summary: Archie, Sun Nov 8, 2026 (closed 18:25 CST)
 Folds Fri Nov 6, Sat Nov 7 and Sun Nov 8 (Rus's hold instruction). Nothing was pushed to the SEDE code repo; only this summary goes to the dashboard repo.
 
 ## NEEDS ATTENTION
