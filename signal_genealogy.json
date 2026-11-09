@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-08T16:19:19.314285",
-  "total_signals": 2004,
+  "generated_at": "2026-11-09T02:03:20.899138",
+  "total_signals": 2005,
   "signals_with_stats": 297,
   "min_resolved_required": 5,
   "signals": {
@@ -36072,6 +36072,24 @@
       "avg_edge_cents": 10.0,
       "avg_kalshi_cents": 29.5,
       "avg_model_pct": 39.5,
+      "confidence": "INSUFFICIENT_DATA",
+      "last_fired": "2026-11-08",
+      "has_stats": false
+    },
+    "KC @ ATL|NO|NFL_GAME": {
+      "market": "KC @ ATL",
+      "direction": "NO",
+      "model": "NFL_GAME",
+      "market_type": "NFL_GAME",
+      "fires": 1,
+      "resolved": 0,
+      "wins": 0,
+      "win_rate_pct": null,
+      "avg_brier": null,
+      "beats_random": null,
+      "avg_edge_cents": 11.5,
+      "avg_kalshi_cents": 36.0,
+      "avg_model_pct": 47.5,
       "confidence": "INSUFFICIENT_DATA",
       "last_fired": "2026-11-08",
       "has_stats": false
