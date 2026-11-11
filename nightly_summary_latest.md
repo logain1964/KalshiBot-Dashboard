@@ -1,16 +1,16 @@
 # Nightly summary: Archie, Tue Nov 10, 2026 (closed 22:10 CST)
-Session opened 19:07 CT (before the 20:00 run). Read-only work only. NOTHING was built, changed or pushed on the SEDE code side; only this summary goes to the dashboard repo. Prior summary: Nov 9 (0725fb6).
+Session opened 19:07 CT (before the 20:00 run). Read-only work only, plus a DRAFT of stage1_analysis.py written in the last 20 minutes (see WEATHER below). NOTHING was changed or pushed on the SEDE code side; only this summary goes to the dashboard repo. Prior summary: Nov 9 (0725fb6).
 
 ## NEEDS ATTENTION
 RUS
 1. Alert patch (A+B Telegram, E2 email) did NOT ship Tuesday (no diff had been seen by J@rv1s, under an hour before the 20:00 run). Per J@rv1s it moves to Thursday or later, not combined with lock day. Same rules: after the 10:15 CT run, before 20:00 CT, you can pull on Oracle, only on your explicit go after the diff and base-hash table.
 2. NEW, your call: should the Telegram DATA-block escape fix (below) go in the same window or stand alone? It needs J@rv1s's ruling and your okay first.
-3. WEATHER LOCK IS AT RISK. The weather package (stage1_analysis.py etc.) has not been started; J@rv1s must review stage1_analysis.py BEFORE it is hashed final. My read: a Wed Nov 11 lock is unlikely (J@rv1s put it at 35%; I would say 25% or less). The hard date is Mon Nov 16, when the reservation lapses. If you can give me a daytime block Wed or Thu, that is the highest-value use of it.
+3. WEATHER LOCK: you cannot work daytime, so the plan is evenings. stage1_analysis.py DRAFT is written, selftest 19 of 19, price-only pilot reproduces the spec numbers (details below). BEFORE WORK Wed: paste claude/archie_to_jarvls_stage1_analysis_draft_20261110 to J@rv1s (paste from the saved file). He reviews during the day; apply his review Wed evening. My odds: Wed evening lock 25%, Thu evening 60%, saved by Sun Nov 15 80%. Treat Sun Nov 15 as the real deadline (Mon Nov 16 is a work day; I do not know when on Nov 16 the reservation lapses).
 4. CPI: still BLOCKED. Nothing was entered for the Nov 10 print. Before the Dec 10 November print a real y/y consensus survey figure with a source link is needed, or it stays blocked.
 5. Optional: one-line confirmation that logain1964/KalshiBot is private.
 J@RV1S
 - Read claude/archie_to_jarvls_parity_table_20261110 (updated 22:10 with the prospective result) and rule on the DATA-block fix.
-- Review stage1_analysis.py once I deliver it (not yet written).
+- Review stage1_analysis.py DRAFT (claude/archie_to_jarvls_stage1_analysis_draft_20261110): 6 questions at the top of the doc, incl. whether to add the COVERAGE LOW flag and suppress labels on descriptive rows.
 
 ## TELEGRAM DIGEST: PARITY TEST AND PROSPECTIVE RESULT
 - J@rv1s 2d done locally: script tmp\parity_test_20261110.py (SHA256 C720EE6B...43F2) rebuilds each report's DATA block from the saved reports on origin/main, counts underscores and asterisks, predicts "rejected iff the unescaped underscore count is odd". 4 distinct DATA-block states, all consistent (A: CPI+JOBS blocked, odd, rejected; B: A plus mlb_schedule stale, even, accepted; C: CPI only, even, accepted; D: CPI plus mlb_schedule stale, odd, rejected). Asterisks in the dynamic text: 0.
@@ -27,6 +27,13 @@ J@RV1S
 - NBA_GAME: suspended, log-only; 10 NBA games, 0 signals, no scored rows; no power signal until about 10 games per team (about mid-November).
 - Price fetcher hit HTTP 429 rate limits at 10:15 on KXNFLGAME, KXNFLSPREAD, KXNHLGAME, KXNBAGAME (retried; NFL still evaluated 29 markets; whether any prices were stale is not checked).
 
+## WEATHER (stage1_analysis.py DRAFT, Tue 22:14-22:30)
+- Script C:\Claude AI\weather_forward_record\stage1_analysis_DRAFT_20261110.py, SHA256 F564E50351963B134FF3F5426DB87066DBC58965E00230F8EBFE37151198D72A (draft; frozen version gets a new hash after review). Modes selftest / rehearsal / stage1; stage1 hashes all five files incl. both sealed files first, asserts cell D+0 07:00 and n=667 before opening outcomes, refuses a second run, prints aggregates only. Selftest PASSED 19 of 19 on synthetic decoy files only.
+- Timed pilot (rehearsal mode, simulated Y, price panel only, sealed never opened or hashed): 6.2 s for 7 shifts x 20 runs, so about 4-5 min for 1,000 runs per shift at B=5000. Pilot reproduces: 40 cells, 28 pass, cell D+0 07:00 PT unique winner, primary n 667, C 3.448c, half-width about 3.1c, needed |g| about 6.56c.
+- Sealed folder: I listed history_panel_20261104 recursively for names and sizes, which enumerated the sealed folder (metadata only; no file opened). Sizes and mtimes re-checked after; unchanged.
+- Still NOT done for lock: lock-day cell record, 1,000-run rehearsal, SHA256SUMS, centicent-vs-round1 script, live close_time script, section 11 blanks, NCEI step (after FINAL save and the label).
+- Doc: claude/archie_to_jarvls_stage1_analysis_draft_20261110.
+
 ## STATE (unchanged unless noted)
 - Real files unchanged: telegram_alerts.py CRLF working-copy hash CC7AF3E9...6917, email_alerts.py BE9FF3A6...; origin/main LF blobs 13F4F67A.../7293E857...; LF-normalized working copy equals them (diff empty). Compare LF-normalized at patch time and quote both forms. Drafts in C:\KalshiBot\tmp\alert_patch_final_20261107\ (telegram_alerts_AB.py DC2C0BB7...6117, ABC variant 932347FD..., email_alerts_E2.py 8E0C08A6...).
 - The two local commits f826bb3 and 8923596 on mlb-backfill-fix-20261102 touch ONLY data/jarvls_calibration.csv (no alert or Phase 2 files). That local branch is ahead 2 and far behind origin/main; the patch builds on a clean branch from fresh origin/main.
@@ -38,7 +45,7 @@ J@RV1S
 - Known stale strings in the pipeline report: daily_runner.py:2060 (go-live), 1984-1998 (MLB Gate 1). The report contradicts itself at 2010. Do not read these as state.
 
 ## NEXT (in order)
-1. Weather package (soft lock Wed Nov 11, hard Mon Nov 16): stage1_analysis.py text (shared label(), --mode rehearsal|stage1, --run-day, explicit spec hash and seed, hash-check sealed files first, refuse a second run, decoy-folder tests, label() boundary tests, no outcomes printed, diff vs provisional_run_20261106.py); timed B=5000 pilot; centicent-vs-round1 script; live KXHIGHLAX close_time (metadata only) script; J@rv1s reviews stage1_analysis.py BEFORE it is hashed; seed = FINAL save date YYYYMMDD; NCEI only after the FINAL save AND the Stage 1 label; fill spec section 11; lock-day SHA256SUMS.txt; confirm from the spec text that the pool is defined by date.
+1. Weather (soft lock Wed Nov 11, hard Mon Nov 16, treat Sun Nov 15 as the deadline): apply J@rv1s review to stage1_analysis.py, freeze and hash it; 1,000-run B=5000 rehearsal; centicent-vs-round1 script; live KXHIGHLAX close_time (metadata only) script; J@rv1s reviews stage1_analysis.py BEFORE it is hashed; seed = FINAL save date YYYYMMDD; NCEI only after the FINAL save AND the Stage 1 label; fill spec section 11; lock-day SHA256SUMS.txt; confirm from the spec text that the pool is defined by date.
 2. Patch window Thursday or later (Rus's call), see item 1 above.
 3. Dates: Wed Nov 11 soft weather lock; Fri Nov 13 cloud task hold review; Mon Nov 16 reservation lapse (HARD); Thu Nov 19 Judge-line first review; Dec 1 rain count; Thu Dec 10 November CPI; Jan 14, 2027 Phase 2 verdict.
 
@@ -49,7 +56,7 @@ Rus runs every Oracle command; nothing pushed or scheduled without his go; no pu
 Failed-send visibility (needs Rus's okay; after the verdict); auto_monitor.py stop-loss alert return-value check (lines 211, 232, 496, 509) as PRE-TRADE CHECK; Markdown fix as its own disclosed commit (now supported, see above); CPI missing-baseline code-path trace (after lock week); mlb_schedule stale-at-20:00 code read (after lock week); Nov 7 post-verdict items (daily_runner.py 2060 and 1984-1998, email_alerts.py 752 and 794, unused _load_calibration_summary(), telegram_alerts.py:589); RESOLVED_MARKETS audit; direction sample; id-3 greps; silent-fetch-error check; MLS Oct 25 trace; 285 vs 230 MLB reconcile; MLS_GAME 349 vs 350 to report; Jan 14 hashed-file list; offline digest render (approved by J@rv1s only after patch work); whether the Grok recompute counts toward Nov 19.
 
 ## MISTAKES / CORRECTIONS (Tue)
-The 19:15 headline "26 of 26" overstated the evidence (4 states, 21 outcomes log-inferred); I corrected it in the same document, and the prospective result above is the firmer evidence. The weather package slipped a second day because the evening went to the parity test and status work; that is a real cost to the Nov 11 target and is stated above, not hidden.
+The 19:15 headline "26 of 26" overstated the evidence (4 states, 21 outcomes log-inferred); I corrected it in the same document, and the prospective result above is the firmer evidence. The weather package slipped to the last 20 minutes of the evening because the session went to the parity test and status work first; the draft exists now but the Nov 11 target is still tight.
 
 ## STATE ARCHIVE
 Session archive: C:\Claude AI\session archive\session_2026-11-10_2210.md
