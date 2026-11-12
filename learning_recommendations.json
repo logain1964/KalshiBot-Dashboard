@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T12:04:30.784783",
+  "generated_at": "2026-11-12T16:19:15.169098",
   "current_threshold": 8,
   "current_weights": {
     "GDP": 0.6,
@@ -27,13 +27,13 @@
       "suggested_threshold": 9,
       "action": "RAISE",
       "confidence": "MEDIUM",
-      "n_above": 129,
-      "n_below": 20,
-      "brier_above": 0.351404,
-      "brier_below": 0.068911,
+      "n_above": 147,
+      "n_below": 21,
+      "brier_above": 0.327797,
+      "brier_below": 0.066195,
       "reason": [
-        "Sub-threshold signals winning: Brier=0.0689 (45.0% acc, n=20)",
-        "Above-threshold signals underperforming: Brier=0.3514 (n=129)"
+        "Sub-threshold signals winning: Brier=0.0662 (47.6% acc, n=21)",
+        "Above-threshold signals underperforming: Brier=0.3278 (n=147)"
       ]
     },
     {
@@ -153,14 +153,14 @@
     {
       "model": "CLAIMS",
       "current_weight": 0.55,
-      "suggested_weight": 0.55,
-      "delta": 0.0,
-      "action": "HOLD",
-      "confidence": "INSUFFICIENT_DATA",
-      "n": 18,
-      "brier": 0.1297,
+      "suggested_weight": 0.57,
+      "delta": 0.02,
+      "action": "RAISE",
+      "confidence": "LOW",
+      "n": 23,
+      "brier": 0.1396,
       "reason": [
-        "Need 2 more resolved signals (have 18)"
+        "Good calibration: Brier=0.1396 (n=23)"
       ]
     },
     {

@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-12T12:04:30.772916",
-  "total_resolved": 2437,
+  "generated_at": "2026-11-12T16:19:15.157371",
+  "total_resolved": 2442,
   "by_model": {
     "GDP": {
       "n": 16,
@@ -115,18 +115,18 @@
       "event_avg_brier": 0.212
     },
     "CLAIMS": {
-      "n": 18,
-      "correct": 5,
-      "acc_pct": 27.8,
-      "avg_brier": 0.1297,
-      "avg_logloss": 0.426,
-      "avg_edge": 14.3,
+      "n": 23,
+      "correct": 10,
+      "acc_pct": 43.5,
+      "avg_brier": 0.1396,
+      "avg_logloss": 0.4456,
+      "avg_edge": 15.8,
       "beats_random": true,
-      "n_events": 4,
-      "correlated_events": 4,
+      "n_events": 5,
+      "correlated_events": 5,
       "gate1_n_ok": false,
-      "event_acc_pct": 28.7,
-      "event_avg_brier": 0.1295
+      "event_acc_pct": 43.0,
+      "event_avg_brier": 0.1387
     }
   },
   "unverified_models": {
@@ -216,20 +216,20 @@
       "rows_clear_15c_real": 1
     },
     "CLAIMS": {
-      "n": 18,
-      "n_events": 4,
-      "win_rate_pct": 27.8,
-      "mid_pnl_cents": 70.0,
-      "real_pnl_cents": -20.0,
-      "fees_cents": 30.0,
-      "event_mean_real_pnl_cents": -5.0,
-      "event_pnl_t_stat": -0.12,
-      "events_pnl_positive": 3,
-      "pct_pnl_survives": -28.6,
-      "rows_clear_8c_mid": 13,
-      "rows_clear_8c_real": 8,
-      "rows_clear_15c_mid": 7,
-      "rows_clear_15c_real": 5
+      "n": 23,
+      "n_events": 5,
+      "win_rate_pct": 43.5,
+      "mid_pnl_cents": 359.0,
+      "real_pnl_cents": 258.0,
+      "fees_cents": 37.0,
+      "event_mean_real_pnl_cents": 51.6,
+      "event_pnl_t_stat": 0.79,
+      "events_pnl_positive": 4,
+      "pct_pnl_survives": 71.9,
+      "rows_clear_8c_mid": 17,
+      "rows_clear_8c_real": 12,
+      "rows_clear_15c_mid": 11,
+      "rows_clear_15c_real": 8
     }
   },
   "spread_stress_fee_mode": "round1",
@@ -241,8 +241,8 @@
     },
     "CLAIMS": {
       "status": "OK",
-      "days_since": 7,
-      "last_resolved": "2026-11-05"
+      "days_since": 0,
+      "last_resolved": "2026-11-12"
     },
     "CPI": {
       "status": "OK",
@@ -326,8 +326,8 @@
     "stale_only": [
       {
         "model": "CLAIMS",
-        "dashboard_n": 18,
-        "scorer_n": 36
+        "dashboard_n": 23,
+        "scorer_n": 41
       }
     ]
   }
