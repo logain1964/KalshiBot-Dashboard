@@ -1,40 +1,36 @@
-# Nightly Summary — Archie — Thu Nov 12, 2026 (session closed ~17:55 CST)
+# Nightly Summary - Archie - Fri Nov 13 to Sun Nov 15, 2026 (closed Sun Nov 15, ~18:30 CST)
 
-Session: evening, opened 17:41 CST from J@rv1s's Nov 12 EOD briefing. Nothing in SEDE code, Oracle, or Phase 2 hashed files was touched. No Oracle commands were run.
+Covers three sessions with no separate close (Nov 13, Nov 14, Nov 15); replaces the Nov 12 version. Nothing in SEDE code, Oracle, or Phase 2 hashed files was touched. Oracle: nothing run by me; Rus ran one read-only check on request (see item 6). The sealed KXHIGHLAX outcome files have never been opened or hashed. Stage 1 has NOT been run.
 
-## Work order (J@rv1s Nov 12) — all done, all saved to the project
-1. Result-field probe, KXHIGHCHI (not KXHIGHLAX): 100 of 100 sampled /historical markets carry `result`; distinct strings 'no','yes'; 0 non-yes/no. No stop condition. Mapping and P1 unchanged.
-   (result_string_probe_20261112.py/.out, .txt copies in project.)
-2. Correction: the Nov 11 "42-market overlap compare" wording was inaccurate. 42 is only the overlap count; the only result-field compare was 24 tickers, 0 mismatches (Nov 4 probe4). Disclosed in the Nov 12 note.
-3. Calibration CSV: the "FINAL weather spec locked by Wed Nov 11" row scored in place FALSE, Brier 0.2025 (J@rv1s ruling). 2 rows appended (probe 92% PENDING; FINAL by Sun Nov 15 70% PENDING). Diff verified: only one original line changed; 96 parsed rows; CRLF only. Local, UNCOMMITTED. Backups in C:\KalshiBot\tmp.
-4. Centicent vs round1 (outcome-blind): round1 3.4475c, fee_cent 3.4475c, centicent 3.0882c, unrounded 3.0836c. Centicent moves the MISCALIBRATED threshold from about 6.56c to about 6.2c. Primary stays round1 per ruling; centicent is a sensitivity row.
-5. Live close time (metadata only): live KXHIGHLAX opens 07:00 PT on D-1 and closes 01:00 PT on D+1 (DST-aware). Forward cell-to-close is 18.00h vs historical median 16.98h. The first run lacked the open-day offset; script edited and rerun, same data, disclosed.
-6. Proposed FINAL spec section 7.5/7.6/7.7 text and section 11 hash table drafted; pre-existing recorded hashes matched.
+## NEEDS ATTENTION
 
-## Fee schedule (Rus attached the PDF, SHA256 c326a69f...9601, effective July 7, 2026)
-- Taker formula text: round up so that fee + position cost is rounded to a centicent; M default 1.
-- KXHIGHLAX is not in the non-standard multiplier table, so M=1 by default.
-- Tension: the per-contract table shows whole cents for 1 contract ($0.02 at $0.50; raw 1.75c) while the 100-contract column matches centicent rounding ($1.75). Which applies to a 1-contract fill is not settled by this document. Round1 stays primary; centicent stays the sensitivity row.
-- Proposed spec citation wording sent to J@rv1s for ruling. PDF not yet saved to the project.
+### Rus
+1. **Stage 1 run day is Tue Nov 17** (you picked it Sun 15:41 CST; J@rv1s took it as picked). You must be at the machine. Window: after 15:00 CT, started no later than 18:30, finished well before 20:00. Order: I do pre-run steps 1-6 plus the selftest and send results to J@rv1s; he answers CLEAR TO RUN or NOT CLEAR; only then I invoke once. No git operation, no Oracle contact, no alert work on run day.
+2. **Monday (optional, J@rv1s asked):** I send J@rv1s the invocation text and F3 header with the real dates filled in (2026-11-17 / 20261117) so he checks the actual string. Needs a session on Monday.
+3. Nothing is owed from you on Oracle; the optional read-only check is done (item 6).
 
-## Open items for J@rv1s
-- Rule on whether the Nov 4 probe3 pre-seal read of KXHIGHLAX result strings counts against "blind-clean", and on the section 8 wording.
-- Rule on the fee citation wording above.
+### J@rv1s
+1. Answer owed in my next note, per his Nov 15 ruling section 2: was the Nov 5 `git pull --rebase --autostash` an exception or drift from the "merge, not rebase" rule. My honest answer: drift, not a documented exception. Protocol form from here on; on run day no git operation at all.
+2. Alert-patch scoping waits for his ruling and Rus; not on run day.
 
-## Lock path (hard date Mon Nov 16; working deadline Sun Nov 15)
-- FINAL save date NOT chosen (suggested Sat Nov 14). It is the seed.
-- Still to do on lock day: recompute cell outcome-blind; 1,000-run B=5000 rehearsal; confirm prelude (D+0 07:00 PT, winners 1, n 667); repeat sealed-folder metadata check; build_blind_panel.py hash; fill section 11 blanks; SHA256SUMS; save FINAL.
-- If FINAL is not saved by Fri Nov 13 evening, tell J@rv1s.
-- Stage 1 script: stage1_analysis_DRAFT_20261111_P1.py (SHA F56B788E...1755), cleared by J@rv1s, not yet hashed as final. Self-test 46/46.
-- Sealed folder history_panel_20261104\sealed: metadata only checked; no file opened. Folder LastAccessTime is Nov 12 17:46 because I listed it.
+## WORK DONE (all saved as project docs, claude/*_20261113 to *_20261115)
+1. **FINAL KXHIGHLAX spec saved Sat Nov 14, 14:17:03 CST** (store timestamp), seed 20261114, SHA256 `52F7595782D53D3F83C37918C8027ABA93A8EED5F7E1FFB06DF0B21243B68B94`, 31,324 bytes, LF. The Nov 16 slot-reservation deadline was met. Lock-day SHA256SUMS list: 45 lines (hash `C164153E...4642`). Laptop copy verified against it.
+2. **Calibration scoring committed and pushed: `d366fc4`** (Nov 14 20:21 CST), nine J@rv1s rows scored plus five Archie rows. Records for the Nov 13 summary: commit `131ea21` (Nov 13 21:05 CST) also carried the Nov 11 and Nov 12 calibration rows and the 45% score; the Nov 4 Archie calibration rows reached git only in `d366fc4`. `jarvls_calibration.csv` is J@rv1s's file (CRLF, append-only), edited by raw line.
+3. **Run-day checklist** drafted (F1-F4 script findings, 13 steps) and ruled on by J@rv1s. Script `stage1_analysis.py` frozen: SHA256 `F56B788E9052C5ED56B3C23B6B58E3278AF7D6C5124A008D5E2E83B35C591755`, 32,781 bytes. F1: no fee PDF in the project. F2: no centicent flip row printed (done by hand after the output is saved). F3: `->` labels print on descriptive rows; only the `STAGE 1 LABEL:` line is the label. F4: `--spec-sha256` recorded, not verified.
+4. **Command line CONFIRMED** (J@rv1s R1): `python -I`, panel `history_panel_20261104`, `--seed 20261114`, `--confirm-open-sealed YES`, `Start-Process` with embedded-quoted paths (the space in "Claude AI" broke the first rehearsal) and stdout/stderr redirects. Added run-day items: print the expanded argument list and `Test-Path` on the output (must be False); log exit code and sizes/hashes of the three files.
+5. **Endpoint convention RULED** (R2): implied YES iff floor <= TMAX <= cap, whole degrees F, both ends inclusive. An inference from pool structure (2,655 of 2,655 brackets width 1.0; midpoint minus floor 0.5), confirmed against rules text of currently open markets (probe `rules_between_probe_20261115`, three templates, 12 open markets); not read from historical markets' rules text. 10 blank-strike primary dates take floor = midpoint - 0.5, cap = midpoint + 0.5. NCEI cross-check only after the label exists; it never changes the label. Environment recorded: Python 3.12.10, numpy 1.26.4, pytz 2026.2.
+6. **Seeds-state report (alert-patch precondition), ACCEPTED and CLOSED.** `post_seeds_bridge.py` on the laptop (Task Scheduler, SEEDS_Live 09:00 and SEEDS_Pitchers 14:00) writes `data/seeds_bridge_state.json` only when it alerts a new signal. Laptop copy (Oct 28 content, hash `37EDE2EF...3391`) is the live runtime state; the committed copy is a stale Sept 24 snapshot. The Nov 5 23:02:00 file mtime is explained: my `git pull --rebase --autostash` at 23:01:55 popped the dirty file (commit `bdd1b64` at 23:01:59). Oracle read-only check (Rus, 16:25 CST): Oracle's copy is clean and identical to the Sept 24 commit, no seeds cron entry, so the bridge write path is laptop-only. Not checked: whether any Oracle script reads the file itself; Oracle's full crontab. Recorded risk: `data_freshness.py` line 364 lists the file as safe to discard on auto-pull.
 
-## Pending git / ops (Rus runs Oracle commands)
-- Calibration commit and push once, after the Fri Nov 13 10:15 CT run, pulling first (private repo branch was 2 ahead, 12 behind origin/main). Do not disturb uncommitted archie_calibration.csv and seeds_bridge_state.json. Keep the 5 non-SEDE income rows out of this file.
-- Alert patch: Fri Nov 13 or later only, after the lock is done, never on lock day. The DATA-block _safe_text fix is its own later commit. No Phase 2 hashed file edits.
-- Gate 1 status unchanged. Nothing demonstrated. Phase 2 verdict date Jan 14, 2027.
-- Slot reservation (KXHIGHLAX) lapses Nov 16 if no spec is saved.
-- Judge-line review Nov 19 belongs to J@rv1s.
+## STATE AT CLOSE
+- KalshiBot laptop repo: branch `mlb-backfill-fix-20261102`, 0 ahead / 0 behind origin/main, HEAD `9c2c36d` (Nov 15 10:15 CT auto-update). Only dirty file: `data/seeds_bridge_state.json` (runtime state; NOT to be committed or modified).
+- Dashboard repo: fast-forwarded to `2384322` (10 Oracle auto-updates and J@rv1s's Nov 13 briefing rename), then this file committed.
+- Phase 2 hashed files untouched. Nothing scheduled. No outcome statistic computed on any data.
 
-## Tooling notes
-- Project store normalizes CRLF to LF, so store hashes of CRLF files differ from laptop hashes (documented).
-- project_write local_path needs a full Read of the file first.
+## CARRIED / NOT DONE
+- Stage 1 run (Nov 17); NCEI cross-check and F2 flip arithmetic only after the label is saved and in the project; calibration rows (P1 abort does not fire 93% / 95%, Stage 1 label rows, 15% decision-relevant row) scored only on J@rv1s's ruling.
+- P1 abort or crash after the sealed file opens: report the line, no diagnosis, wait for J@rv1s; one repair shared between abort and crash, a second failure = NOT RUN, goes to Rus.
+- `_safe_text` DATA-block fix: its own later commit. Alert patch: after the run, after rulings.
+- Fri 10:15 and 20:00 CT Oracle run logs: unverified.
+- Nov 19 Judge-line review belongs to J@rv1s.
+
+Archie
