@@ -1,32 +1,52 @@
-# Nightly Summary - Archie - Mon Nov 16, 2026 (session 22:07 to ~22:15 CST)
+# Nightly Summary - Archie - Tue Nov 17, 2026 (session 17:42 to ~18:10 CST)
 
-Short evening session, opened from J@rv1s's Nov 16 EOD briefing. Nothing in SEDE code, Oracle, or Phase 2 hashed files was touched. No Oracle commands run. The sealed KXHIGHLAX outcome files are still unopened and unhashed. Stage 1 has NOT been run. Replaces the Nov 15 version; its Nov 13-15 content is in the project docs and the Nov 15 summary's git history (`f05dd18`).
+Stage 1 RUN DAY. The KXHIGHLAX Stage 1 test ran once and finished. Nothing in SEDE code, Oracle, or Phase 2 hashed files was touched. No Oracle commands run, no git on the main KalshiBot repo. Replaces the Nov 16 version.
 
 ## NEEDS ATTENTION
 
-### Rus - TOMORROW, Tue Nov 17: Stage 1 run day
-1. You must be at the machine. Window: after 15:00 CT, run started no later than 18:30, finished well before 20:00. Nothing else happens that day (no git, no Oracle, no alert work, no side ideas).
-2. Order: I do the pre-run steps and the selftest and send results to J@rv1s; he answers CLEAR TO RUN or NOT CLEAR; only then I invoke ONCE. If you cannot attend, tell me before 18:30; do not leave it unattended.
-3. Nov 17 reached J@rv1s secondhand (through me). If it is wrong, say so first thing.
-4. If the run aborts (P1) or crashes after the sealed file opens: I report the line and make no diagnosis; one repair is allowed; a second failure is NOT RUN and comes to you.
+### Rus - WEDNESDAY Nov 18
+1. After the 10:15 CT auto-update: I commit the two calibration files (`data/jarvls_calibration.csv`, `data/archie_calibration.csv`), pull first with a MERGE (not rebase), `data/seeds_bridge_state.json` stays out, nothing else swept in. Then J@rv1s checks the published copy.
+2. One read-only Oracle log check (weekend and Nov 13-17 runs), which you run.
 
 ### J@rv1s
-1. My Monday note `archie_to_jarvls_monday_filled_command_20261116` has the F3 header and the command text with D = 2026-11-17, DS = 20261117 and spec hash `52F7595782D53D3F83C37918C8027ABA93A8EED5F7E1FFB06DF0B21243B68B94`. Tonight's `Get-Date` cannot produce Nov 17 itself; I showed the AddDays(1) formatting and will take a fresh read Tuesday and stop if D/DS differ.
-2. Your calibration row "Stage 1 is invoked on Tue Nov 17" (85%) does not define "invoked" for an abort or a no-show. I took it as: the single Start-Process line runs on Nov 17 Central time, whatever the outcome. Change it before Tuesday if you want another rule.
+1. Tomorrow I propose the method for the g-with-and-without-2026-10-22 descriptive row. You rule on method and on a second read-only exception to the sealed outcomes file before anything runs. The driver must first reproduce the printed Stage 1 digits (n 667, g +2.80c, 90% [-0.19, +5.83], yes-rate 48.3%, mean m 45.5%, C 3.448c, seed 20261114, B 5000).
+2. Nothing else is pending on me from your 18:00 ruling.
 
-## WORK DONE
-1. Preview checks (NOT carried to Tuesday; all redone on the day): `stage1_analysis.py` SHA256 `F56B788E9052C5ED56B3C23B6B58E3278AF7D6C5124A008D5E2E83B35C591755`; FINAL spec laptop copy `52F7...8B94`; `stage1_output_20261117.out` does not exist (Test-Path False). Selftest, pool-file checks, lock-day folder comparison, fee PDF hash and environment record not run tonight.
-2. **Calibration row appended locally, NOT committed:** `2026-11-16, session_2026-11-16_eod_briefing, JARVLS, Process, Stage 1 is invoked on Tue Nov 17 (does not slip), 85, outcome_date 2026-11-17, PENDING`. Raw-line append, CRLF, no CSV writer. First 44,862 bytes identical to backup `C:\KalshiBot\tmp\jarvls_calibration_pre_20261116.csv`; 45,207 bytes after; 99 lines, 98 parsed rows; no bare LF, no stray tags. Hash before `27E7146A...BF5B`, after `B32452CE...384D`. Commit Wednesday after the 10:15 CT run, pull first with a MERGE (not rebase).
+## RESULT
+- **STAGE 1 LABEL: UNRESOLVED.** g +2.80c, 90% interval [-0.19, +5.83]c, C 3.45c, n 667 of 667, 1 of 668 dates excluded (0.1%), no COVERAGE LOW. The `->` marks on descriptive rows are not labels.
+- Per spec section 6: the series closes as NOT DETECTED at this sample, the slot is released, no forward collector is built. NOT DETECTED does not mean "calibrated". **The slot is released with NO admission decided;** nothing is admitted into it without Rus under the one-in, one-out rule.
+- J@rv1s's reading (accepted): the point estimate is not a trend; the lower bound -0.19c is a near-miss, not a finding; descriptive rows are noise-compatible and nothing is built on them.
+
+## RUN RECORD
+- Invoked once: 17:48:03 CST, finished 17:48:06, exit 0, stderr 0 bytes, no P1 abort line, script startup hash check OK on 5 files incl. both sealed files. I never listed, opened or hashed the sealed files for the run.
+- Script `stage1_analysis.py` SHA256 `F56B788E9052C5ED56B3C23B6B58E3278AF7D6C5124A008D5E2E83B35C591755`; spec hash passed `52F7595782D53D3F83C37918C8027ABA93A8EED5F7E1FFB06DF0B21243B68B94`.
+- Output `stage1_output_20261117.out` 2,490 bytes, SHA256 `C38499DC0F723FF1F7551CAD4C20DA5EA6ED9643A66D480BACC6B80AAA33FE10` (stdout byte-identical; stderr empty).
+- J@rv1s: CLEAR TO RUN (two conditions, both met), run ACCEPTED, label accepted as printed.
+
+## F2 CENTICENT FLIP CHECK
+By hand from the printed bounds: at C = 3.448c and 3.0882c the label is UNRESOLVED both ways. No bound within 0.005c of 0 or +/-C. No flip. Accepted.
+
+## CALIBRATION (scored locally, NOT committed)
+Seven rows scored in place, J@rv1s ruled, accepted. Only these lines changed; line counts unchanged; CRLF, no BOM, 0 stray tags; backups in `C:\KalshiBot\tmp\*_pre_20261117.csv`.
+- jarvls_calibration.csv lines 63 (55%, FALSE, 0.3025), 73 (15%, FALSE, 0.0225), 77 (6%, FALSE, 0.0036), 78 (80%, TRUE, 0.0400), 93 (93%, TRUE, 0.0049), 99 (85%, TRUE, 0.0225, with J@rv1s's verbatim "invoked" sentence appended). Mean Brier of the six 0.0660 = one label outcome plus two process facts, one very bad confidence row (line 63).
+- archie_calibration.csv line 15 (95%, TRUE, 0.0025); column 7 left at 2026-11-30 as logged, the Nov 17 date is in the note.
+- Hashes: jarvls `B32452CE...384D` -> `8C65B5A646340D5E349CC3233FB509CDE363841BBC4C59C712618BA38CE2A9E9` (46,380 bytes); archie `575BDBFF...1CD6` -> `E4645B1FC8697E47D747900A7A0003631F93BB27793FF7A8354F8F6D22A7AF5C` (5,760 bytes). Line 80 (Judge-line, 55%) stays PENDING to Nov 19.
+
+## NCEI CROSS-CHECK (descriptive only; cannot change the label)
+- Fetched once: 17:53:12-17:53:13 CST, HTTP 200, 672 daily TMAX rows 2025-01-01 to 2026-11-03, no gaps. File `ncei_tmax_USW00023174_20261117.csv`, SHA256 `66B1B631EB9C51A08DD8BDFE4CF6CE5266BFCFC16ABA003BECEFBEB03FD4A7FF`.
+- Comparison ran under a ruled read-only exception: `outcomes_sealed.csv` hash matched `SHA256SUMS.txt` (`03E36E51...17A4`) before any content was read; `markets_raw_sealed.json` untouched. Script `ncei_crosscheck_20261117.py` SHA256 `B6D7AD00FAED106EC4F1425A246005CCA267D0EB702B84FEB74AC46F697F324D`; output SHA256 `7EF024B51C4108542F926ACEE1080CD108E262B22ACAF277F53EC6C2B198524A`.
+- Result: 1 disagreement in 2,672 between-bracket markets, 1 date in 668: **2026-10-22, KXHIGHLAX-26OCT22-B70.5**, Kalshi yes, NCEI TMAX 72, bracket 70-71. A difference between two sources, not a settlement error. Limits: the ruled convention covers between brackets only (1,336 one-open-end markets listed by name in the output file); an unruled literal-text pass found the same date; whether that date is in the primary 667 is not known.
+- **g with and without that date: NOT DONE, deferred pending J@rv1s's ruling (above).** No g, interval or reliability row was computed on sealed data tonight.
 
 ## STATE AT CLOSE
-- KalshiBot laptop repo: branch `mlb-backfill-fix-20261102`, HEAD `de6292d` (Nov 16 20:00 CT auto-update). Dirty: `data/jarvls_calibration.csv` (the one new row) and `data/seeds_bridge_state.json` (runtime state; NEVER commit or modify). I did not check ahead/behind counts tonight.
-- Dashboard repo fast-forwarded to `f73066e`, then this file committed.
-- Phase 2 hashed files untouched. Nothing scheduled. No outcome statistic computed on any data.
+- KalshiBot laptop repo not queried tonight (no git ruled). Last known: branch `mlb-backfill-fix-20261102`. Dirty: both calibration CSVs (scored rows) and `data/seeds_bridge_state.json` (runtime state; NEVER commit or modify).
+- Dashboard repo fast-forwarded to `6318aaa` (J@rv1s's Nov 17 briefing copy), then this file committed.
+- Phase 2 hashed files untouched. Nothing scheduled.
 
 ## CARRIED / NOT DONE
-- Stage 1 run Tue Nov 17. After the label is in the project: centicent flip check by hand (C = 3.0882c and 3.448c), then the NCEI cross-check; neither can change the label. Calibration rows scored only on J@rv1s's ruling.
-- Alert patch (J@rv1s ruling, earliest Wed after the run), `_safe_text` DATA-block fix (own commit). Unverified edges for alert scoping: any Oracle reader of the state file; Oracle's full crontab; `data_freshness.py` line 364 discard-list risk.
-- Oracle run logs for Fri/weekend runs unverified (J@rv1s suggests a read-only check Wednesday, not Tuesday).
-- Nov 19 Judge-line review is J@rv1s's.
+- Commit calibration Wednesday (above). Optional Wednesday read-only Oracle log check (Rus runs).
+- Alert patch scoping (J@rv1s ruling, earliest Wed after the 10:15 run); `_safe_text` DATA-block fix is its own later commit. Unverified edges: any Oracle reader of the state file; Oracle's full crontab; `data_freshness.py` line 364 discard-list risk.
+- Disclosed limits: store copy of the FINAL spec compared by timestamp and reading only (no byte hash); Rus said "keep the laptop awake" and "I am at the laptop", never "untouched" (accepted by J@rv1s).
+- Nov 19 Judge-line review is J@rv1s's. Dec 1 daily-rain count re-check only. Jan 14, 2027 Phase 2 verdict; Jan 31 falsification-rule checkpoint.
 
 Archie
