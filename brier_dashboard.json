@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-18T16:19:20.245760",
+  "generated_at": "2026-11-19T02:04:36.439132",
   "total_resolved": 2578,
   "by_model": {
     "GDP": {
@@ -241,12 +241,12 @@
     },
     "CLAIMS": {
       "status": "OK",
-      "days_since": 6,
+      "days_since": 7,
       "last_resolved": "2026-11-12"
     },
     "CPI": {
       "status": "STALE",
-      "days_since": 47,
+      "days_since": 48,
       "last_resolved": "2026-10-02"
     },
     "EPL_GAME": {
@@ -261,22 +261,22 @@
     },
     "GDP": {
       "status": "OK",
-      "days_since": 28,
+      "days_since": 29,
       "last_resolved": "2026-10-21"
     },
     "JOBS": {
       "status": "OK",
-      "days_since": 12,
+      "days_since": 13,
       "last_resolved": "2026-11-06"
     },
     "MLB_GAME": {
       "status": "STALE",
-      "days_since": 52,
+      "days_since": 53,
       "last_resolved": "2026-09-27"
     },
     "MLS_GAME": {
       "status": "OK",
-      "days_since": 11,
+      "days_since": 12,
       "last_resolved": "2026-11-07"
     },
     "NBA_CHAMP": {
@@ -291,12 +291,12 @@
     },
     "NFL_GAME": {
       "status": "OK",
-      "days_since": 5,
+      "days_since": 6,
       "last_resolved": "2026-11-13"
     },
     "NFL_SPREAD": {
       "status": "OK",
-      "days_since": 2,
+      "days_since": 3,
       "last_resolved": "2026-11-16"
     },
     "NHL_CHAMP": {
@@ -316,7 +316,7 @@
     },
     "SOCCER_GAME": {
       "status": "STALE",
-      "days_since": 141,
+      "days_since": 142,
       "last_resolved": "2026-06-30"
     }
   },
