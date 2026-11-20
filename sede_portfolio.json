@@ -7,7 +7,7 @@
     "current_bankroll": 997.98,
     "currency": "USD",
     "status": "paper",
-    "last_updated": "2026-11-20T06:04:28"
+    "last_updated": "2026-11-20T10:19:36"
   },
   "config": {
     "sizing": {
@@ -31,8 +31,8 @@
     }
   },
   "performance": {
-    "total_trades": 9,
-    "open_trades": 5,
+    "total_trades": 10,
+    "open_trades": 6,
     "closed_trades": 4,
     "wins": 2,
     "losses": 1,
@@ -68,8 +68,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 74.5,
-      "last_checked": "2026-11-20 06:04 CT"
+      "current_price_cents": 67.5,
+      "last_checked": "2026-11-20 10:19 CT"
     },
     {
       "id": 4,
@@ -93,8 +93,8 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 86.0,
-      "last_checked": "2026-11-20 06:04 CT"
+      "current_price_cents": 85.0,
+      "last_checked": "2026-11-20 10:19 CT"
     },
     {
       "id": 6,
@@ -119,7 +119,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 92.5,
-      "last_checked": "2026-11-20 06:04 CT"
+      "last_checked": "2026-11-20 10:19 CT"
     },
     {
       "id": 7,
@@ -144,7 +144,7 @@
       "brier_score": null,
       "close_note": null,
       "current_price_cents": 54.5,
-      "last_checked": "2026-11-20 06:04 CT"
+      "last_checked": "2026-11-20 10:19 CT"
     },
     {
       "id": 9,
@@ -168,8 +168,31 @@
       "pnl_dollars": null,
       "brier_score": null,
       "close_note": null,
-      "current_price_cents": 78.5,
-      "last_checked": "2026-11-20 06:04 CT"
+      "current_price_cents": 77.5,
+      "last_checked": "2026-11-20 10:19 CT"
+    },
+    {
+      "id": 10,
+      "entered_at": "2026-11-20 10:19 CT",
+      "market_ticker": "KXBTCMINY-27JAN01-55000.00",
+      "description": "BTC<$55k Dec31",
+      "model": "BTC",
+      "direction": "NO",
+      "entry_price_cents": 40.5,
+      "contracts": 61,
+      "size_dollars": 25.0,
+      "max_loss_dollars": 25.0,
+      "max_profit_dollars": 24.71,
+      "model_probability_pct": 61.96467248431795,
+      "edge_cents": 21.464672484317948,
+      "sede_rating": "HIGH",
+      "status": "OPEN",
+      "result": null,
+      "exit_price_cents": null,
+      "exit_date": null,
+      "pnl_dollars": null,
+      "brier_score": null,
+      "close_note": null
     }
   ],
   "closed_positions": [
