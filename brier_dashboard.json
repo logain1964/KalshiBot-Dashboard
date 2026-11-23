@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-23T02:04:14.604205",
-  "total_resolved": 2602,
+  "generated_at": "2026-11-23T12:03:56.750590",
+  "total_resolved": 2604,
   "by_model": {
     "GDP": {
       "n": 16,
@@ -31,18 +31,18 @@
       "event_avg_brier": 0.1407
     },
     "MLS_GAME": {
-      "n": 130,
+      "n": 132,
       "correct": 66,
-      "acc_pct": 50.8,
-      "avg_brier": 0.2608,
-      "avg_logloss": 0.7263,
+      "acc_pct": 50.0,
+      "avg_brier": 0.2691,
+      "avg_logloss": 0.752,
       "avg_edge": 13.4,
       "beats_random": false,
-      "n_events": 93,
-      "correlated_events": 35,
+      "n_events": 94,
+      "correlated_events": 36,
       "gate1_n_ok": true,
-      "event_acc_pct": 47.7,
-      "event_avg_brier": 0.2679
+      "event_acc_pct": 47.2,
+      "event_avg_brier": 0.2737
     },
     "MLB_GAME": {
       "n": 135,
@@ -276,8 +276,8 @@
     },
     "MLS_GAME": {
       "status": "OK",
-      "days_since": 6,
-      "last_resolved": "2026-11-17"
+      "days_since": 3,
+      "last_resolved": "2026-11-20"
     },
     "NBA_CHAMP": {
       "status": "NEVER_RESOLVED",
