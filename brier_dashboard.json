@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-23T12:03:56.750590",
-  "total_resolved": 2604,
+  "generated_at": "2026-11-23T16:18:58.241947",
+  "total_resolved": 2735,
   "by_model": {
     "GDP": {
       "n": 16,
@@ -31,18 +31,18 @@
       "event_avg_brier": 0.1407
     },
     "MLS_GAME": {
-      "n": 132,
-      "correct": 66,
-      "acc_pct": 50.0,
-      "avg_brier": 0.2691,
-      "avg_logloss": 0.752,
+      "n": 133,
+      "correct": 67,
+      "acc_pct": 50.4,
+      "avg_brier": 0.2687,
+      "avg_logloss": 0.7511,
       "avg_edge": 13.4,
       "beats_random": false,
-      "n_events": 94,
+      "n_events": 95,
       "correlated_events": 36,
       "gate1_n_ok": true,
-      "event_acc_pct": 47.2,
-      "event_avg_brier": 0.2737
+      "event_acc_pct": 47.7,
+      "event_avg_brier": 0.2731
     },
     "MLB_GAME": {
       "n": 135,
@@ -87,32 +87,32 @@
       "event_avg_brier": 0.1444
     },
     "NFL_GAME": {
-      "n": 167,
-      "correct": 61,
-      "acc_pct": 36.5,
-      "avg_brier": 0.2344,
-      "avg_logloss": 0.6603,
-      "avg_edge": 11.8,
+      "n": 178,
+      "correct": 63,
+      "acc_pct": 35.4,
+      "avg_brier": 0.2317,
+      "avg_logloss": 0.6542,
+      "avg_edge": 11.6,
       "beats_random": true,
-      "n_events": 134,
-      "correlated_events": 33,
+      "n_events": 144,
+      "correlated_events": 34,
       "gate1_n_ok": true,
-      "event_acc_pct": 38.1,
-      "event_avg_brier": 0.2367
+      "event_acc_pct": 36.8,
+      "event_avg_brier": 0.2342
     },
     "NFL_SPREAD": {
-      "n": 1942,
-      "correct": 690,
-      "acc_pct": 35.5,
-      "avg_brier": 0.2062,
-      "avg_logloss": 0.5989,
-      "avg_edge": 11.7,
+      "n": 2061,
+      "correct": 721,
+      "acc_pct": 35.0,
+      "avg_brier": 0.2042,
+      "avg_logloss": 0.5942,
+      "avg_edge": 11.6,
       "beats_random": true,
-      "n_events": 150,
-      "correlated_events": 149,
+      "n_events": 161,
+      "correlated_events": 160,
       "gate1_n_ok": true,
-      "event_acc_pct": 35.2,
-      "event_avg_brier": 0.2095
+      "event_acc_pct": 34.3,
+      "event_avg_brier": 0.2063
     },
     "CLAIMS": {
       "n": 23,
@@ -152,19 +152,19 @@
       "rows_clear_15c_real": 5
     },
     "NFL_GAME": {
-      "n": 147,
-      "n_events": 120,
-      "win_rate_pct": 37.4,
-      "mid_pnl_cents": -375.0,
-      "real_pnl_cents": -791.0,
-      "fees_cents": 290.0,
-      "event_mean_real_pnl_cents": -6.6,
-      "event_pnl_t_stat": -1.3,
-      "events_pnl_positive": 45,
+      "n": 158,
+      "n_events": 130,
+      "win_rate_pct": 36.1,
+      "mid_pnl_cents": -480.5,
+      "real_pnl_cents": -926.0,
+      "fees_cents": 310.0,
+      "event_mean_real_pnl_cents": -7.1,
+      "event_pnl_t_stat": -1.48,
+      "events_pnl_positive": 47,
       "pct_pnl_survives": null,
-      "rows_clear_8c_mid": 100,
-      "rows_clear_8c_real": 61,
-      "rows_clear_15c_mid": 36,
+      "rows_clear_8c_mid": 108,
+      "rows_clear_8c_real": 64,
+      "rows_clear_15c_mid": 37,
       "rows_clear_15c_real": 20
     },
     "MLB_GAME": {
@@ -184,20 +184,20 @@
       "rows_clear_15c_real": 2
     },
     "NFL_SPREAD": {
-      "n": 1836,
-      "n_events": 148,
-      "win_rate_pct": 35.6,
-      "mid_pnl_cents": 481.0,
-      "real_pnl_cents": -4408.0,
-      "fees_cents": 3183.0,
-      "event_mean_real_pnl_cents": -29.8,
-      "event_pnl_t_stat": -0.81,
-      "events_pnl_positive": 63,
-      "pct_pnl_survives": -916.4,
-      "rows_clear_8c_mid": 1305,
-      "rows_clear_8c_real": 888,
-      "rows_clear_15c_mid": 405,
-      "rows_clear_15c_real": 247
+      "n": 1955,
+      "n_events": 159,
+      "win_rate_pct": 35.0,
+      "mid_pnl_cents": -284.0,
+      "real_pnl_cents": -5462.0,
+      "fees_cents": 3386.0,
+      "event_mean_real_pnl_cents": -34.4,
+      "event_pnl_t_stat": -0.99,
+      "events_pnl_positive": 66,
+      "pct_pnl_survives": null,
+      "rows_clear_8c_mid": 1389,
+      "rows_clear_8c_real": 944,
+      "rows_clear_15c_mid": 426,
+      "rows_clear_15c_real": 259
     },
     "JOBS": {
       "n": 19,
@@ -276,8 +276,8 @@
     },
     "MLS_GAME": {
       "status": "OK",
-      "days_since": 3,
-      "last_resolved": "2026-11-20"
+      "days_since": 2,
+      "last_resolved": "2026-11-21"
     },
     "NBA_CHAMP": {
       "status": "NEVER_RESOLVED",
@@ -291,13 +291,13 @@
     },
     "NFL_GAME": {
       "status": "OK",
-      "days_since": 10,
-      "last_resolved": "2026-11-13"
+      "days_since": 4,
+      "last_resolved": "2026-11-19"
     },
     "NFL_SPREAD": {
       "status": "OK",
-      "days_since": 4,
-      "last_resolved": "2026-11-19"
+      "days_since": 1,
+      "last_resolved": "2026-11-22"
     },
     "NHL_CHAMP": {
       "status": "NEVER_RESOLVED",
