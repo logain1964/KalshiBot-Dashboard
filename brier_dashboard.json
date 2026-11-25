@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-11-25T12:04:35.789274",
-  "total_resolved": 2748,
+  "generated_at": "2026-11-25T16:19:37.635771",
+  "total_resolved": 2750,
   "by_model": {
     "GDP": {
       "n": 16,
@@ -115,18 +115,18 @@
       "event_avg_brier": 0.206
     },
     "CLAIMS": {
-      "n": 23,
-      "correct": 10,
-      "acc_pct": 43.5,
-      "avg_brier": 0.1396,
-      "avg_logloss": 0.4456,
-      "avg_edge": 15.8,
+      "n": 25,
+      "correct": 11,
+      "acc_pct": 44.0,
+      "avg_brier": 0.1435,
+      "avg_logloss": 0.4544,
+      "avg_edge": 15.6,
       "beats_random": true,
-      "n_events": 5,
-      "correlated_events": 5,
+      "n_events": 6,
+      "correlated_events": 6,
       "gate1_n_ok": false,
-      "event_acc_pct": 43.0,
-      "event_avg_brier": 0.1387
+      "event_acc_pct": 44.2,
+      "event_avg_brier": 0.1471
     }
   },
   "unverified_models": {
@@ -216,18 +216,18 @@
       "rows_clear_15c_real": 1
     },
     "CLAIMS": {
-      "n": 23,
-      "n_events": 5,
-      "win_rate_pct": 43.5,
-      "mid_pnl_cents": 359.0,
-      "real_pnl_cents": 258.0,
-      "fees_cents": 37.0,
-      "event_mean_real_pnl_cents": 51.6,
-      "event_pnl_t_stat": 0.79,
-      "events_pnl_positive": 4,
-      "pct_pnl_survives": 71.9,
-      "rows_clear_8c_mid": 17,
-      "rows_clear_8c_real": 12,
+      "n": 25,
+      "n_events": 6,
+      "win_rate_pct": 44.0,
+      "mid_pnl_cents": 416.5,
+      "real_pnl_cents": 308.0,
+      "fees_cents": 40.0,
+      "event_mean_real_pnl_cents": 51.3,
+      "event_pnl_t_stat": 0.96,
+      "events_pnl_positive": 5,
+      "pct_pnl_survives": 73.9,
+      "rows_clear_8c_mid": 19,
+      "rows_clear_8c_real": 13,
       "rows_clear_15c_mid": 11,
       "rows_clear_15c_real": 8
     }
@@ -241,8 +241,8 @@
     },
     "CLAIMS": {
       "status": "OK",
-      "days_since": 13,
-      "last_resolved": "2026-11-12"
+      "days_since": 1,
+      "last_resolved": "2026-11-24"
     },
     "CPI": {
       "status": "STALE",
@@ -326,8 +326,8 @@
     "stale_only": [
       {
         "model": "CLAIMS",
-        "dashboard_n": 23,
-        "scorer_n": 41
+        "dashboard_n": 25,
+        "scorer_n": 43
       }
     ]
   }
